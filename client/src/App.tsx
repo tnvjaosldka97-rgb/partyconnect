@@ -5,11 +5,17 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import PartyDetail from "./pages/PartyDetail";
+import BecomeHost from "./pages/BecomeHost";
+import CreateParty from "./pages/CreateParty";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path="/party/:id" component={PartyDetail} />
+      <Route path="/become-host" component={BecomeHost} />
+      <Route path="/create-party" component={CreateParty} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

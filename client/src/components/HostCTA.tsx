@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { ArrowRight, DollarSign, Home, TrendingUp, Users } from "lucide-react";
+import { Link } from "wouter";
 
 const benefits = [
   {
@@ -71,13 +72,15 @@ export default function HostCTA() {
 
             {/* CTA Button */}
             <div className="pt-4">
-              <Button
-                size="lg"
-                className="gradient-button h-14 px-10 rounded-2xl text-lg font-semibold shadow-2xl group"
-              >
-                호스팅 시작하기
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <Link href="/become-host">
+                <Button
+                  size="lg"
+                  className="gradient-button h-14 px-10 rounded-2xl text-lg font-semibold shadow-2xl group"
+                >
+                  호스팅 시작하기
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
 
             {/* Additional Info */}

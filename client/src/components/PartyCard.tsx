@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Heart, MapPin, Users } from "lucide-react";
 import { useState } from "react";
+import { Link } from "wouter";
 
 interface PartyCardProps {
   id: string;
@@ -9,7 +10,8 @@ interface PartyCardProps {
   image: string;
   date: string;
   location: string;
-  price: string;
+  price: number;
+  priceFormatted: string;
   attendees: number;
   maxAttendees: number;
   ageRange: string;
@@ -17,11 +19,12 @@ interface PartyCardProps {
 }
 
 export default function PartyCard({
+  id,
   title,
   image,
   date,
   location,
-  price,
+  priceFormatted,
   attendees,
   maxAttendees,
   ageRange,
@@ -105,11 +108,13 @@ export default function PartyCard({
         <div className="flex items-center justify-between pt-4 border-t border-white/10">
           <div>
             <div className="text-xs text-muted-foreground">입장료</div>
-            <div className="text-2xl font-bold gradient-text">{price}</div>
+              <div className="text-2xl font-bold gradient-text">{priceFormatted}</div>
           </div>
-          <Button className="gradient-button rounded-xl px-6 h-10">
-            상세 보기
-          </Button>
+          <Link href={`/party/${id}`}>
+            <Button className="gradient-button rounded-xl px-6 h-10">
+              상세 보기
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
