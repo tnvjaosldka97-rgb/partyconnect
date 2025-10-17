@@ -246,3 +246,12 @@
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(217, 70, 239, 0.3);
   }
 }
+/* Hide Manus branding for premium users */
+[data-manus-branding],
+[class*="manus-branding"],
+[id*="manus-branding"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
