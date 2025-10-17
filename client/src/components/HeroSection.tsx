@@ -4,14 +4,24 @@ import { ArrowRight, Award, Calendar, Users } from "lucide-react";
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background Image with Overlay */}
+      {/* Background Video with Overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/80 z-10" />
-        <img
-          src="/hero-party.jpg"
-          alt="Party"
-          className="w-full h-full object-cover opacity-30"
-        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover opacity-40"
+        >
+          <source src="https://cdn.pixabay.com/video/2023/08/03/174433-851984223_large.mp4" type="video/mp4" />
+          {/* Fallback image */}
+          <img
+            src="/hero-party.jpg"
+            alt="Party"
+            className="w-full h-full object-cover"
+          />
+        </video>
       </div>
 
       {/* Floating Elements */}

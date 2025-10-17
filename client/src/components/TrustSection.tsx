@@ -29,8 +29,22 @@ const features = [
 
 export default function TrustSection() {
   return (
-    <section className="py-20 relative">
-      <div className="container">
+    <section className="py-20 relative overflow-hidden">
+      {/* Background Video with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-background/98 via-background/95 to-background/98 z-10" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover opacity-20"
+        >
+          <source src="https://cdn.pixabay.com/video/2022/10/11/134866-760092899_large.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div className="container relative z-20">
         {/* Section Header */}
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full border border-primary/30 mb-4">
