@@ -23,11 +23,16 @@ import {
   CheckCircle2,
   Clock,
   Tag,
+  Shield,
 } from "lucide-react";
 import { toast } from "sonner";
+import { saveParty, getHostByEmail } from "@/lib/storage";
 
 export default function CreateParty() {
   const [, setLocation] = useLocation();
+  const [hostEmail, setHostEmail] = useState("");
+  const [isHostVerified, setIsHostVerified] = useState(false);
+  const [currentHost, setCurrentHost] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -42,9 +47,127 @@ export default function CreateParty() {
     price: "",
     included: "",
   });
+  const [partyImages, setPartyImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleHostVerification = () => {
+    if (!hostEmail.trim()) {
+      toast.error("이메일을 입력해주세요");
+      return;
+    }
+
+    const host = getHostByEmail(hostEmail);
+    if (host) {
+      setIsHostVerified(true);
+      setCurrentHost(host);
+      toast.success("호스트 인증 완료!", {
+        description: `환영합니다, ${host.name}님!`,
+      });
+    } else {
+      toast.error("승인된 호스트가 아닙니다", {
+        description: "호스트 신청 후 승인을 받아야 파티를 등록할 수 있습니다.",
+      });
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // 파일 크기 및 형식 검증
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size > 10 * 1024 * 1024) {
+        toast.error("파일 크기 오류", {
+          description: "파일 크기는 10MB 이하여야 합니다.",
+        });
+        return;
+      }
+      if (!files[i].type.match(/image\/(jpeg|jpg|png)/)) {
+        toast.error("파일 형식 오류", {
+          description: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+        });
+        return;
+      }
+    }
+
+    setIsUploading(true);
+
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append("party", files[i]);
+
+        const response = await fetch("/api/upload/party", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.fileUrl) {
+          uploadedUrls.push(data.fileUrl);
+        } else {
+          throw new Error(data.message || "업로드 실패");
+        }
+      }
+
+      setPartyImages((prev) => [...prev, ...uploadedUrls]);
+      toast.success("파티 사진 업로드 성공", {
+        description: `${uploadedUrls.length}개의 파일이 업로드되었습니다.`,
+      });
+    } catch (error) {
+      console.error("Party images upload error:", error);
+      toast.error("업로드 실패", {
+        description: "파티 사진 업로드 중 오류가 발생했습니다.",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 필수 필드 검증
+    if (!formData.title || !formData.date || !formData.city) {
+      toast.error("필수 항목을 입력해주세요", {
+        description: "파티 제목, 날짜, 도시는 필수 항목입니다.",
+      });
+      return;
+    }
+
+    if (!isHostVerified || !currentHost) {
+      toast.error("호스트 인증이 필요합니다", {
+        description: "먼저 이메일로 호스트 인증을 완료해주세요.",
+      });
+      return;
+    }
+
+    // 파티 데이터 저장
+    const partyData = {
+      id: `party-${Date.now()}`,
+      title: formData.title,
+      date: formData.date,
+      time: formData.time,
+      location: formData.address,
+      city: formData.city,
+      host: currentHost.name,
+      hostId: currentHost.id,
+      price: parseInt(formData.price) || 0,
+      capacity: parseInt(formData.maxAttendees) || 0,
+      attendees: 0,
+      ageRange: formData.ageRange || "20-30대",
+      type: formData.type || "파티",
+      description: formData.description,
+      images: partyImages.length > 0 ? partyImages : ["/placeholder.svg"],
+      tags: formData.theme ? [formData.theme] : [],
+      rating: 0,
+      reviews: 0,
+    };
+
+    saveParty(partyData);
     
     toast.success("파티 등록이 완료되었습니다!", {
       description: "검토 후 승인되면 게시됩니다.",
@@ -80,300 +203,285 @@ export default function CreateParty() {
                 <br />
                 <span className="gradient-text">등록하세요</span>
               </h1>
-              
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                멋진 파티를 계획하고 새로운 사람들을 초대하세요
+                검증된 호스트가 준비한 특별한 파티에 참여하세요
               </p>
             </div>
           </div>
         </section>
 
         {/* Form Section */}
-        <section className="py-12">
+        <section className="py-16">
           <div className="container">
-            <div className="max-w-4xl mx-auto">
-              <div className="glass-strong rounded-3xl p-8 md:p-12 border border-white/10">
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Basic Info */}
+            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
+              {/* 호스트 인증 */}
+              <div className={`glass p-8 rounded-2xl border space-y-6 ${
+                isHostVerified ? "border-green-500/50 bg-green-500/5" : "border-primary/30"
+              }`}>
+                <div className="flex items-center space-x-3 mb-6">
+                  <Shield className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">호스트 인증</h2>
+                  {isHostVerified && (
+                    <CheckCircle2 className="w-6 h-6 text-green-500 ml-auto" />
+                  )}
+                </div>
+
+                {!isHostVerified ? (
                   <div className="space-y-4">
-                    <h3 className="text-2xl font-semibold flex items-center">
-                      <CheckCircle2 className="w-6 h-6 text-primary mr-2" />
-                      기본 정보
-                    </h3>
-                    
-                    <div>
-                      <Label htmlFor="title">파티 제목 *</Label>
+                    <p className="text-muted-foreground">
+                      파티를 등록하려면 먼저 승인된 호스트인지 확인해야 합니다.
+                    </p>
+                    <div className="flex gap-3">
                       <Input
-                        id="title"
-                        required
-                        value={formData.title}
-                        onChange={(e) => updateField("title", e.target.value)}
-                        className="glass border-white/20 mt-2"
-                        placeholder="예: Golden Hour Gatherings - 축제 분위기의 저녁 파티"
+                        type="email"
+                        placeholder="호스트 등록 시 사용한 이메일 주소"
+                        value={hostEmail}
+                        onChange={(e) => setHostEmail(e.target.value)}
+                        className="glass border-white/20"
                       />
+                      <Button
+                        type="button"
+                        onClick={handleHostVerification}
+                        className="gradient-button whitespace-nowrap"
+                      >
+                        인증하기
+                      </Button>
                     </div>
-
-                    <div>
-                      <Label htmlFor="description">파티 설명 *</Label>
-                      <Textarea
-                        id="description"
-                        required
-                        value={formData.description}
-                        onChange={(e) => updateField("description", e.target.value)}
-                        className="glass border-white/20 mt-2 min-h-32"
-                        placeholder="파티에 대해 자세히 설명해주세요. 분위기, 활동, 제공되는 것들 등..."
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="type">파티 유형 *</Label>
-                        <Select value={formData.type} onValueChange={(value) => updateField("type", value)}>
-                          <SelectTrigger className="glass border-white/20 mt-2">
-                            <SelectValue placeholder="파티 유형 선택" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="하우스 파티">하우스 파티</SelectItem>
-                            <SelectItem value="루프탑 파티">루프탑 파티</SelectItem>
-                            <SelectItem value="브런치 파티">브런치 파티</SelectItem>
-                            <SelectItem value="테마 파티">테마 파티</SelectItem>
-                            <SelectItem value="네트워킹 파티">네트워킹 파티</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="theme">테마 *</Label>
-                        <Select value={formData.theme} onValueChange={(value) => updateField("theme", value)}>
-                          <SelectTrigger className="glass border-white/20 mt-2">
-                            <SelectValue placeholder="테마 선택" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="축제">축제</SelectItem>
-                            <SelectItem value="음악">음악</SelectItem>
-                            <SelectItem value="댄스">댄스</SelectItem>
-                            <SelectItem value="문화">문화</SelectItem>
-                            <SelectItem value="대화">대화</SelectItem>
-                            <SelectItem value="게임">게임</SelectItem>
-                            <SelectItem value="음식">음식</SelectItem>
-                            <SelectItem value="칵테일">칵테일</SelectItem>
-                            <SelectItem value="와인">와인</SelectItem>
-                            <SelectItem value="케이팝">케이팝</SelectItem>
-                            <SelectItem value="복고">복고</SelectItem>
-                            <SelectItem value="럭셔리">럭셔리</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Date & Time */}
-                  <div className="space-y-4 pt-6 border-t border-white/10">
-                    <h3 className="text-2xl font-semibold flex items-center">
-                      <Clock className="w-6 h-6 text-primary mr-2" />
-                      날짜 및 시간
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="date">날짜 *</Label>
-                        <Input
-                          id="date"
-                          type="date"
-                          required
-                          value={formData.date}
-                          onChange={(e) => updateField("date", e.target.value)}
-                          className="glass border-white/20 mt-2"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="time">시간 *</Label>
-                        <Input
-                          id="time"
-                          type="time"
-                          required
-                          value={formData.time}
-                          onChange={(e) => updateField("time", e.target.value)}
-                          className="glass border-white/20 mt-2"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Location */}
-                  <div className="space-y-4 pt-6 border-t border-white/10">
-                    <h3 className="text-2xl font-semibold flex items-center">
-                      <MapPin className="w-6 h-6 text-primary mr-2" />
-                      장소
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city">도시 *</Label>
-                        <Select value={formData.city} onValueChange={(value) => updateField("city", value)}>
-                          <SelectTrigger className="glass border-white/20 mt-2">
-                            <SelectValue placeholder="도시 선택" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="서울">서울</SelectItem>
-                            <SelectItem value="부산">부산</SelectItem>
-                            <SelectItem value="인천">인천</SelectItem>
-                            <SelectItem value="대구">대구</SelectItem>
-                            <SelectItem value="대전">대전</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="address">상세 주소 *</Label>
-                        <Input
-                          id="address"
-                          required
-                          value={formData.address}
-                          onChange={(e) => updateField("address", e.target.value)}
-                          className="glass border-white/20 mt-2"
-                          placeholder="강남구, 서울"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Attendees & Pricing */}
-                  <div className="space-y-4 pt-6 border-t border-white/10">
-                    <h3 className="text-2xl font-semibold flex items-center">
-                      <Users className="w-6 h-6 text-primary mr-2" />
-                      참석 인원 및 가격
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="maxAttendees">최대 인원 *</Label>
-                        <Input
-                          id="maxAttendees"
-                          type="number"
-                          required
-                          min="5"
-                          max="100"
-                          value={formData.maxAttendees}
-                          onChange={(e) => updateField("maxAttendees", e.target.value)}
-                          className="glass border-white/20 mt-2"
-                          placeholder="20"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="ageRange">연령대 *</Label>
-                        <Select value={formData.ageRange} onValueChange={(value) => updateField("ageRange", value)}>
-                          <SelectTrigger className="glass border-white/20 mt-2">
-                            <SelectValue placeholder="연령대 선택" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="18-30세">18-30세</SelectItem>
-                            <SelectItem value="21-35세">21-35세</SelectItem>
-                            <SelectItem value="23-34세">23-34세</SelectItem>
-                            <SelectItem value="25-40세">25-40세</SelectItem>
-                            <SelectItem value="28-45세">28-45세</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="price">입장료 (원) *</Label>
-                        <Input
-                          id="price"
-                          type="number"
-                          required
-                          min="0"
-                          step="1000"
-                          value={formData.price}
-                          onChange={(e) => updateField("price", e.target.value)}
-                          className="glass border-white/20 mt-2"
-                          placeholder="35000"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* What's Included */}
-                  <div className="space-y-4 pt-6 border-t border-white/10">
-                    <h3 className="text-2xl font-semibold flex items-center">
-                      <Tag className="w-6 h-6 text-primary mr-2" />
-                      포함 사항
-                    </h3>
-                    
-                    <div>
-                      <Label htmlFor="included">포함되는 것들 *</Label>
-                      <Textarea
-                        id="included"
-                        required
-                        value={formData.included}
-                        onChange={(e) => updateField("included", e.target.value)}
-                        className="glass border-white/20 mt-2 min-h-24"
-                        placeholder="예: 웰컴 드링크, 스낵 & 핑거푸드, 음악 & 엔터테인먼트, 게임 & 액티비티"
-                      />
-                      <p className="text-sm text-muted-foreground mt-2">
-                        각 항목을 쉼표(,)로 구분해주세요
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Photos */}
-                  <div className="space-y-4 pt-6 border-t border-white/10">
-                    <h3 className="text-2xl font-semibold flex items-center">
-                      <Upload className="w-6 h-6 text-primary mr-2" />
-                      파티 사진
-                    </h3>
-                    
-                    <div className="glass border-2 border-dashed border-white/20 rounded-xl p-12 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                      <Upload className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-lg font-semibold mb-2">
-                        클릭하여 사진 업로드
-                      </p>
-                      <p className="text-sm text-muted-foreground mb-1">
-                        파티 장소나 분위기를 보여주는 사진을 업로드하세요
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        JPG, PNG (최대 10MB, 최소 1장)
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Submit */}
-                  <div className="pt-6 border-t border-white/10">
-                    <div className="glass rounded-2xl p-6 mb-6 border border-primary/20">
-                      <h4 className="font-semibold mb-2 flex items-center">
-                        <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-                        검토 프로세스
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        파티 등록 후 24시간 내에 검토가 완료됩니다. 승인되면 즉시 게시되며 
-                        참석자들이 예약할 수 있습니다. 안전하고 즐거운 파티를 위해 
-                        모든 정보를 정확하게 입력해주세요.
-                      </p>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-full gradient-button h-14 rounded-2xl text-lg font-semibold group"
-                    >
-                      파티 등록하기
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                    
-                    <p className="text-sm text-center text-muted-foreground mt-4">
-                      등록 시 <Link href="#" className="text-primary hover:underline">이용약관</Link> 및{" "}
-                      <Link href="#" className="text-primary hover:underline">호스트 정책</Link>에 동의하게 됩니다
+                    <p className="text-sm text-muted-foreground">
+                      호스트가 아니신가요?{" "}
+                      <Link href="/become-host" className="text-primary hover:underline">
+                        호스트 신청하기
+                      </Link>
                     </p>
                   </div>
-                </form>
+                ) : (
+                  <div className="flex items-center gap-3 p-4 rounded-lg bg-green-500/10 border border-green-500/30">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <div>
+                      <p className="font-semibold text-green-400">
+                        인증 완료: {currentHost?.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {currentHost?.email}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+
+              {/* 기본 정보 */}
+              <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <Tag className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">기본 정보</h2>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">파티 제목 *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => updateField("title", e.target.value)}
+                      placeholder="예: 루프탑 파티"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="description">파티 설명 *</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => updateField("description", e.target.value)}
+                      placeholder="파티에 대한 설명을 입력하세요"
+                      rows={4}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 날짜 및 시간 */}
+              <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <Clock className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">날짜 및 시간</h2>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="date">날짜 *</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => updateField("date", e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="time">시간 *</Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={formData.time}
+                      onChange={(e) => updateField("time", e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 장소 */}
+              <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <MapPin className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">장소</h2>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="city">도시 *</Label>
+                    <Select value={formData.city} onValueChange={(value) => updateField("city", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="도시 선택" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="서울">서울</SelectItem>
+                        <SelectItem value="부산">부산</SelectItem>
+                        <SelectItem value="제주">제주</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="address">주소 *</Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => updateField("address", e.target.value)}
+                      placeholder="상세 주소를 입력하세요"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 참석 인원 및 가격 */}
+              <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <DollarSign className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">참석 인원 및 가격</h2>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="maxAttendees">최대 인원 *</Label>
+                    <Input
+                      id="maxAttendees"
+                      type="number"
+                      value={formData.maxAttendees}
+                      onChange={(e) => updateField("maxAttendees", e.target.value)}
+                      placeholder="20"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="price">참가비 (원) *</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) => updateField("price", e.target.value)}
+                      placeholder="50000"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 파티 사진 */}
+              <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <Upload className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">파티 사진</h2>
+                </div>
+
+                <div>
+                  <Label htmlFor="partyImages">클릭하여 사진 업로드</Label>
+                  <input
+                    id="partyImages"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="partyImages"
+                    className={`mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                      partyImages.length > 0
+                        ? "border-green-500/50 bg-green-500/10"
+                        : "border-white/20 hover:border-primary/50"
+                    }`}
+                  >
+                    {isUploading ? (
+                      <>
+                        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                        <p className="text-sm text-primary font-semibold">
+                          업로드 중...
+                        </p>
+                      </>
+                    ) : partyImages.length > 0 ? (
+                      <>
+                        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-3">
+                          <CheckCircle2 className="w-6 h-6 text-green-500" />
+                        </div>
+                        <p className="text-sm text-green-400 mb-1 font-semibold">
+                          {partyImages.length}개의 사진 업로드 완료
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          추가 사진을 업로드하려면 클릭하세요
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-12 h-12 text-muted-foreground mb-3" />
+                        <p className="text-sm text-muted-foreground mb-1">
+                          클릭하여 사진 업로드
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          JPG, PNG (최대 10MB) - 여러 장 선택 가능
+                        </p>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              {/* 제출 버튼 */}
+              <div className="flex justify-center pt-6">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="px-12 group"
+                >
+                  파티 등록하기
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+
+              <p className="text-center text-sm text-muted-foreground">
+                등록 후 24시간 내에 검토 결과를 알려드립니다
+              </p>
+            </form>
           </div>
         </section>
       </main>
-
+      
       <Footer />
     </div>
   );

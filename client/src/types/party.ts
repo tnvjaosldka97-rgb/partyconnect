@@ -25,6 +25,6 @@ export interface FilterOptions {
   dateRange: string;
   themes: string[];
   ageRange: [number, number];
-  sortBy: 'date' | 'price-low' | 'price-high' | 'popular' | 'rating';
+  sortBy: 'none' | 'date' | 'price-low' | 'price-high' | 'popular' | 'rating';
 }
 

@@ -4,11 +4,11 @@ import { Party, FilterOptions } from "@/types/party";
 const defaultFilters: FilterOptions = {
   searchQuery: "",
   city: "all",
-  priceRange: [0, 100000],
+  priceRange: [0, 1000000], // 모든 가격대를 포함하는 큰 범위
   dateRange: "all",
   themes: [],
   ageRange: [18, 50],
-  sortBy: "date",
+  sortBy: "none", // 기본값: 정렬 없음 (원본 순서)
 };
 
 export function usePartyFilter(parties: Party[]) {
@@ -90,6 +90,9 @@ export function usePartyFilter(parties: Party[]) {
 
     // 정렬
     switch (filters.sortBy) {
+      case "none":
+        // 정렬 없음: 원본 순서 유지
+        break;
       case "date":
         result.sort((a, b) => a.dateTimestamp - b.dateTimestamp);
         break;

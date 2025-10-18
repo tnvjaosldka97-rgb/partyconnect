@@ -1,6 +1,7 @@
 import PartyCard from "./PartyCard";
 import { Button } from "./ui/button";
 import { ArrowRight, SlidersHorizontal } from "lucide-react";
+import { Link } from "wouter";
 import { FilterOptions } from "@/types/party";
 import { mockParties } from "@/data/mockParties";
 import { usePartyFilter } from "@/hooks/usePartyFilter";
@@ -129,14 +130,16 @@ export default function FeaturedParties({
             {/* See All Button */}
             {filteredParties.length > 6 && (
               <div className="text-center">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="glass border-primary/30 hover:border-primary/50 hover:bg-primary/10 rounded-2xl px-8 h-12 group"
-                >
-                  모든 파티 보기 ({filteredParties.length})
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                <Link href="/all-parties">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="glass border-primary/30 hover:border-primary/50 hover:bg-primary/10 rounded-2xl px-8 h-12 group"
+                  >
+                    모든 파티 보기 ({filteredParties.length})
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
               </div>
             )}
           </>

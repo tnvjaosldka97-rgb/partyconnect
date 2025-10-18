@@ -8,6 +8,10 @@ import Home from "./pages/Home";
 import PartyDetail from "./pages/PartyDetail";
 import BecomeHost from "./pages/BecomeHost";
 import CreateParty from "./pages/CreateParty";
+import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
+import ChangePassword from "./pages/ChangePassword";
+import AllParties from "./pages/AllParties";
 
 function Router() {
   return (
@@ -16,6 +20,10 @@ function Router() {
       <Route path="/party/:id" component={PartyDetail} />
       <Route path="/become-host" component={BecomeHost} />
       <Route path="/create-party" component={CreateParty} />
+      <Route path="/all-parties" component={AllParties} />
+      <Route path="/admin" component={Admin} />
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin/change-password" component={ChangePassword} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
