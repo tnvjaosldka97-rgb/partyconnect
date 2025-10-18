@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { ArrowRight, Award, Calendar, Users } from "lucide-react";
 
 export default function HeroSection() {
@@ -40,25 +40,25 @@ export default function HeroSection() {
 
           {/* Headline */}
           <h1 className="animate-fadeIn">
-            검증된 사람들과 함께하는
+            Premium Party Experience
             <br />
-            <span className="gradient-text">프리미엄 파티 경험</span>
+            <span className="gradient-text">With Verified People</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-            30,000명의 회원이 신뢰하는 파티 플랫폼에서
+            Join 30,000+ verified members on the most trusted party platform
             <br className="hidden sm:block" />
-            새로운 친구들과 특별한 순간을 만들어보세요
+            Make new friends and create unforgettable moments
           </p>
 
-          {/* CTA Button */}
+          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
             <Button
               size="lg"
               className="gradient-button h-14 px-8 rounded-2xl text-lg font-semibold shadow-2xl group"
             >
-              지금 탐색하기
+              Explore Now
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button
@@ -66,7 +66,7 @@ export default function HeroSection() {
               variant="outline"
               className="h-14 px-8 rounded-2xl text-lg font-semibold glass border-white/20 hover:bg-white/10"
             >
-              파티 호스팅하기
+              Host a Party
             </Button>
           </div>
 
@@ -77,30 +77,23 @@ export default function HeroSection() {
                 <Users className="w-8 h-8 text-primary" />
               </div>
               <div className="text-3xl font-bold gradient-text">30,000+</div>
-              <div className="text-sm text-muted-foreground mt-1">검증된 회원</div>
+              <div className="text-sm text-muted-foreground mt-1">Verified Members</div>
             </div>
             <div className="glass-strong rounded-2xl p-6 border border-white/10">
               <div className="flex items-center justify-center mb-2">
-                <Calendar className="w-8 h-8 text-accent" />
+                <Calendar className="w-8 h-8 text-primary" />
               </div>
               <div className="text-3xl font-bold gradient-text">4,000+</div>
-              <div className="text-sm text-muted-foreground mt-1">성공한 파티</div>
+              <div className="text-sm text-muted-foreground mt-1">Successful Parties</div>
             </div>
             <div className="glass-strong rounded-2xl p-6 border border-white/10">
               <div className="flex items-center justify-center mb-2">
-                <Award className="w-8 h-8 text-secondary" />
+                <Award className="w-8 h-8 text-primary" />
               </div>
-              <div className="text-3xl font-bold gradient-text">6년</div>
-              <div className="text-sm text-muted-foreground mt-1">운영 경력</div>
+              <div className="text-3xl font-bold gradient-text">6 Years</div>
+              <div className="text-sm text-muted-foreground mt-1">Operating Experience</div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
         </div>
       </div>
     </section>

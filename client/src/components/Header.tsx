@@ -46,7 +46,7 @@ export default function Header({
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="파티, 호스트, 테마, 지역 검색... (예: 서울, 강남, 음악)"
+                placeholder="Search parties, hosts, themes, locations... (e.g., New York, music)"
                 value={searchQuery}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 className="pl-12 pr-4 h-12 glass border-white/20 focus:border-primary/50 rounded-2xl text-base"
@@ -71,11 +71,15 @@ export default function Header({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">모든 도시</SelectItem>
-                <SelectItem value="서울">서울</SelectItem>
-                <SelectItem value="부산">부산</SelectItem>
-                <SelectItem value="인천">인천</SelectItem>
-                <SelectItem value="대구">대구</SelectItem>
+                <SelectItem value="all">All Cities</SelectItem>
+                <SelectItem value="New York">New York</SelectItem>
+                <SelectItem value="Los Angeles">Los Angeles</SelectItem>
+                <SelectItem value="Chicago">Chicago</SelectItem>
+                <SelectItem value="San Francisco">San Francisco</SelectItem>
+                <SelectItem value="Miami">Miami</SelectItem>
+                <SelectItem value="Boston">Boston</SelectItem>
+                <SelectItem value="Seattle">Seattle</SelectItem>
+                <SelectItem value="Austin">Austin</SelectItem>
               </SelectContent>
             </Select>
 
@@ -85,7 +89,7 @@ export default function Header({
                 variant="outline"
                 className="h-10 px-4 glass border-primary/50 hover:bg-primary/10 rounded-xl hidden sm:flex"
               >
-                호스트 되기
+                Become a Host
               </Button>
             </Link>
             
@@ -94,7 +98,7 @@ export default function Header({
                 variant="outline"
                 className="h-10 px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl hidden lg:flex"
               >
-                파티 등록
+                Create Party
               </Button>
             </Link>
 
@@ -115,7 +119,7 @@ export default function Header({
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="파티 검색... (예: 서울, 음악)"
+              placeholder="Search parties... (e.g., New York, music)"
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
               className="pl-12 pr-4 h-12 glass border-white/20 focus:border-primary/50 rounded-2xl"

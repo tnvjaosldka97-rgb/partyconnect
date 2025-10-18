@@ -1,4 +1,4 @@
-// LocalStorage 관리 유틸리티
+// LocalStorage management utilities
 
 export interface HostApplication {
   id: string;
@@ -42,7 +42,7 @@ export interface Party {
   reviews: number;
 }
 
-// 호스트 신청 관리
+// Host application management
 export function getHostApplications(): HostApplication[] {
   const data = localStorage.getItem("hostApplications");
   return data ? JSON.parse(data) : [];
@@ -81,7 +81,7 @@ export function updateHostApplicationStatus(
   }
 }
 
-// 호스트 승인 여부 확인
+// Check if host is approved
 export function isHostApproved(email: string): boolean {
   try {
     const applications = getHostApplications();
@@ -95,7 +95,7 @@ export function isHostApproved(email: string): boolean {
   }
 }
 
-// 이메일로 호스트 정보 가져오기
+// Get host information by email
 export function getHostByEmail(email: string): HostApplication | null {
   try {
     const applications = getHostApplications();
@@ -109,7 +109,7 @@ export function getHostByEmail(email: string): HostApplication | null {
   }
 }
 
-// 파티 관리
+// Party management
 export function getParties(): Party[] {
   const data = localStorage.getItem("parties");
   return data ? JSON.parse(data) : [];
@@ -127,26 +127,26 @@ export function saveParty(party: Party): boolean {
   }
 }
 
-// 호스트 승인 시 자동 파티 생성
+// Auto-create party when host is approved
 export function createPartyFromApplication(application: HostApplication): boolean {
   try {
     const party: Party = {
       id: `party-${Date.now()}`,
-      title: `${application.spaceType} 파티 - ${application.city}`,
-      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 7일 후
+      title: `${application.spaceType} Party - ${application.city}`,
+      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 7 days later
       time: "19:00",
       location: application.address,
       city: application.city,
       host: application.name,
       hostId: application.id,
-      price: 35000,
+      price: 45,
       capacity: application.capacity,
       attendees: 0,
-      ageRange: "21-35세",
+      ageRange: "21-35",
       type: application.spaceType,
-      description: application.intro || "멋진 파티에 여러분을 초대합니다!",
+      description: application.intro || "Join us for an amazing party!",
       images: application.images.length > 0 ? application.images : ["/placeholder-party.jpg"],
-      tags: ["신규", application.city, application.spaceType],
+      tags: ["new", application.city, application.spaceType],
       rating: 0,
       reviews: 0,
     };

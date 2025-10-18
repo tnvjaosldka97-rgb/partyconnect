@@ -23,11 +23,11 @@ export default function AllParties() {
   }
 
   const quickFilters = [
-    { label: "오늘 밤", value: "today", type: "dateRange" as const },
-    { label: "이번 주말", value: "weekend", type: "dateRange" as const },
-    { label: "₩30,000 이하", value: [0, 30000] as [number, number], type: "priceRange" as const },
-    { label: "인기순", value: "popular" as const, type: "sortBy" as const },
-    { label: "평점순", value: "rating" as const, type: "sortBy" as const },
+    { label: "Tonight", value: "today", type: "dateRange" as const },
+    { label: "This Weekend", value: "weekend", type: "dateRange" as const },
+    { label: "$40 or less", value: [0, 30000] as [number, number], type: "priceRange" as const },
+    { label: "Popular", value: "popular" as const, type: "sortBy" as const },
+    { label: "Top Rated", value: "rating" as const, type: "sortBy" as const },
   ];
 
   const handleQuickFilter = (
@@ -69,7 +69,7 @@ export default function AllParties() {
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {totalResults > 0
-                ? `${totalResults}개의 파티를 찾았습니다`
+                ? `${totalResults}parties found`
                 : "검증된 호스트가 준비한 특별한 파티에 참여하세요"}
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function AllParties() {
               className="glass border-primary/30 hover:border-primary/50 hover:bg-primary/10 rounded-full px-6 text-primary"
             >
               <SlidersHorizontal className="w-4 h-4 mr-2" />
-              고급 필터
+              Advanced Filters
             </Button>
           </div>
 

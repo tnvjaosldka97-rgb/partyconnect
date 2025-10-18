@@ -68,7 +68,7 @@ export default function PartyCard({
         <div className="absolute bottom-4 left-4 right-4">
           <div className="glass-strong rounded-xl px-3 py-2 text-sm">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-muted-foreground">참석 현황</span>
+              <span className="text-xs text-muted-foreground">Attendance</span>
               <span className="text-xs font-semibold">{attendees}/{maxAttendees}</span>
             </div>
             <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -100,19 +100,19 @@ export default function PartyCard({
           </div>
           <div className="flex items-center space-x-2">
             <Users className="w-4 h-4 text-secondary" />
-            <span>{attendees}명 참석 중</span>
+            <span>{attendees}명 Attending</span>
           </div>
         </div>
 
         {/* Price & CTA */}
         <div className="flex items-center justify-between pt-4 border-t border-white/10">
           <div>
-            <div className="text-xs text-muted-foreground">입장료</div>
+            <div className="text-xs text-muted-foreground">Entry Fee</div>
               <div className="text-2xl font-bold gradient-text">{priceFormatted}</div>
           </div>
           <Link href={`/party/${id}`}>
             <Button className="gradient-button rounded-xl px-6 h-10">
-              상세 보기
+              View Details
             </Button>
           </Link>
         </div>

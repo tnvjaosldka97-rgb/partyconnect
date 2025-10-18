@@ -57,7 +57,7 @@ export default function TrustSection() {
             안심하고 즐기세요
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            6년간 30,000명 이상의 회원이 신뢰한 안전한 파티 플랫폼
+            6년간 30,000+ members 이상의 회원이 신뢰한 안전한 파티 플랫폼
           </p>
         </div>
 

@@ -78,7 +78,7 @@ export default function CreateParty() {
     for (let i = 0; i < files.length; i++) {
       if (files[i].size > 10 * 1024 * 1024) {
         toast.error("파일 크기 오류", {
-          description: "파일 크기는 10MB 이하여야 합니다.",
+          description: "파일 크기는 10MB or less여야 합니다.",
         });
         return;
       }
@@ -169,7 +169,7 @@ export default function CreateParty() {
 
     saveParty(partyData);
     
-    toast.success("파티 등록이 완료되었습니다!", {
+    toast.success("Create Party이 완료되었습니다!", {
       description: "검토 후 승인되면 게시됩니다.",
     });
     
@@ -195,7 +195,7 @@ export default function CreateParty() {
             <div className="max-w-4xl mx-auto text-center space-y-4">
               <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full border border-primary/30 mb-4">
                 <Calendar className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">파티 등록</span>
+                <span className="text-sm font-medium">Create Party</span>
               </div>
               
               <h1 className="text-4xl sm:text-5xl font-bold">
@@ -346,12 +346,17 @@ export default function CreateParty() {
                     <Label htmlFor="city">도시 *</Label>
                     <Select value={formData.city} onValueChange={(value) => updateField("city", value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="도시 선택" />
+                        <SelectValue placeholder="Select City" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="서울">서울</SelectItem>
-                        <SelectItem value="부산">부산</SelectItem>
-                        <SelectItem value="제주">제주</SelectItem>
+                        <SelectItem value="New York">New York</SelectItem>
+                        <SelectItem value="Los Angeles">Los Angeles</SelectItem>
+                        <SelectItem value="Chicago">Chicago</SelectItem>
+                        <SelectItem value="San Francisco">San Francisco</SelectItem>
+                        <SelectItem value="Miami">Miami</SelectItem>
+                        <SelectItem value="Boston">Boston</SelectItem>
+                        <SelectItem value="Seattle">Seattle</SelectItem>
+                        <SelectItem value="Austin">Austin</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -362,7 +367,7 @@ export default function CreateParty() {
                       id="address"
                       value={formData.address}
                       onChange={(e) => updateField("address", e.target.value)}
-                      placeholder="상세 주소를 입력하세요"
+                      placeholder="Enter detailed address"
                       required
                     />
                   </div>
@@ -469,7 +474,7 @@ export default function CreateParty() {
                   size="lg"
                   className="px-12 group"
                 >
-                  파티 등록하기
+                  Create Party하기
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>

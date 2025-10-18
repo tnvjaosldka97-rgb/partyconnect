@@ -57,7 +57,7 @@ export default function BecomeHost() {
     // Check file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       toast.error("파일 크기 초과", {
-        description: "범죄기록증명원은 10MB 이하여야 합니다.",
+        description: "범죄기록증명원은 10MB or less여야 합니다.",
       });
       return;
     }
@@ -100,7 +100,7 @@ export default function BecomeHost() {
     // Check file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       toast.error("파일 크기 초과", {
-        description: "신분증 사본은 10MB 이하여야 합니다.",
+        description: "신분증 사본은 10MB or less여야 합니다.",
       });
       return;
     }
@@ -143,7 +143,7 @@ export default function BecomeHost() {
     for (let i = 0; i < files.length; i++) {
       if (files[i].size > 10 * 1024 * 1024) {
         toast.error("파일 크기 초과", {
-          description: "각 파일은 10MB 이하여야 합니다.",
+          description: "각 파일은 10MB or less여야 합니다.",
         });
         return;
       }
@@ -263,7 +263,7 @@ export default function BecomeHost() {
   const benefits = [
     {
       icon: DollarSign,
-      title: "월 최대 ₩1,600,000 수익",
+      title: "월 최대 $2,000 수익",
       description: "파티 호스팅으로 안정적인 수익 창출",
     },
     {
@@ -297,7 +297,7 @@ export default function BecomeHost() {
             <div className="max-w-4xl mx-auto text-center space-y-6">
               <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full border border-primary/30 mb-4">
                 <TrendingUp className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">호스트 되기</span>
+                <span className="text-sm font-medium">Become a Host</span>
               </div>
               
               <h1 className="text-5xl sm:text-6xl font-bold">
@@ -409,14 +409,17 @@ export default function BecomeHost() {
                         <Label htmlFor="city">도시 *</Label>
                         <Select value={formData.city} onValueChange={(value) => updateField("city", value)}>
                           <SelectTrigger className="glass border-white/20 mt-2">
-                            <SelectValue placeholder="도시 선택" />
+                            <SelectValue placeholder="Select City" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="서울">서울</SelectItem>
-                            <SelectItem value="부산">부산</SelectItem>
-                            <SelectItem value="인천">인천</SelectItem>
-                            <SelectItem value="대구">대구</SelectItem>
-                            <SelectItem value="대전">대전</SelectItem>
+                            <SelectItem value="New York">New York</SelectItem>
+                            <SelectItem value="Los Angeles">Los Angeles</SelectItem>
+                            <SelectItem value="Chicago">Chicago</SelectItem>
+                            <SelectItem value="San Francisco">San Francisco</SelectItem>
+                            <SelectItem value="Miami">Miami</SelectItem>
+                            <SelectItem value="Boston">Boston</SelectItem>
+                            <SelectItem value="Seattle">Seattle</SelectItem>
+                            <SelectItem value="Austin">Austin</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -446,7 +449,7 @@ export default function BecomeHost() {
                         value={formData.address}
                         onChange={(e) => updateField("address", e.target.value)}
                         className="glass border-white/20 mt-2"
-                        placeholder="서울시 강남구 테헤란로 123"
+                        placeholder="New York시 Manhattan 테헤란로 123"
                       />
                     </div>
 

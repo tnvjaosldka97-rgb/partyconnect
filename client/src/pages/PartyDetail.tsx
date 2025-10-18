@@ -185,7 +185,7 @@ export default function PartyDetail() {
                   {party.description}
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  이 파티는 검증된 회원들만 참석할 수 있으며, 모든 참석자는 사전 승인을 받아야 합니다. 
+                  이 파티는 Verified Members들만 참석할 수 있으며, 모든 참석자는 사전 승인을 받아야 합니다. 
                   안전하고 즐거운 분위기에서 새로운 친구들을 만나보세요. 음료와 간단한 스낵이 제공되며, 
                   추가 음식은 각자 준비하실 수 있습니다.
                 </p>
@@ -289,17 +289,17 @@ export default function PartyDetail() {
                 <div className="mb-6 p-4 glass rounded-xl border border-white/10">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-muted-foreground">입장권 ({ticketCount}매)</span>
-                    <span className="font-semibold">₩{(party.price * ticketCount).toLocaleString()}</span>
+                    <span className="font-semibold">${(party.price * ticketCount).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-muted-foreground">서비스 수수료</span>
-                    <span className="font-semibold">₩{Math.floor(party.price * ticketCount * 0.05).toLocaleString()}</span>
+                    <span className="font-semibold">${Math.floor(party.price * ticketCount * 0.05).toLocaleString()}</span>
                   </div>
                   <div className="border-t border-white/10 my-3" />
                   <div className="flex items-center justify-between">
                     <span className="font-bold">총 금액</span>
                     <span className="text-2xl font-bold gradient-text">
-                      ₩{Math.floor(totalPrice * 1.05).toLocaleString()}
+                      ${Math.floor(totalPrice * 1.05).toLocaleString()}
                     </span>
                   </div>
                 </div>

@@ -12,6 +12,9 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import ChangePassword from "./pages/ChangePassword";
 import AllParties from "./pages/AllParties";
+import { useEffect } from "react";
+import { getParties, saveParty } from "./lib/storage";
+import { initialParties } from "./lib/initialParties";
 
 function Router() {
   return (
@@ -37,6 +40,14 @@ function Router() {
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
+  // Load initial parties on first visit
+  useEffect(() => {
+    const parties = getParties();
+    if (parties.length === 0) {
+      initialParties.forEach(party => saveParty(party));
+    }
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider

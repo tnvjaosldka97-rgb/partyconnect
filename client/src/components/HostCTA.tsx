@@ -5,7 +5,7 @@ import { Link } from "wouter";
 const benefits = [
   {
     icon: DollarSign,
-    text: "월 최대 ₩1,600,000 수익",
+    text: "월 최대 $2,000 수익",
   },
   {
     icon: Home,
@@ -36,14 +36,14 @@ export default function HostCTA() {
             {/* Badge */}
             <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full border border-accent/30">
               <TrendingUp className="w-5 h-5 text-accent" />
-              <span className="text-sm font-medium">호스트 되기</span>
+              <span className="text-sm font-medium">Become a Host</span>
             </div>
 
             {/* Headline */}
             <h2 className="animate-fadeIn">
               파티를 호스팅하고
               <br />
-              <span className="gradient-text">월 ₩1,600,000 수익 창출</span>
+              <span className="gradient-text">월 $2,000 수익 창출</span>
             </h2>
 
             {/* Description */}
