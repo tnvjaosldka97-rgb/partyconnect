@@ -45,9 +45,22 @@ export default function AllParties() {
     type: keyof typeof filters,
     value: any
   ) => {
-    // 현재 필터가 활성화되어 있으면 해제, 아니면 활성화
+    // 현재 필터가 활성화되어 있는지 확인
     const currentValue = filters[type];
-    if (JSON.stringify(currentValue) === JSON.stringify(value)) {
+    let isCurrentlyActive = false;
+    
+    if (type === "dateRange") {
+      isCurrentlyActive = currentValue === value;
+    } else if (type === "priceRange") {
+      isCurrentlyActive = Array.isArray(currentValue) && 
+                          Array.isArray(value) &&
+                          currentValue[0] === value[0] && 
+                          currentValue[1] === value[1];
+    } else if (type === "sortBy") {
+      isCurrentlyActive = currentValue === value;
+    }
+    
+    if (isCurrentlyActive) {
       // 필터 해제: 기본값으로 되돌리기
       if (type === "dateRange") {
         updateFilter(type, "all" as any);

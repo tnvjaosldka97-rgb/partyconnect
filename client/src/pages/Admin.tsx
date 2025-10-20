@@ -47,8 +47,8 @@ export default function Admin() {
           loadHostApplications();
           loadParties();
         } else {
-          toast.error("접근 권한이 없습니다", {
-            description: "관리자 로그인이 필요합니다.",
+          toast.error("Access Denied", {
+            description: "Admin login required.",
           });
           setLocation("/admin/login");
         }
@@ -60,8 +60,8 @@ export default function Admin() {
           setIsAuthenticated(true);
           loadHostApplications();
         } else {
-          toast.error("접근 권한이 없습니다", {
-            description: "관리자 로그인이 필요합니다.",
+          toast.error("Access Denied", {
+            description: "Admin login required.",
           });
           setLocation("/admin/login");
         }
@@ -92,19 +92,19 @@ export default function Admin() {
       const partyCreated = createPartyFromApplication(application);
       
       if (partyCreated) {
-        toast.success("호스트 승인 완료!", {
-          description: `${application.name}님의 신청이 승인되었고, 파티가 자동으로 생성되었습니다.`,
+        toast.success("Host Approved!", {
+          description: `${application.name}'s application has been approved and a party has been automatically created.`,
         });
       } else {
-        toast.success("호스트 승인 완료!", {
-          description: `${application.name}님의 신청이 승인되었습니다.`,
+        toast.success("Host Approved!", {
+          description: `${application.name}'s application has been approved.`,
         });
       }
       
       // Reload applications
       loadHostApplications();
     } else {
-      toast.error("승인 실패", {
+      toast.error("Approval Failed", {
         description: "다시 시도해주세요.",
       });
     }
@@ -114,12 +114,12 @@ export default function Admin() {
     const success = updateHostApplicationStatus(application.id, "rejected");
     
     if (success) {
-      toast.success("호스트 신청 거부", {
-        description: `${application.name}님의 신청이 거부되었습니다.`,
+      toast.success("Host Application Rejected", {
+        description: `${application.name}'s application has been rejected.`,
       });
       loadHostApplications();
     } else {
-      toast.error("거부 실패", {
+      toast.error("Rejection Failed", {
         description: "다시 시도해주세요.",
       });
     }
@@ -135,7 +135,7 @@ export default function Admin() {
     }
     
     localStorage.removeItem("adminLoggedIn");
-    toast.success("로그아웃되었습니다");
+    toast.success("Logged out successfully");
     setLocation("/admin/login");
   };
 
@@ -172,13 +172,13 @@ export default function Admin() {
               <div>
                 <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full border border-primary/30 mb-4">
                   <LayoutDashboard className="w-5 h-5 text-primary" />
-                  <span className="text-sm font-medium">관리자 대시보드</span>
+                  <span className="text-sm font-medium">Admin Dashboard</span>
                 </div>
                 <h1 className="text-4xl font-bold mb-2">
-                  <span className="gradient-text">PartyConnect</span> 관리
+                  <span className="gradient-text">PartyConnect</span> Management
                 </h1>
                 <p className="text-muted-foreground">
-                  호스트 신청, 티켓 구매, 파티 관리를 한 곳에서
+                  Manage host applications, tickets, and parties in one place
                 </p>
               </div>
               <div className="flex items-center space-x-3">
@@ -187,7 +187,7 @@ export default function Admin() {
                   className="glass border-white/20"
                   onClick={() => setLocation("/")}
                 >
-                  홈으로 돌아가기
+                  Back to Home
                 </Button>
                 <Button
                   variant="outline"
@@ -195,7 +195,7 @@ export default function Admin() {
                   onClick={() => setLocation("/admin/change-password")}
                 >
                   <Key className="w-4 h-4 mr-2" />
-                  비밀번호 변경
+                  Change Password
                 </Button>
                 <Button
                   variant="outline"
@@ -203,7 +203,7 @@ export default function Admin() {
                   onClick={handleLogout}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
-                  로그아웃
+                  Logout
                 </Button>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function Admin() {
                 </Badge>
               </div>
               <h3 className="text-2xl font-bold mb-1">{hostApplications.length}</h3>
-              <p className="text-sm text-muted-foreground">총 호스트 신청</p>
+              <p className="text-sm text-muted-foreground">Total Host Applications</p>
             </div>
 
             <div className="glass-strong rounded-2xl p-6 border border-white/10">
@@ -232,11 +232,11 @@ export default function Admin() {
                   <Check className="w-6 h-6 text-green-500" />
                 </div>
                 <Badge className="bg-green-500/20 text-green-500 border-green-500/30">
-                  승인됨
+                  Approved
                 </Badge>
               </div>
               <h3 className="text-2xl font-bold mb-1">{approvedApplications.length}</h3>
-              <p className="text-sm text-muted-foreground">승인된 신청</p>
+              <p className="text-sm text-muted-foreground">Approved Applications</p>
             </div>
 
             <div className="glass-strong rounded-2xl p-6 border border-white/10">
@@ -245,11 +245,11 @@ export default function Admin() {
                   <X className="w-6 h-6 text-red-500" />
                 </div>
                 <Badge className="bg-red-500/20 text-red-500 border-red-500/30">
-                  거부됨
+                  Rejected
                 </Badge>
               </div>
               <h3 className="text-2xl font-bold mb-1">{rejectedApplications.length}</h3>
-              <p className="text-sm text-muted-foreground">거부된 신청</p>
+              <p className="text-sm text-muted-foreground">Rejected Applications</p>
             </div>
 
             <div className="glass-strong rounded-2xl p-6 border border-white/10">
@@ -259,7 +259,7 @@ export default function Admin() {
                 </div>
               </div>
               <h3 className="text-2xl font-bold mb-1">{approvedApplications.length}</h3>
-              <p className="text-sm text-muted-foreground">생성된 파티</p>
+              <p className="text-sm text-muted-foreground">Created Parties</p>
             </div>
           </div>
         </section>
@@ -270,15 +270,15 @@ export default function Admin() {
             <TabsList className="glass border border-white/10">
               <TabsTrigger value="hosts" className="data-[state=active]:bg-primary/20">
                 <Users className="w-4 h-4 mr-2" />
-                호스트 신청 ({hostApplications.length})
+                Host Applications ({hostApplications.length})
               </TabsTrigger>
               <TabsTrigger value="tickets" className="data-[state=active]:bg-primary/20">
                 <Ticket className="w-4 h-4 mr-2" />
-                티켓 구매 (0)
+                Ticket Purchases (0)
               </TabsTrigger>
               <TabsTrigger value="parties" className="data-[state=active]:bg-primary/20">
                 <PartyPopper className="w-4 h-4 mr-2" />
-                파티 관리 ({approvedApplications.length})
+                Party Management ({approvedApplications.length})
               </TabsTrigger>
             </TabsList>
 
@@ -286,9 +286,9 @@ export default function Admin() {
               {hostApplications.length === 0 ? (
                 <div className="glass-strong rounded-2xl p-8 border border-white/10 text-center">
                   <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">호스트 신청이 없습니다</h3>
+                  <h3 className="text-xl font-semibold mb-2">No Host Applications</h3>
                   <p className="text-muted-foreground">
-                    새로운 호스트 신청이 들어오면 여기에 표시됩니다.
+                    New host applications will appear here when submitted.
                   </p>
                 </div>
               ) : (
@@ -313,12 +313,12 @@ export default function Admin() {
                             {application.status === "pending"
                               ? "대기 중"
                               : application.status === "approved"
-                              ? "승인됨"
-                              : "거부됨"}
+                              ? "Approved"
+                              : "Rejected"}
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          신청일: {new Date(application.appliedAt).toLocaleString("ko-KR")}
+                          Applied: {new Date(application.appliedAt).toLocaleString("ko-KR")}
                         </p>
                       </div>
                       {application.status === "pending" && (
@@ -329,7 +329,7 @@ export default function Admin() {
                             onClick={() => handleApprove(application)}
                           >
                             <Check className="w-4 h-4 mr-1" />
-                            승인
+                            Approve
                           </Button>
                           <Button
                             size="sm"
@@ -338,7 +338,7 @@ export default function Admin() {
                             onClick={() => handleReject(application)}
                           >
                             <X className="w-4 h-4 mr-1" />
-                            거부
+                            Reject
                           </Button>
                         </div>
                       )}
@@ -389,9 +389,9 @@ export default function Admin() {
             <TabsContent value="tickets" className="space-y-4">
               <div className="glass-strong rounded-2xl p-8 border border-white/10 text-center">
                 <Ticket className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">티켓 구매 내역이 없습니다</h3>
+                <h3 className="text-xl font-semibold mb-2">Ticket Purchases 내역이 없습니다</h3>
                 <p className="text-muted-foreground">
-                  티켓 구매가 발생하면 여기에 표시됩니다.
+                  Ticket Purchases가 발생하면 여기에 표시됩니다.
                 </p>
               </div>
             </TabsContent>

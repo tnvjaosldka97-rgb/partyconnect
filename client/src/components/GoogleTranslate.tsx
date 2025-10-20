@@ -49,7 +49,7 @@ export default function GoogleTranslate() {
   return (
     <div
       id="google_translate_element"
-      className="inline-block"
+      className="flex items-center"
       style={{
         // Google Translate 위젯 스타일링
         filter: "invert(1) hue-rotate(180deg)",
