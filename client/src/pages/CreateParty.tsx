@@ -204,7 +204,7 @@ export default function CreateParty() {
                 <span className="gradient-text">등록하세요</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                검증된 호스트가 준비한 특별한 파티에 참여하세요
+                Join special parties prepared by verified hosts
               </p>
             </div>
           </div>
@@ -250,7 +250,7 @@ export default function CreateParty() {
                     <p className="text-sm text-muted-foreground">
                       호스트가 아니신가요?{" "}
                       <Link href="/become-host" className="text-primary hover:underline">
-                        호스트 신청하기
+                        Apply to Become a Host
                       </Link>
                     </p>
                   </div>

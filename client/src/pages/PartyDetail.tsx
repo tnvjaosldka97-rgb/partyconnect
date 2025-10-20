@@ -185,7 +185,7 @@ export default function PartyDetail() {
                   {party.description}
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  이 파티는 Verified Members들만 참석할 수 있으며, 모든 참석자는 사전 승인을 받아야 합니다. 
+                  이 파티는 Verified Members들만 참석할 수 있으며, All 참석자는 사전 승인을 받아야 합니다. 
                   안전하고 즐거운 분위기에서 새로운 친구들을 만나보세요. 음료와 간단한 스낵이 제공되며, 
                   추가 음식은 각자 준비하실 수 있습니다.
                 </p>
@@ -226,7 +226,7 @@ export default function PartyDetail() {
                         <span>4.9</span>
                       </div>
                       <div>·</div>
-                      <div>42개 파티 호스팅</div>
+                      <div>42개 Host a Party</div>
                       <div>·</div>
                       <div>가입일: 2023년</div>
                     </div>
@@ -324,14 +324,14 @@ export default function PartyDetail() {
                     <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                     <div className="text-sm">
                       <div className="font-semibold mb-1">안전한 결제</div>
-                      <div className="text-muted-foreground">모든 결제는 암호화되어 보호됩니다</div>
+                      <div className="text-muted-foreground">All 결제는 암호화되어 보호됩니다</div>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                     <div className="text-sm">
                       <div className="font-semibold mb-1">검증된 호스트</div>
-                      <div className="text-muted-foreground">모든 호스트는 신원 확인을 거쳤습니다</div>
+                      <div className="text-muted-foreground">All 호스트는 신원 확인을 거쳤습니다</div>
                     </div>
                   </div>
                 </div>

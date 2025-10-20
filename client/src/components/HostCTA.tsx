@@ -41,7 +41,7 @@ export default function HostCTA() {
 
             {/* Headline */}
             <h2 className="animate-fadeIn">
-              파티를 호스팅하고
+              Host Parties and
               <br />
               <span className="gradient-text">월 $2,000 수익 창출</span>
             </h2>
@@ -50,7 +50,7 @@ export default function HostCTA() {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               당신의 공간을 활용하여 멋진 파티를 주최하고 수익을 얻으세요.
               <br className="hidden sm:block" />
-              우리가 모든 것을 도와드립니다.
+              우리가 All 것을 도와드립니다.
             </p>
 
             {/* Benefits */}

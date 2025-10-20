@@ -237,7 +237,7 @@ export default function BecomeHost() {
       const success = saveHostApplication(application);
 
       if (success) {
-        toast.success("호스트 신청이 완료되었습니다!", {
+        toast.success("Host application submitted successfully!", {
           description: "검토 후 24시간 내에 연락드리겠습니다.",
         });
         
@@ -264,7 +264,7 @@ export default function BecomeHost() {
     {
       icon: DollarSign,
       title: "월 최대 $2,000 수익",
-      description: "파티 호스팅으로 안정적인 수익 창출",
+      description: "Host a Party으로 안정적인 수익 창출",
     },
     {
       icon: Home,
@@ -301,14 +301,14 @@ export default function BecomeHost() {
               </div>
               
               <h1 className="text-5xl sm:text-6xl font-bold">
-                파티를 호스팅하고
+                Host Parties and
                 <br />
                 <span className="gradient-text">새로운 수익을 창출하세요</span>
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                 당신의 공간을 활용하여 멋진 파티를 주최하고 수익을 얻으세요.
-                우리가 모든 것을 도와드립니다.
+                우리가 All 것을 도와드립니다.
               </p>
             </div>
           </div>
@@ -343,7 +343,7 @@ export default function BecomeHost() {
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <div className="glass-strong rounded-3xl p-8 md:p-12 border border-white/10">
-                <h2 className="text-3xl font-bold mb-2">호스트 신청하기</h2>
+                <h2 className="text-3xl font-bold mb-2">Apply to Become a Host</h2>
                 <p className="text-muted-foreground mb-8">
                   아래 정보를 입력해주시면 검토 후 24시간 내에 연락드리겠습니다.
                 </p>
@@ -684,7 +684,7 @@ export default function BecomeHost() {
                           ⚠️ 본 신청서를 타인이 대리로 작성하거나 허위 정보를 제공할 경우, 형법 제231조(사문서 위조) 및 제347조(사기)에 따라 법적 처벌을 받을 수 있습니다.
                         </p>
                         <p className="text-sm text-muted-foreground mt-2">
-                          본인이 직접 작성하였으며, 모든 정보가 사실임을 확인합니다.
+                          본인이 직접 작성하였으며, All 정보가 사실임을 확인합니다.
                         </p>
                       </div>
                     </div>
@@ -706,7 +706,7 @@ export default function BecomeHost() {
                       size="lg"
                       className="w-full gradient-button h-14 rounded-2xl text-lg font-semibold group"
                     >
-                      호스트 신청하기
+                      Apply to Become a Host
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
                     <p className="text-sm text-center text-muted-foreground mt-4">

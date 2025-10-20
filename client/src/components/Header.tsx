@@ -10,6 +10,7 @@ import {
 import { APP_TITLE } from "@/const";
 import { MapPin, Search, User } from "lucide-react";
 import { Link } from "wouter";
+import GoogleTranslate from "@/components/GoogleTranslate";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -63,7 +64,9 @@ export default function Header({
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
+            {/* Google Translate */}
+            <GoogleTranslate />
             {/* City Selector */}
             <Select value={selectedCity} onValueChange={onCityChange}>
               <SelectTrigger className="w-32 h-10 glass border-white/20 rounded-xl hidden lg:flex">

@@ -5,8 +5,8 @@ import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 const platformLinks = [
   { label: "소개", href: "#" },
-  { label: "파티 호스팅", href: "#" },
-  { label: "파티 탐색", href: "#" },
+  { label: "Host a Party", href: "#" },
+  { label: "Explore Parties", href: "#" },
   { label: "브랜드 제휴", href: "#" },
 ];
 
@@ -39,7 +39,7 @@ export default function Footer() {
               <span className="text-2xl font-bold gradient-text">{APP_TITLE}</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              검증된 사람들과 함께하는 프리미엄 파티 경험. 새로운 친구들과 특별한 순간을 만들어보세요.
+              Premium party experience with verified people. 새로운 친구들과 특별한 순간을 만들어보세요.
             </p>
           </div>
 
@@ -81,7 +81,7 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">뉴스레터 구독</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              최신 파티 소식과 특별 혜택을 받아보세요
+              Get the latest party news and special offers
             </p>
             <div className="flex space-x-2">
               <Input

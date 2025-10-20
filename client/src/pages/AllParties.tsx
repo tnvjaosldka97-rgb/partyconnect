@@ -41,7 +41,7 @@ export default function AllParties() {
       if (type === "dateRange") {
         updateFilter(type, "all" as any);
       } else if (type === "priceRange") {
-        updateFilter(type, [0, 1000000]); // 모든 가격대를 포함하는 큰 범위로 설정
+        updateFilter(type, [0, 1000000]); // All 가격대를 포함하는 큰 범위로 설정
       } else if (type === "sortBy") {
         updateFilter(type, "none");
       }
@@ -65,12 +65,12 @@ export default function AllParties() {
           {/* Page Header */}
           <div className="text-center mb-12 space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold animate-fadeIn">
-              모든 <span className="gradient-text">파티</span>
+              All <span className="gradient-text">파티</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {totalResults > 0
                 ? `${totalResults}parties found`
-                : "검증된 호스트가 준비한 특별한 파티에 참여하세요"}
+                : "Join special parties prepared by verified hosts"}
             </p>
           </div>
 
@@ -111,15 +111,15 @@ export default function AllParties() {
           {/* Active Filters Display */}
           {(searchQuery || selectedCity !== "all" || filters.dateRange !== "all") && (
             <div className="mb-8 flex flex-wrap items-center gap-3">
-              <span className="text-sm text-muted-foreground">활성 필터:</span>
+              <span className="text-sm text-muted-foreground">Active Filters:</span>
               {searchQuery && (
                 <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                  검색: "{searchQuery}"
+                  Search: "{searchQuery}"
                 </div>
               )}
               {selectedCity !== "all" && (
                 <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                  도시: {selectedCity}
+                  City: {selectedCity}
                 </div>
               )}
               {filters.dateRange !== "all" && (
@@ -148,9 +148,9 @@ export default function AllParties() {
               <div className="w-24 h-24 mx-auto mb-6 rounded-full glass-strong flex items-center justify-center">
                 <span className="text-5xl">🔍</span>
               </div>
-              <h3 className="text-2xl font-bold mb-4">검색 결과가 없습니다</h3>
+              <h3 className="text-2xl font-bold mb-4">No Results Found</h3>
               <p className="text-muted-foreground mb-6">
-                다른 검색어나 필터를 시도해보세요
+                Try different keywords or filters
               </p>
               <Button
                 onClick={() => {
@@ -160,7 +160,7 @@ export default function AllParties() {
                 }}
                 className="gradient-button rounded-xl px-6"
               >
-                필터 초기화
+                Reset Filters
               </Button>
             </div>
           )}

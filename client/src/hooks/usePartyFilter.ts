@@ -4,7 +4,7 @@ import { Party, FilterOptions } from "@/types/party";
 const defaultFilters: FilterOptions = {
   searchQuery: "",
   city: "all",
-  priceRange: [0, 1000000], // 모든 가격대를 포함하는 큰 범위
+  priceRange: [0, 1000000], // All 가격대를 포함하는 큰 범위
   dateRange: "all",
   themes: [],
   ageRange: [18, 50],

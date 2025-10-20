@@ -5,13 +5,13 @@ const features = [
     icon: Shield,
     title: "검증된 프로필",
     description:
-      "모든 게스트는 OTP, ID 업로드, 셀카 매칭, 전화 인증을 포함한 엄격한 검증 절차를 거칩니다.",
+      "All 게스트는 OTP, ID 업로드, 셀카 매칭, 전화 인증을 포함한 엄격한 검증 절차를 거칩니다.",
     color: "text-primary",
     bgColor: "bg-primary/10",
   },
   {
     icon: Users,
-    title: "균형잡힌 파티",
+    title: "Balanced Parties",
     description:
       "각 파티는 최소 7명의 참석자와 60:40 성비를 요구하여 활기차고 포용적인 분위기를 보장합니다.",
     color: "text-accent",
@@ -21,7 +21,7 @@ const features = [
     icon: Star,
     title: "실제 리뷰",
     description:
-      "호스트와 게스트를 평가하여 다른 사람들을 돕고, 분위기와 엔터테인먼트에 대한 피드백을 공유하세요.",
+      "Rate hosts and guests to 다른 사람들을 돕고, 분위기와 엔터테인먼트에 대한 피드백을 공유하세요.",
     color: "text-secondary",
     bgColor: "bg-secondary/10",
   },
@@ -97,7 +97,7 @@ export default function TrustSection() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
             <div className="space-y-2">
               <div className="text-4xl font-bold gradient-text">99.8%</div>
-              <div className="text-sm text-muted-foreground">안전한 파티 성공률</div>
+              <div className="text-sm text-muted-foreground">Safe Party Success Rate</div>
             </div>
             <div className="space-y-2">
               <div className="text-4xl font-bold gradient-text">4.9/5</div>
