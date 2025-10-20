@@ -36,7 +36,7 @@ export default function Header({
                 <span className="text-2xl">🎉</span>
               </div>
               <span className="text-2xl font-bold gradient-text hidden sm:block">
-                {APP_TITLE}
+                PartyConnect
               </span>
             </div>
           </Link>
