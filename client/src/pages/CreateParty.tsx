@@ -167,15 +167,23 @@ export default function CreateParty() {
       reviews: 0,
     };
 
-    saveParty(partyData);
+    const success = saveParty(partyData);
     
-    toast.success("Create Party이 완료되었습니다!", {
-      description: "검토 후 승인되면 게시됩니다.",
-    });
-    
-    setTimeout(() => {
-      setLocation("/");
-    }, 2000);
+    if (success) {
+      console.log("Party saved successfully:", partyData);
+      toast.success("Party Created Successfully!", {
+        description: "Your party will be reviewed and published soon.",
+      });
+      
+      setTimeout(() => {
+        setLocation("/all-parties");
+      }, 2000);
+    } else {
+      console.error("Failed to save party");
+      toast.error("Failed to Create Party", {
+        description: "Please try again.",
+      });
+    }
   };
 
   const updateField = (field: string, value: string) => {
