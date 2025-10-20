@@ -40,6 +40,8 @@ export interface Party {
   tags: string[];
   rating: number;
   reviews: number;
+  status?: "pending" | "approved" | "rejected";
+  createdAt?: string;
 }
 
 // Host application management
@@ -124,6 +126,38 @@ export function saveParty(party: Party): boolean {
   } catch (error) {
     console.error("Failed to save party:", error);
     return false;
+  }
+}
+
+// Update party status (approve/reject)
+export function updatePartyStatus(
+  id: string,
+  status: "approved" | "rejected"
+): boolean {
+  try {
+    const parties = getParties();
+    const index = parties.findIndex((party) => party.id === id);
+    
+    if (index === -1) return false;
+    
+    parties[index].status = status;
+    
+    localStorage.setItem("parties", JSON.stringify(parties));
+    return true;
+  } catch (error) {
+    console.error("Failed to update party status:", error);
+    return false;
+  }
+}
+
+// Get approved parties only
+export function getApprovedParties(): Party[] {
+  try {
+    const parties = getParties();
+    return parties.filter((party) => party.status === "approved");
+  } catch (error) {
+    console.error("Failed to get approved parties:", error);
+    return [];
   }
 }
 

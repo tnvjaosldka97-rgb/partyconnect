@@ -21,7 +21,10 @@ import {
   getHostApplications,
   updateHostApplicationStatus,
   createPartyFromApplication,
+  getParties,
+  updatePartyStatus,
   type HostApplication,
+  type Party,
 } from "@/lib/storage";
 
 export default function Admin() {
@@ -29,6 +32,7 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hostApplications, setHostApplications] = useState<HostApplication[]>([]);
+  const [parties, setParties] = useState<Party[]>([]);
 
   useEffect(() => {
     // Check authentication with backend
@@ -39,8 +43,9 @@ export default function Admin() {
         
         if (response.ok && data.authenticated) {
           setIsAuthenticated(true);
-          // Load host applications
+          // Load host applications and parties
           loadHostApplications();
+          loadParties();
         } else {
           toast.error("접근 권한이 없습니다", {
             description: "관리자 로그인이 필요합니다.",
@@ -71,6 +76,11 @@ export default function Admin() {
   const loadHostApplications = () => {
     const applications = getHostApplications();
     setHostApplications(applications);
+  };
+
+  const loadParties = () => {
+    const allParties = getParties();
+    setParties(allParties);
   };
 
   const handleApprove = (application: HostApplication) => {
@@ -387,15 +397,94 @@ export default function Admin() {
             </TabsContent>
 
             <TabsContent value="parties" className="space-y-4">
-              <div className="glass-strong rounded-2xl p-8 border border-white/10 text-center">
-                <PartyPopper className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">
-                  {approvedApplications.length}개의 파티가 생성되었습니다
-                </h3>
-                <p className="text-muted-foreground">
-                  호스트 승인 시 자동으로 파티가 생성됩니다.
-                </p>
-              </div>
+              {parties.length === 0 ? (
+                <div className="glass-strong rounded-2xl p-8 border border-white/10 text-center">
+                  <PartyPopper className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No parties yet</h3>
+                  <p className="text-muted-foreground">
+                    Parties created by hosts will appear here for approval.
+                  </p>
+                </div>
+              ) : (
+                parties.map((party) => (
+                  <div
+                    key={party.id}
+                    className="glass-strong rounded-2xl p-6 border border-white/10"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-xl font-bold">{party.title}</h3>
+                          <Badge
+                            className={
+                              party.status === "pending"
+                                ? "bg-yellow-500/20 text-yellow-500 border-yellow-500/30"
+                                : party.status === "approved"
+                                ? "bg-green-500/20 text-green-500 border-green-500/30"
+                                : "bg-red-500/20 text-red-500 border-red-500/30"
+                            }
+                          >
+                            {party.status === "pending"
+                              ? "Pending"
+                              : party.status === "approved"
+                              ? "Approved"
+                              : "Rejected"}
+                          </Badge>
+                        </div>
+                        <div className="space-y-1 text-sm text-muted-foreground">
+                          <p><strong>Host:</strong> {party.host}</p>
+                          <p><strong>Date:</strong> {party.date} {party.time}</p>
+                          <p><strong>Location:</strong> {party.location}, {party.city}</p>
+                          <p><strong>Price:</strong> ${party.price}</p>
+                          <p><strong>Capacity:</strong> {party.capacity} people</p>
+                        </div>
+                      </div>
+                      {party.status === "pending" && (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            className="bg-green-500/20 text-green-500 hover:bg-green-500/30 border border-green-500/30"
+                            onClick={() => {
+                              const success = updatePartyStatus(party.id, "approved");
+                              if (success) {
+                                toast.success("Party Approved!", {
+                                  description: `${party.title} is now live.`,
+                                });
+                                loadParties();
+                              }
+                            }}
+                          >
+                            <Check className="w-4 h-4 mr-2" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-red-500/30 text-red-500 hover:bg-red-500/10"
+                            onClick={() => {
+                              const success = updatePartyStatus(party.id, "rejected");
+                              if (success) {
+                                toast.success("Party Rejected", {
+                                  description: `${party.title} has been rejected.`,
+                                });
+                                loadParties();
+                              }
+                            }}
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-white/10">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Description:</strong> {party.description}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
             </TabsContent>
           </Tabs>
         </section>

@@ -6,13 +6,24 @@ import { Button } from "@/components/ui/button";
 import { SlidersHorizontal } from "lucide-react";
 import { mockParties } from "@/data/mockParties";
 import { usePartyFilter } from "@/hooks/usePartyFilter";
+import { getApprovedParties } from "@/lib/storage";
 
 export default function AllParties() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
+  const [approvedParties, setApprovedParties] = useState<any[]>([]);
+  
+  // Load approved parties from localStorage
+  useEffect(() => {
+    const approved = getApprovedParties();
+    setApprovedParties(approved);
+  }, []);
+  
+  // Combine mockParties with approved parties
+  const allParties = [...mockParties, ...approvedParties];
   
   const { filters, filteredParties, updateFilter, totalResults } =
-    usePartyFilter(mockParties);
+    usePartyFilter(allParties);
 
   // 외부에서 전달된 검색어와 도시 필터 적용
   if (filters.searchQuery !== searchQuery) {

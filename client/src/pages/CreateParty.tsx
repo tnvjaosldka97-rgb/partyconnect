@@ -52,7 +52,7 @@ export default function CreateParty() {
 
   const handleHostVerification = () => {
     if (!hostEmail.trim()) {
-      toast.error("이메일을 입력해주세요");
+      toast.error("Please enter your email");
       return;
     }
 
@@ -60,12 +60,12 @@ export default function CreateParty() {
     if (host) {
       setIsHostVerified(true);
       setCurrentHost(host);
-      toast.success("호스트 인증 완료!", {
-        description: `환영합니다, ${host.name}님!`,
+      toast.success("Host Verified Successfully!", {
+        description: `Welcome, ${host.name}님!`,
       });
     } else {
-      toast.error("승인된 호스트가 아닙니다", {
-        description: "호스트 신청 후 승인을 받아야 파티를 등록할 수 있습니다.",
+      toast.error("Not an Approved Host", {
+        description: "You must apply as a host and get approved before creating parties.",
       });
     }
   };
@@ -74,17 +74,17 @@ export default function CreateParty() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // 파일 크기 및 형식 검증
+    // File size and format validation
     for (let i = 0; i < files.length; i++) {
       if (files[i].size > 10 * 1024 * 1024) {
-        toast.error("파일 크기 오류", {
-          description: "파일 크기는 10MB or less여야 합니다.",
+        toast.error("File size error", {
+          description: "File size must be 10MB or less.",
         });
         return;
       }
       if (!files[i].type.match(/image\/(jpeg|jpg|png)/)) {
-        toast.error("파일 형식 오류", {
-          description: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+        toast.error("File format error", {
+          description: "Only JPG or PNG files are allowed.",
         });
         return;
       }
@@ -95,32 +95,23 @@ export default function CreateParty() {
     try {
       const uploadedUrls: string[] = [];
 
+      // Mock upload: Create local URLs for preview
       for (let i = 0; i < files.length; i++) {
-        const formData = new FormData();
-        formData.append("party", files[i]);
-
-        const response = await fetch("/api/upload/party", {
-          method: "POST",
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (data.success && data.fileUrl) {
-          uploadedUrls.push(data.fileUrl);
-        } else {
-          throw new Error(data.message || "업로드 실패");
-        }
+        const localUrl = URL.createObjectURL(files[i]);
+        uploadedUrls.push(localUrl);
       }
 
+      // Simulate upload delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       setPartyImages((prev) => [...prev, ...uploadedUrls]);
-      toast.success("파티 사진 업로드 성공", {
-        description: `${uploadedUrls.length}개의 파일이 업로드되었습니다.`,
+      toast.success("Party Images Uploaded Successfully!", {
+        description: `${uploadedUrls.length} file(s) uploaded.`,
       });
     } catch (error) {
       console.error("Party images upload error:", error);
-      toast.error("업로드 실패", {
-        description: "파티 사진 업로드 중 오류가 발생했습니다.",
+      toast.error("Upload Failed", {
+        description: "An error occurred while uploading party images.",
       });
     } finally {
       setIsUploading(false);
@@ -132,15 +123,15 @@ export default function CreateParty() {
     
     // 필수 필드 검증
     if (!formData.title || !formData.date || !formData.city) {
-      toast.error("필수 항목을 입력해주세요", {
-        description: "파티 제목, 날짜, 도시는 필수 항목입니다.",
+      toast.error("Please fill in all required fields", {
+        description: "Party title, date, and city are required.",
       });
       return;
     }
 
     if (!isHostVerified || !currentHost) {
-      toast.error("호스트 인증이 필요합니다", {
-        description: "먼저 이메일로 호스트 인증을 완료해주세요.",
+      toast.error("Host verification required", {
+        description: "Please verify your host email first.",
       });
       return;
     }
@@ -158,13 +149,15 @@ export default function CreateParty() {
       price: parseInt(formData.price) || 0,
       capacity: parseInt(formData.maxAttendees) || 0,
       attendees: 0,
-      ageRange: formData.ageRange || "20-30대",
-      type: formData.type || "파티",
+      ageRange: formData.ageRange || "21-35",
+      type: formData.type || "House Party",
       description: formData.description,
       images: partyImages.length > 0 ? partyImages : ["/placeholder.svg"],
       tags: formData.theme ? [formData.theme] : [],
       rating: 0,
       reviews: 0,
+      status: "pending" as const,
+      createdAt: new Date().toISOString(),
     };
 
     const success = saveParty(partyData);
@@ -207,9 +200,9 @@ export default function CreateParty() {
               </div>
               
               <h1 className="text-4xl sm:text-5xl font-bold">
-                새로운 파티를
+                Create a New Party
                 <br />
-                <span className="gradient-text">등록하세요</span>
+                <span className="gradient-text">and Get Started</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Join special parties prepared by verified hosts
@@ -222,13 +215,13 @@ export default function CreateParty() {
         <section className="py-16">
           <div className="container">
             <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
-              {/* 호스트 인증 */}
+              {/* Host Verification */}
               <div className={`glass p-8 rounded-2xl border space-y-6 ${
                 isHostVerified ? "border-green-500/50 bg-green-500/5" : "border-primary/30"
               }`}>
                 <div className="flex items-center space-x-3 mb-6">
                   <Shield className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold">호스트 인증</h2>
+                  <h2 className="text-2xl font-bold">Host Verification</h2>
                   {isHostVerified && (
                     <CheckCircle2 className="w-6 h-6 text-green-500 ml-auto" />
                   )}
@@ -237,12 +230,12 @@ export default function CreateParty() {
                 {!isHostVerified ? (
                   <div className="space-y-4">
                     <p className="text-muted-foreground">
-                      파티를 등록하려면 먼저 승인된 호스트인지 확인해야 합니다.
+                      You must be a verified host to create a party.
                     </p>
                     <div className="flex gap-3">
                       <Input
                         type="email"
-                        placeholder="호스트 등록 시 사용한 이메일 주소"
+                        placeholder="Email address used for host registration"
                         value={hostEmail}
                         onChange={(e) => setHostEmail(e.target.value)}
                         className="glass border-white/20"
@@ -252,11 +245,11 @@ export default function CreateParty() {
                         onClick={handleHostVerification}
                         className="gradient-button whitespace-nowrap"
                       >
-                        인증하기
+                        Verify Host
                       </Button>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      호스트가 아니신가요?{" "}
+                      Not a host yet?{" "}
                       <Link href="/become-host" className="text-primary hover:underline">
                         Apply to Become a Host
                       </Link>
@@ -267,7 +260,7 @@ export default function CreateParty() {
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                     <div>
                       <p className="font-semibold text-green-400">
-                        인증 완료: {currentHost?.name}
+                        Verified: {currentHost?.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {currentHost?.email}
@@ -277,32 +270,32 @@ export default function CreateParty() {
                 )}
               </div>
 
-              {/* 기본 정보 */}
+              {/* Basic Information */}
               <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
                 <div className="flex items-center space-x-3 mb-6">
                   <Tag className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold">기본 정보</h2>
+                  <h2 className="text-2xl font-bold">Basic Information</h2>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="title">파티 제목 *</Label>
+                    <Label htmlFor="title">Party Title *</Label>
                     <Input
                       id="title"
                       value={formData.title}
                       onChange={(e) => updateField("title", e.target.value)}
-                      placeholder="예: 루프탑 파티"
+                      placeholder="e.g., Rooftop Party"
                       required
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="description">파티 설명 *</Label>
+                    <Label htmlFor="description">Party Description *</Label>
                     <Textarea
                       id="description"
                       value={formData.description}
                       onChange={(e) => updateField("description", e.target.value)}
-                      placeholder="파티에 대한 설명을 입력하세요"
+                      placeholder="Enter a description for your party"
                       rows={4}
                       required
                     />
@@ -310,16 +303,16 @@ export default function CreateParty() {
                 </div>
               </div>
 
-              {/* 날짜 및 시간 */}
+              {/* Date and Time */}
               <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
                 <div className="flex items-center space-x-3 mb-6">
                   <Clock className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold">날짜 및 시간</h2>
+                  <h2 className="text-2xl font-bold">Date and Time</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="date">날짜 *</Label>
+                    <Label htmlFor="date">Date *</Label>
                     <Input
                       id="date"
                       type="date"
@@ -330,7 +323,7 @@ export default function CreateParty() {
                   </div>
 
                   <div>
-                    <Label htmlFor="time">시간 *</Label>
+                    <Label htmlFor="time">Time *</Label>
                     <Input
                       id="time"
                       type="time"
@@ -342,16 +335,16 @@ export default function CreateParty() {
                 </div>
               </div>
 
-              {/* 장소 */}
+              {/* Location */}
               <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
                 <div className="flex items-center space-x-3 mb-6">
                   <MapPin className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold">장소</h2>
+                  <h2 className="text-2xl font-bold">Location</h2>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="city">도시 *</Label>
+                    <Label htmlFor="city">City *</Label>
                     <Select value={formData.city} onValueChange={(value) => updateField("city", value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select City" />
@@ -370,7 +363,7 @@ export default function CreateParty() {
                   </div>
 
                   <div>
-                    <Label htmlFor="address">주소 *</Label>
+                    <Label htmlFor="address">Address *</Label>
                     <Input
                       id="address"
                       value={formData.address}
@@ -382,16 +375,16 @@ export default function CreateParty() {
                 </div>
               </div>
 
-              {/* 참석 인원 및 가격 */}
+              {/* Attendees and Price */}
               <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
                 <div className="flex items-center space-x-3 mb-6">
                   <DollarSign className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold">참석 인원 및 가격</h2>
+                  <h2 className="text-2xl font-bold">Attendees and Price</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="maxAttendees">최대 인원 *</Label>
+                    <Label htmlFor="maxAttendees">Max Attendees *</Label>
                     <Input
                       id="maxAttendees"
                       type="number"
@@ -403,7 +396,7 @@ export default function CreateParty() {
                   </div>
 
                   <div>
-                    <Label htmlFor="price">참가비 (원) *</Label>
+                    <Label htmlFor="price">Entry Fee ($) *</Label>
                     <Input
                       id="price"
                       type="number"
@@ -416,15 +409,15 @@ export default function CreateParty() {
                 </div>
               </div>
 
-              {/* 파티 사진 */}
+              {/* Party Images */}
               <div className="glass p-8 rounded-2xl border border-white/10 space-y-6">
                 <div className="flex items-center space-x-3 mb-6">
                   <Upload className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold">파티 사진</h2>
+                  <h2 className="text-2xl font-bold">Party Images</h2>
                 </div>
 
                 <div>
-                  <Label htmlFor="partyImages">클릭하여 사진 업로드</Label>
+                  <Label htmlFor="partyImages">Click to Upload Images</Label>
                   <input
                     id="partyImages"
                     type="file"
@@ -445,7 +438,7 @@ export default function CreateParty() {
                       <>
                         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                         <p className="text-sm text-primary font-semibold">
-                          업로드 중...
+                          Uploading...
                         </p>
                       </>
                     ) : partyImages.length > 0 ? (
@@ -454,20 +447,20 @@ export default function CreateParty() {
                           <CheckCircle2 className="w-6 h-6 text-green-500" />
                         </div>
                         <p className="text-sm text-green-400 mb-1 font-semibold">
-                          {partyImages.length}개의 사진 업로드 완료
+                          {partyImages.length} image(s) uploaded
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          추가 사진을 업로드하려면 클릭하세요
+                          Click to upload more images
                         </p>
                       </>
                     ) : (
                       <>
                         <Upload className="w-12 h-12 text-muted-foreground mb-3" />
                         <p className="text-sm text-muted-foreground mb-1">
-                          클릭하여 사진 업로드
+                          Click to Upload Images
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          JPG, PNG (최대 10MB) - 여러 장 선택 가능
+                          JPG, PNG (max 10MB) - Multiple files allowed
                         </p>
                       </>
                     )}
@@ -482,13 +475,13 @@ export default function CreateParty() {
                   size="lg"
                   className="px-12 group"
                 >
-                  Create Party하기
+                  Create Party
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
 
               <p className="text-center text-sm text-muted-foreground">
-                등록 후 24시간 내에 검토 결과를 알려드립니다
+                등록 후 24Time 내에 검토 결과를 알려드립니다
               </p>
             </form>
           </div>
