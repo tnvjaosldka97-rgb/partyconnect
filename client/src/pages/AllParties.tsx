@@ -109,15 +109,18 @@ export default function AllParties() {
                   : filter.type === "priceRange"
                   ? filters.priceRange[1] === (filter.value as [number, number])[1]
                   : false;
-
               return (
                 <Button
-                  key={filter.label}
+                  key={`${filter.label}-${isActive}`}
                   variant="outline"
                   onClick={() => handleQuickFilter(filter.type, filter.value)}
-                  className={`glass border-white/20 hover:border-primary/50 hover:bg-primary/10 rounded-full px-6 transition-all ${
-                    isActive ? "border-primary/50 bg-primary/10 text-primary" : ""
-                  }`}
+                  style={{
+                    borderColor: isActive ? 'rgb(168, 85, 247)' : 'rgba(255, 255, 255, 0.2)',
+                    backgroundColor: isActive ? 'rgba(168, 85, 247, 0.2)' : 'transparent',
+                    color: isActive ? 'rgb(168, 85, 247)' : 'inherit',
+                    fontWeight: isActive ? '600' : '400'
+                  }}
+                  className="glass rounded-full px-6 transition-all hover:border-primary/50 hover:bg-primary/10"
                 >
                   {filter.label}
                 </Button>
