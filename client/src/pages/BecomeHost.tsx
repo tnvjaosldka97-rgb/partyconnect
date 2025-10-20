@@ -56,16 +56,16 @@ export default function BecomeHost() {
 
     // Check file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      toast.error("파일 크기 초과", {
-        description: "범죄기록증명원은 10MB or less여야 합니다.",
+      toast.error("File Size Exceeded", {
+        description: "Criminal record document must be 10MB or less.",
       });
       return;
     }
 
     // Check file type
     if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
-      toast.error("파일 형식 오류", {
-        description: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+      toast.error("Invalid File Format", {
+        description: "Only JPG or PNG files can be uploaded.",
       });
       return;
     }
@@ -80,13 +80,13 @@ export default function BecomeHost() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setCriminalRecordImage(localUrl);
-      toast.success("범죄기록증명원 업로드 성공", {
-        description: "파일이 안전하게 저장되었습니다.",
+      toast.success("Criminal Record Uploaded Successfully", {
+        description: "File has been securely saved.",
       });
     } catch (error) {
       console.error("Criminal record upload error:", error);
-      toast.error("업로드 실패", {
-        description: "범죄기록증명원 업로드 중 오류가 발생했습니다.",
+      toast.error("Upload Failed", {
+        description: "An error occurred while uploading criminal record.",
       });
     } finally {
       setIsUploading(prev => ({ ...prev, criminalRecord: false }));
@@ -99,16 +99,16 @@ export default function BecomeHost() {
 
     // Check file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      toast.error("파일 크기 초과", {
-        description: "신분증 사본은 10MB or less여야 합니다.",
+      toast.error("File Size Exceeded", {
+        description: "ID card copy must be 10MB or less.",
       });
       return;
     }
 
     // Check file type
     if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
-      toast.error("파일 형식 오류", {
-        description: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+      toast.error("Invalid File Format", {
+        description: "Only JPG or PNG files can be uploaded.",
       });
       return;
     }
@@ -123,12 +123,12 @@ export default function BecomeHost() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setIdCardImage(localUrl);
-      toast.success("신분증 업로드 성공!", {
-        description: "신분증 사본이 안전하게 업로드되었습니다.",
+      toast.success("ID Card Uploaded Successfully!", {
+        description: "ID card copy has been securely uploaded.",
       });
     } catch (error) {
-      toast.error("업로드 실패", {
-        description: "파일 업로드 중 오류가 발생했습니다.",
+      toast.error("Upload Failed", {
+        description: "An error occurred while uploading file.",
       });
     } finally {
       setIsUploading(prev => ({ ...prev, idCard: false }));
@@ -142,16 +142,16 @@ export default function BecomeHost() {
     // Check file size for each file (max 10MB)
     for (let i = 0; i < files.length; i++) {
       if (files[i].size > 10 * 1024 * 1024) {
-        toast.error("파일 크기 초과", {
-          description: "각 파일은 10MB or less여야 합니다.",
+        toast.error("File Size Exceeded", {
+          description: "Each file must be 10MB or less.",
         });
         return;
       }
 
       // Check file type
       if (!files[i].type.match(/image\/(jpeg|jpg|png)/)) {
-        toast.error("파일 형식 오류", {
-          description: "JPG 또는 PNG 파일만 업로드 가능합니다.",
+        toast.error("Invalid File Format", {
+          description: "Only JPG or PNG files can be uploaded.",
         });
         return;
       }
@@ -172,13 +172,13 @@ export default function BecomeHost() {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       setSpaceImages((prev) => [...prev, ...uploadedUrls]);
-      toast.success("공간 사진 업로드 성공", {
-        description: `${uploadedUrls.length}개의 파일이 업로드되었습니다.`,
+      toast.success("Space Photos Uploaded Successfully", {
+        description: `${uploadedUrls.length} files have been uploaded.`,
       });
     } catch (error) {
       console.error("Space images upload error:", error);
-      toast.error("업로드 실패", {
-        description: "공간 사진 업로드 중 오류가 발생했습니다.",
+      toast.error("Upload Failed", {
+        description: "An error occurred while uploading space photos.",
       });
     } finally {
       setIsUploading(prev => ({ ...prev, space: false }));
@@ -189,27 +189,27 @@ export default function BecomeHost() {
     e.preventDefault();
     
     if (!formData.agreedToTerms) {
-      toast.error("이용약관에 동의해주세요");
+      toast.error("Please agree to the terms of service");
       return;
     }
     
     if (!criminalRecordImage) {
-      toast.error("범죄기록증명원 사진 업로드는 필수입니다");
+      toast.error("Criminal record document upload is required");
       return;
     }
     
     if (!idCardImage) {
-      toast.error("신분증 사진 업로드는 필수입니다");
+      toast.error("ID card photo upload is required");
       return;
     }
     
     if (!formData.agreedToLegalWarning) {
-      toast.error("대리 작성 법적 책임 동의는 필수입니다");
+      toast.error("Consent to legal responsibility for proxy writing is required");
       return;
     }
     
     if (!idCardImage) {
-      toast.error("신분증 사본을 업로드해주세요");
+      toast.error("Please upload ID card copy");
       return;
     }
 
@@ -238,20 +238,20 @@ export default function BecomeHost() {
 
       if (success) {
         toast.success("Host application submitted successfully!", {
-          description: "검토 후 24시간 내에 연락드리겠습니다.",
+          description: "We will contact you within 24 hours after review.",
         });
         
         setTimeout(() => {
           setLocation("/");
         }, 2000);
       } else {
-        toast.error("신청 실패", {
-          description: "신청 제출에 실패했습니다.",
+        toast.error("Application Failed", {
+          description: "Failed to submit application.",
         });
       }
     } catch (error) {
-      toast.error("오류 발생", {
-        description: "신청 제출 중 오류가 발생했습니다.",
+      toast.error("Error Occurred", {
+        description: "An error occurred while submitting application.",
       });
     }
   };
@@ -263,23 +263,23 @@ export default function BecomeHost() {
   const benefits = [
     {
       icon: DollarSign,
-      title: "월 최대 $2,000 수익",
-      description: "Host a Party으로 안정적인 수익 창출",
+      title: "Earn up to $2,000 per month",
+      description: "Generate stable income by hosting parties",
     },
     {
       icon: Home,
-      title: "자신의 공간 활용",
-      description: "집이나 사무실을 활용한 부가 수익",
+      title: "Utilize Your Own Space",
+      description: "Additional income using your home or office",
     },
     {
       icon: Users,
-      title: "새로운 사람들과 네트워킹",
-      description: "다양한 사람들과 의미있는 관계 형성",
+      title: "Network with New People",
+      description: "Build meaningful relationships with diverse people",
     },
     {
       icon: TrendingUp,
-      title: "유연한 일정 관리",
-      description: "원하는 시간에 원하는 만큼만",
+      title: "Flexible Schedule Management",
+      description: "Work as much as you want, when you want",
     },
   ];
 
@@ -303,12 +303,12 @@ export default function BecomeHost() {
               <h1 className="text-5xl sm:text-6xl font-bold">
                 Host Parties and
                 <br />
-                <span className="gradient-text">새로운 수익을 창출하세요</span>
+                <span className="gradient-text">Generate New Income</span>
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                당신의 공간을 활용하여 멋진 파티를 주최하고 수익을 얻으세요.
-                우리가 All 것을 도와드립니다.
+                Host amazing parties using your space and earn income.
+                We'll help you with everything.
               </p>
             </div>
           </div>
@@ -345,7 +345,7 @@ export default function BecomeHost() {
               <div className="glass-strong rounded-3xl p-8 md:p-12 border border-white/10">
                 <h2 className="text-3xl font-bold mb-2">Apply to Become a Host</h2>
                 <p className="text-muted-foreground mb-8">
-                  아래 정보를 입력해주시면 검토 후 24시간 내에 연락드리겠습니다.
+                  아래 정보를 입력해주시면 We will contact you within 24 hours after review.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -353,24 +353,24 @@ export default function BecomeHost() {
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold flex items-center">
                       <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-                      개인 정보
+                      Personal Information
                     </h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="fullName">이름 *</Label>
+                        <Label htmlFor="fullName">Full Name *</Label>
                         <Input
                           id="fullName"
                           required
                           value={formData.fullName}
                           onChange={(e) => updateField("fullName", e.target.value)}
                           className="glass border-white/20 mt-2"
-                          placeholder="홍길동"
+                          placeholder="John Doe"
                         />
                       </div>
                       
                       <div>
-                        <Label htmlFor="phone">전화번호 *</Label>
+                        <Label htmlFor="phone">Phone Number *</Label>
                         <Input
                           id="phone"
                           type="tel"
@@ -384,7 +384,7 @@ export default function BecomeHost() {
                     </div>
 
                     <div>
-                      <Label htmlFor="email">이메일 *</Label>
+                      <Label htmlFor="email">Email *</Label>
                       <Input
                         id="email"
                         type="email"
@@ -401,12 +401,12 @@ export default function BecomeHost() {
                   <div className="space-y-4 pt-6 border-t border-white/10">
                     <h3 className="text-xl font-semibold flex items-center">
                       <Home className="w-5 h-5 text-primary mr-2" />
-                      공간 정보
+                      Space Information
                     </h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="city">도시 *</Label>
+                        <Label htmlFor="city">City *</Label>
                         <Select value={formData.city} onValueChange={(value) => updateField("city", value)}>
                           <SelectTrigger className="glass border-white/20 mt-2">
                             <SelectValue placeholder="Select City" />
@@ -425,36 +425,36 @@ export default function BecomeHost() {
                       </div>
 
                       <div>
-                        <Label htmlFor="spaceType">공간 유형 *</Label>
+                        <Label htmlFor="spaceType">Space Type *</Label>
                         <Select value={formData.spaceType} onValueChange={(value) => updateField("spaceType", value)}>
                           <SelectTrigger className="glass border-white/20 mt-2">
-                            <SelectValue placeholder="공간 유형 선택" />
+                            <SelectValue placeholder="Select Space Type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="아파트">아파트</SelectItem>
-                            <SelectItem value="주택">주택</SelectItem>
-                            <SelectItem value="루프탑">루프탑</SelectItem>
-                            <SelectItem value="스튜디오">스튜디오</SelectItem>
-                            <SelectItem value="카페/바">카페/바</SelectItem>
+                            <SelectItem value="Apartment">Apartment</SelectItem>
+                            <SelectItem value="House">House</SelectItem>
+                            <SelectItem value="Rooftop">Rooftop</SelectItem>
+                            <SelectItem value="Studio">Studio</SelectItem>
+                            <SelectItem value="Cafe/Bar">Cafe/Bar</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="address">주소 *</Label>
+                      <Label htmlFor="address">Address *</Label>
                       <Input
                         id="address"
                         required
                         value={formData.address}
                         onChange={(e) => updateField("address", e.target.value)}
                         className="glass border-white/20 mt-2"
-                        placeholder="New York시 Manhattan 테헤란로 123"
+                        placeholder="123 Teheran-ro, Manhattan, New York"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="capacity">수용 인원 *</Label>
+                      <Label htmlFor="capacity">Capacity *</Label>
                       <Input
                         id="capacity"
                         type="number"
@@ -467,7 +467,7 @@ export default function BecomeHost() {
                         placeholder="20"
                       />
                       <p className="text-sm text-muted-foreground mt-1">
-                        최소 5명 이상 수용 가능해야 합니다
+                        Must accommodate at least 5 people
                       </p>
                     </div>
                   </div>
@@ -476,38 +476,38 @@ export default function BecomeHost() {
                   <div className="space-y-4 pt-6 border-t border-white/10">
                     <h3 className="text-xl font-semibold flex items-center">
                       <Users className="w-5 h-5 text-primary mr-2" />
-                      자기소개
+                      About You
                     </h3>
 
                     <div>
-                      <Label htmlFor="bio">자기소개 *</Label>
+                      <Label htmlFor="bio">About You *</Label>
                       <Textarea
                         id="bio"
                         required
                         value={formData.bio}
                         onChange={(e) => updateField("bio", e.target.value)}
                         className="glass border-white/20 mt-2 min-h-32"
-                        placeholder="자신과 호스팅 경험에 대해 간단히 소개해주세요..."
+                        placeholder="Please briefly introduce yourself and your hosting experience..."
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="experience">호스팅 경험</Label>
+                      <Label htmlFor="experience">Hosting Experience</Label>
                       <Select value={formData.experience} onValueChange={(value) => updateField("experience", value)}>
                         <SelectTrigger className="glass border-white/20 mt-2">
-                          <SelectValue placeholder="경험 수준 선택" />
+                          <SelectValue placeholder="Select Experience Level" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="없음">없음 (처음입니다)</SelectItem>
-                          <SelectItem value="초보">초보 (1-5회)</SelectItem>
-                          <SelectItem value="중급">중급 (6-20회)</SelectItem>
-                          <SelectItem value="전문">전문 (20회 이상)</SelectItem>
+                          <SelectItem value="None">None (처음입니다)</SelectItem>
+                          <SelectItem value="Beginner">Beginner (1-5회)</SelectItem>
+                          <SelectItem value="Intermediate">Intermediate (6-20회)</SelectItem>
+                          <SelectItem value="Expert">Expert (20회 이상)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <Label htmlFor="photos">공간 사진 업로드</Label>
+                      <Label htmlFor="photos">Upload Space Photos</Label>
                       <input
                         id="photos"
                         type="file"
@@ -519,14 +519,14 @@ export default function BecomeHost() {
                       <label htmlFor="photos" className="block mt-2 glass border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
                         <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                         <p className="text-sm text-muted-foreground mb-1">
-                          클릭하여 사진 업로드
+                          Click to Upload Photos
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          JPG, PNG (최대 10MB) - 여러 장 선택 가능
+                          JPG, PNG (max 10MB) - Multiple selection available
                         </p>
                         {spaceImages.length > 0 && (
                           <p className="text-xs text-green-400 mt-2">
-                            ✓ {spaceImages.length}개의 사진이 업로드되었습니다
+                            ✓ {spaceImages.length} photos have been uploaded
                           </p>
                         )}
                       </label>
@@ -534,10 +534,10 @@ export default function BecomeHost() {
 
                     <div>
                       <Label htmlFor="idCard" className="text-red-400">
-                        신분증 사본 업로드 *
+                        Upload ID Card Copy *
                       </Label>
                       <p className="text-xs text-muted-foreground mb-2">
-                        본인 확인을 위해 주민등록증 또는 운전면허증 사본이 필요합니다.
+                        ID card or driver's license copy is required for identity verification.
                       </p>
                       <input
                         id="idCard"
@@ -558,7 +558,7 @@ export default function BecomeHost() {
                           <>
                             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                             <p className="text-sm text-primary font-semibold">
-                              업로드 중...
+                              Uploading...
                             </p>
                           </>
                         ) : idCardImage ? (
@@ -569,20 +569,20 @@ export default function BecomeHost() {
                               </svg>
                             </div>
                             <p className="text-sm text-green-400 mb-1 font-semibold">
-                              신분증 업로드 완료
+                              ID Card Upload Complete
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              다른 파일로 변경하려면 클릭하세요
+                              Click to change to another file
                             </p>
                           </>
                         ) : (
                           <>
                             <Upload className="w-12 h-12 text-red-400 mx-auto mb-3" />
                             <p className="text-sm text-red-400 mb-1 font-semibold">
-                              필수: 신분증 사본 업로드
+                              Required: Upload ID Card Copy
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              JPG, PNG (최대 10MB) - 개인정보는 안전하게 보호됩니다
+                              JPG, PNG (max 10MB) - Personal information is securely protected
                             </p>
                           </>
                         )}
@@ -601,21 +601,21 @@ export default function BecomeHost() {
                       />
                       <div className="flex-1">
                         <Label htmlFor="terms" className="cursor-pointer">
-                          <span className="font-semibold">이용약관</span> 및{" "}
-                          <span className="font-semibold">개인정보처리방침</span>에 동의합니다 *
+                          <span className="font-semibold">Terms of Service</span> 및{" "}
+                          <span className="font-semibold">Privacy Policy</span> *
                         </Label>
                         <p className="text-sm text-muted-foreground mt-1">
-                          호스트 가입 시 플랫폼 정책과 안전 가이드라인을 준수해야 합니다.
+                          When joining as a host, you must comply with platform policies and safety guidelines.
                         </p>
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <Label className="text-red-400 font-semibold">
-                        범죄기록증명원 사진 업로드 *
+                        Upload Criminal Record Document Photo *
                       </Label>
                       <p className="text-sm text-muted-foreground">
-                        게스트의 안전을 위해 범죄기록증명원 사진이 필요합니다. 성범죄, 폭력범죄 등의 기록이 있을 경우 호스트 승인이 거부될 수 있습니다.
+                        Criminal record document photo is required for guest safety. Host approval may be denied if there are records of sexual crimes, violent crimes, etc.
                       </p>
                       <input
                         id="criminalRecord"
@@ -636,7 +636,7 @@ export default function BecomeHost() {
                           <>
                             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                             <p className="text-sm text-primary font-semibold">
-                              업로드 중...
+                              Uploading...
                             </p>
                           </>
                         ) : criminalRecordImage ? (
@@ -647,20 +647,20 @@ export default function BecomeHost() {
                               </svg>
                             </div>
                             <p className="text-sm text-green-400 mb-1 font-semibold">
-                              범죄기록증명원 업로드 완료
+                              Criminal Record Upload Complete
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              다른 파일로 변경하려면 클릭하세요
+                              Click to change to another file
                             </p>
                           </>
                         ) : (
                           <>
                             <Upload className="w-12 h-12 text-red-400 mx-auto mb-3" />
                             <p className="text-sm text-red-400 mb-1 font-semibold">
-                              필수: 범죄기록증명원 사진 업로드
+                              Required: Upload Criminal Record Document Photo
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              JPG, PNG (최대 10MB) - 개인정보는 안전하게 보호됩니다
+                              JPG, PNG (max 10MB) - Personal information is securely protected
                             </p>
                           </>
                         )}
@@ -678,23 +678,23 @@ export default function BecomeHost() {
                       />
                       <div className="flex-1">
                         <Label htmlFor="legalWarning" className="cursor-pointer text-orange-400 font-semibold">
-                          대리 작성 금지 및 법적 책임 동의 *
+                          Consent to Prohibition of Proxy Writing and Legal Responsibility *
                         </Label>
                         <p className="text-sm text-red-400 mt-1 font-medium">
-                          ⚠️ 본 신청서를 타인이 대리로 작성하거나 허위 정보를 제공할 경우, 형법 제231조(사문서 위조) 및 제347조(사기)에 따라 법적 처벌을 받을 수 있습니다.
+                          ⚠️ If this application is written by proxy or false information is provided, you may be subject to legal punishment under Article 231 (Forgery of Private Documents) and Article 347 (Fraud) of the Criminal Act.
                         </p>
                         <p className="text-sm text-muted-foreground mt-2">
-                          본인이 직접 작성하였으며, All 정보가 사실임을 확인합니다.
+                          I confirm that I have written this myself and all information is true.
                         </p>
                       </div>
                     </div>
 
                     <div className="bg-blue-500/10 p-4 rounded-lg border border-blue-500/30">
                       <p className="text-sm text-blue-400 font-medium">
-                        🛡️ 개인정보 보호 안내
+                        🛡️ Privacy Protection Notice
                       </p>
                       <p className="text-xs text-muted-foreground mt-2">
-                        제공하신 신분증 및 개인정보는 호스트 신원 확인 목적으로만 사용되며, AES-256 암호화로 안전하게 보관됩니다. 승인 거부 시 즉시 파기되며, 승인 후에도 법적 보관 기간 종료 시 자동 삭제됩니다.
+                        The ID card and personal information you provide will only be used for host identity verification and will be securely stored with AES-256 encryption. It will be immediately destroyed if approval is denied, and will be automatically deleted after the legal retention period even after approval.
                       </p>
                     </div>
                   </div>
@@ -710,7 +710,7 @@ export default function BecomeHost() {
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
                     <p className="text-sm text-center text-muted-foreground mt-4">
-                      신청 후 24시간 내에 검토 결과를 알려드립니다
+                      We will notify you of the review results within 24 hours after application
                     </p>
                   </div>
                 </form>

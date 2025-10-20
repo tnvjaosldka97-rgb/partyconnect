@@ -24,21 +24,21 @@ export default function AdminLogin() {
       if (formData.username === "onlyup1!" && formData.password === "onlyup12!") {
         localStorage.setItem("adminLoggedIn", "true");
         
-        toast.success("로그인 성공!", {
-          description: "관리자 대시보드로 이동합니다.",
+        toast.success("Login Successful!", {
+          description: "Redirecting to admin dashboard.",
         });
         
         setTimeout(() => {
           setLocation("/admin");
         }, 1000);
       } else {
-        toast.error("로그인 실패", {
-          description: "아이디 또는 비밀번호가 올바르지 않습니다.",
+        toast.error("Login Failed", {
+          description: "Invalid username or password.",
         });
       }
     } catch (error) {
-      toast.error("로그인 실패", {
-        description: "오류가 발생했습니다.",
+      toast.error("Login Failed", {
+        description: "An error occurred.",
       });
     } finally {
       setIsLoading(false);
@@ -63,10 +63,10 @@ export default function AdminLogin() {
                   <Shield className="w-10 h-10 text-primary" />
                 </div>
                 <h1 className="text-3xl font-bold mb-2">
-                  <span className="gradient-text">관리자 로그인</span>
+                  <span className="gradient-text">Admin Login</span>
                 </h1>
                 <p className="text-muted-foreground">
-                  PartyConnect 관리자 대시보드 접속
+                  Access PartyConnect Admin Dashboard
                 </p>
               </div>
 
@@ -76,14 +76,14 @@ export default function AdminLogin() {
                   <div>
                     <Label htmlFor="username" className="flex items-center space-x-2 mb-2">
                       <User className="w-4 h-4" />
-                      <span>관리자 ID</span>
+                      <span>Admin ID</span>
                     </Label>
                     <Input
                       id="username"
                       type="text"
                       value={formData.username}
                       onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                      placeholder="관리자 아이디를 입력하세요"
+                      placeholder="Enter admin username"
                       className="h-12 glass border-white/20"
                       required
                     />
@@ -92,14 +92,14 @@ export default function AdminLogin() {
                   <div>
                     <Label htmlFor="password" className="flex items-center space-x-2 mb-2">
                       <Lock className="w-4 h-4" />
-                      <span>비밀번호</span>
+                      <span>Password</span>
                     </Label>
                     <Input
                       id="password"
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      placeholder="비밀번호를 입력하세요"
+                      placeholder="Enter password"
                       className="h-12 glass border-white/20"
                       required
                     />
@@ -111,7 +111,7 @@ export default function AdminLogin() {
                     className="w-full gradient-button h-12 rounded-xl text-base font-semibold"
                     disabled={isLoading}
                   >
-                    {isLoading ? "로그인 중..." : "로그인"}
+                    {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
 
@@ -119,11 +119,11 @@ export default function AdminLogin() {
                   <div className="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30">
                     <p className="text-sm text-yellow-400 font-medium flex items-center">
                       <Shield className="w-4 h-4 mr-2" />
-                      보안 안내
+                      Security Notice
                     </p>
                     <p className="text-xs text-muted-foreground mt-2">
-                      관리자 계정은 승인된 직원만 사용할 수 있습니다. 
-                      무단 접근 시도는 기록되며 법적 조치가 취해질 수 있습니다.
+                      Admin access is restricted to authorized personnel only. 
+                      Unauthorized access attempts will be logged and may result in legal action.
                     </p>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export default function AdminLogin() {
                   onClick={() => setLocation("/")}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  홈으로 돌아가기
+                  Back to Home
                 </Button>
               </div>
             </div>

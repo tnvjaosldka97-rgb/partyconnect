@@ -64,9 +64,7 @@ export default function Header({
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Google Translate */}
-            <GoogleTranslate />
+          <div className="flex items-center space-x-2">
             {/* City Selector */}
             <Select value={selectedCity} onValueChange={onCityChange}>
               <SelectTrigger className="w-32 h-10 glass border-white/20 rounded-xl hidden lg:flex">
@@ -104,6 +102,11 @@ export default function Header({
                 Create Party
               </Button>
             </Link>
+
+            {/* Google Translate */}
+            <div className="hidden sm:block">
+              <GoogleTranslate />
+            </div>
 
             {/* User Profile */}
             <Button

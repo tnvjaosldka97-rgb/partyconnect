@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PartyCard from "@/components/PartyCard";
@@ -76,11 +76,11 @@ export default function AllParties() {
           {/* Page Header */}
           <div className="text-center mb-12 space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold animate-fadeIn">
-              All <span className="gradient-text">파티</span>
+              All <span className="gradient-text">Parties</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {totalResults > 0
-                ? `${totalResults}parties found`
+                ? `${totalResults} parties found`
                 : "Join special parties prepared by verified hosts"}
             </p>
           </div>
@@ -135,7 +135,7 @@ export default function AllParties() {
               )}
               {filters.dateRange !== "all" && (
                 <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                  날짜: {quickFilters.find((f) => f.value === filters.dateRange)?.label}
+                  Date: {quickFilters.find((f) => f.value === filters.dateRange)?.label}
                 </div>
               )}
             </div>
