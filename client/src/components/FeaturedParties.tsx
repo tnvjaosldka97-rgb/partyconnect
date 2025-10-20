@@ -128,20 +128,18 @@ export default function FeaturedParties({
             </div>
 
             {/* See All Button */}
-            {filteredParties.length > 6 && (
-              <div className="text-center">
-                <Link href="/all-parties">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="glass border-primary/30 hover:border-primary/50 hover:bg-primary/10 rounded-2xl px-8 h-12 group"
-                  >
-                    All Parties 보기 ({filteredParties.length})
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
-            )}
+            <div className="text-center">
+              <Link href="/all-parties">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="glass border-primary/30 hover:border-primary/50 hover:bg-primary/10 rounded-2xl px-8 h-12 group"
+                >
+                  View All Parties ({filteredParties.length})
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
           </>
         ) : (
           <div className="text-center py-20">

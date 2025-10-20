@@ -59,6 +59,7 @@ export default function Admin() {
         if (isLoggedIn) {
           setIsAuthenticated(true);
           loadHostApplications();
+          loadParties();
         } else {
           toast.error("Access Denied", {
             description: "Admin login required.",
