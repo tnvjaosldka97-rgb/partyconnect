@@ -22,7 +22,29 @@ export default function FeaturedParties({
   // Load approved parties from localStorage
   useEffect(() => {
     const approved = getApprovedParties();
-    setApprovedParties(approved);
+    
+    // Map localStorage parties to match mockParties format
+    const mappedParties = approved.map((p: any) => ({
+      id: p.id,
+      title: p.title,
+      image: p.images?.[0] || "/placeholder-party.jpg",
+      date: p.date,
+      dateTimestamp: new Date(p.date).getTime(),
+      location: p.location || p.city,
+      city: p.city,
+      price: p.price,
+      priceFormatted: `$${p.price?.toLocaleString() || '0'}`,
+      attendees: p.attendees || 0,
+      maxAttendees: p.capacity || 20,
+      ageRange: p.ageRange || "21-35",
+      type: p.type || "Party",
+      theme: p.type || "Party",
+      description: p.description || "",
+      hostName: p.host || "Host",
+      rating: p.rating || 4.5,
+    }));
+    
+    setApprovedParties(mappedParties);
   }, []);
   
   // Combine mockParties with approved parties

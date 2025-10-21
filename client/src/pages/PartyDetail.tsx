@@ -26,7 +26,31 @@ export default function PartyDetail() {
   
   // Load parties from both mockParties and localStorage
   const localParties = getApprovedParties();
-  const allParties = [...mockParties, ...localParties];
+  
+  // Map localStorage parties to match mockParties format
+  const mappedLocalParties = localParties.map((p: any) => ({
+    id: p.id,
+    title: p.title,
+    image: p.images?.[0] || "/placeholder-party.jpg",
+    date: p.date,
+    dateTimestamp: new Date(p.date).getTime(),
+    location: p.location || p.city,
+    city: p.city,
+    price: p.price,
+    priceFormatted: `$${p.price.toLocaleString()}`,
+    attendees: p.attendees || 0,
+    maxAttendees: p.capacity,
+    ageRange: p.ageRange,
+    type: p.type,
+    theme: p.type,
+    description: p.description,
+    hostName: p.host,
+    rating: p.rating || 4.5,
+    time: p.time,
+    tags: p.tags || [],
+  }));
+  
+  const allParties = [...mockParties, ...mappedLocalParties];
   const party = allParties.find((p) => p.id === params?.id);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
