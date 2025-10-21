@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import PartyCard from "./PartyCard";
 import { Button } from "./ui/button";
 import { ArrowRight, SlidersHorizontal } from "lucide-react";
@@ -5,6 +6,7 @@ import { Link } from "wouter";
 import { FilterOptions } from "@/types/party";
 import { mockParties } from "@/data/mockParties";
 import { usePartyFilter } from "@/hooks/usePartyFilter";
+import { getApprovedParties } from "@/lib/storage";
 
 interface FeaturedPartiesProps {
   searchQuery?: string;
@@ -15,8 +17,19 @@ export default function FeaturedParties({
   searchQuery = "",
   selectedCity = "all",
 }: FeaturedPartiesProps) {
+  const [approvedParties, setApprovedParties] = useState<any[]>([]);
+  
+  // Load approved parties from localStorage
+  useEffect(() => {
+    const approved = getApprovedParties();
+    setApprovedParties(approved);
+  }, []);
+  
+  // Combine mockParties with approved parties
+  const allParties = [...mockParties, ...approvedParties];
+  
   const { filters, filteredParties, updateFilter, totalResults } =
-    usePartyFilter(mockParties);
+    usePartyFilter(allParties);
 
   // 외부에서 전달된 검색어와 도시 필터 적용
   if (filters.searchQuery !== searchQuery) {
@@ -35,10 +48,37 @@ export default function FeaturedParties({
   ];
 
   const handleQuickFilter = (
-    type: keyof FilterOptions,
-    value: FilterOptions[keyof FilterOptions]
+    type: keyof typeof filters,
+    value: any
   ) => {
-    updateFilter(type, value);
+    // Check if the filter is currently active
+    const currentValue = filters[type];
+    let isCurrentlyActive = false;
+    
+    if (type === "dateRange") {
+      isCurrentlyActive = currentValue === value;
+    } else if (type === "priceRange") {
+      isCurrentlyActive = Array.isArray(currentValue) && 
+                          Array.isArray(value) &&
+                          currentValue[0] === value[0] && 
+                          currentValue[1] === value[1];
+    } else if (type === "sortBy") {
+      isCurrentlyActive = currentValue === value;
+    }
+    
+    if (isCurrentlyActive) {
+      // Deactivate filter: reset to default
+      if (type === "dateRange") {
+        updateFilter(type, "all" as any);
+      } else if (type === "priceRange") {
+        updateFilter(type, [0, 1000000]); // Reset to wide range
+      } else if (type === "sortBy") {
+        updateFilter(type, "none");
+      }
+    } else {
+      // Activate filter
+      updateFilter(type, value);
+    }
   };
 
   return (
