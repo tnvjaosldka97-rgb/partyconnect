@@ -86,23 +86,27 @@ export default function Header({
 
             {/* Host Party Button */}
             <Link href="/become-host">
-              <Button
-                variant="outline"
-                className="h-9 px-2 sm:h-10 sm:px-4 glass border-primary/50 hover:bg-primary/10 rounded-xl text-xs sm:text-sm"
-              >
-                <span className="hidden sm:inline">Become a Host</span>
-                <span className="sm:hidden">Host</span>
-              </Button>
+              <a>
+                <Button
+                  variant="outline"
+                  className="h-9 px-2 sm:h-10 sm:px-4 glass border-primary/50 hover:bg-primary/10 rounded-xl text-xs sm:text-sm"
+                >
+                  <span className="hidden sm:inline">Become a Host</span>
+                  <span className="sm:hidden">Host</span>
+                </Button>
+              </a>
             </Link>
             
             <Link href="/create-party">
-              <Button
-                variant="outline"
-                className="h-9 px-2 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl text-xs sm:text-sm"
-              >
-                <span className="hidden sm:inline">Create Party</span>
-                <span className="sm:hidden">Create</span>
-              </Button>
+              <a>
+                <Button
+                  variant="outline"
+                  className="h-9 px-2 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl text-xs sm:text-sm"
+                >
+                  <span className="hidden sm:inline">Create Party</span>
+                  <span className="sm:hidden">Create</span>
+                </Button>
+              </a>
             </Link>
 
             {/* Google Translate */}
