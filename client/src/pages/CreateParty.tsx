@@ -122,9 +122,23 @@ export default function CreateParty() {
     e.preventDefault();
     
     // 필수 필드 검증
-    if (!formData.title || !formData.date || !formData.city) {
+    if (!formData.title || !formData.date || !formData.city || !formData.address || !formData.description) {
       toast.error("Please fill in all required fields", {
-        description: "Party title, date, and city are required.",
+        description: "Party title, description, date, city, and address are required.",
+      });
+      return;
+    }
+    
+    if (!formData.time) {
+      toast.error("Please select a time", {
+        description: "Party time is required.",
+      });
+      return;
+    }
+    
+    if (!formData.maxAttendees || parseInt(formData.maxAttendees) <= 0) {
+      toast.error("Please enter max attendees", {
+        description: "Maximum number of attendees must be greater than 0.",
       });
       return;
     }
@@ -142,22 +156,22 @@ export default function CreateParty() {
     // 파티 데이터 저장
     const partyData = {
       id: `party-${Date.now()}`,
-      title: formData.title,
+      title: formData.title.trim(),
       date: formData.date,
-      time: formData.time,
-      location: formData.address,
-      city: formData.city,
+      time: formData.time || "19:00",
+      location: formData.address.trim(),
+      city: formData.city.trim(),
       host: currentHost.name,
       hostId: currentHost.id,
-      price: parseInt(formData.price) || 0,
-      capacity: parseInt(formData.maxAttendees) || 0,
+      price: parseInt(formData.price) || 50,
+      capacity: parseInt(formData.maxAttendees) || 20,
       attendees: 0,
       ageRange: formData.ageRange || "21-35",
       type: formData.type || "House Party",
-      description: formData.description,
-      images: partyImages.length > 0 ? partyImages : ["/placeholder.svg"],
-      tags: formData.theme ? [formData.theme] : [],
-      rating: 0,
+      description: formData.description.trim() || "Join us for an amazing party experience!",
+      images: partyImages.length > 0 ? partyImages : ["https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800"],
+      tags: formData.theme ? [formData.theme, formData.city] : [formData.city],
+      rating: 4.5,
       reviews: 0,
       status: (isAdmin ? "approved" : "pending") as const,
       createdAt: new Date().toISOString(),
