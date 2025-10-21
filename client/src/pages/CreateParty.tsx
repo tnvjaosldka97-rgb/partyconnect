@@ -136,6 +136,9 @@ export default function CreateParty() {
       return;
     }
 
+    // Check if admin is logged in
+    const isAdmin = localStorage.getItem("adminLoggedIn") === "true";
+    
     // 파티 데이터 저장
     const partyData = {
       id: `party-${Date.now()}`,
@@ -156,7 +159,7 @@ export default function CreateParty() {
       tags: formData.theme ? [formData.theme] : [],
       rating: 0,
       reviews: 0,
-      status: "pending" as const,
+      status: (isAdmin ? "approved" : "pending") as const,
       createdAt: new Date().toISOString(),
     };
 
