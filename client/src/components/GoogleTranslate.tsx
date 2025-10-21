@@ -49,10 +49,12 @@ export default function GoogleTranslate() {
   return (
     <div
       id="google_translate_element"
-      className="flex items-center"
+      className="flex items-center scale-75 origin-right"
       style={{
-        // Google Translate 위젯 스타일링
+        // Google Translate 위젯 스타일링 - 작게 표시
         filter: "invert(1) hue-rotate(180deg)",
+        transform: "scale(0.85)",
+        transformOrigin: "right center",
       }}
     />
   );
