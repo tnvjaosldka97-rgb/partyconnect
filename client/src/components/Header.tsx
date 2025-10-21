@@ -64,7 +64,7 @@ export default function Header({
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             {/* City Selector */}
             <Select value={selectedCity} onValueChange={onCityChange}>
               <SelectTrigger className="w-32 h-10 glass border-white/20 rounded-xl hidden lg:flex">
@@ -88,23 +88,25 @@ export default function Header({
             <Link href="/become-host">
               <Button
                 variant="outline"
-                className="h-10 px-4 glass border-primary/50 hover:bg-primary/10 rounded-xl hidden sm:flex"
+                className="h-9 px-2 sm:h-10 sm:px-4 glass border-primary/50 hover:bg-primary/10 rounded-xl text-xs sm:text-sm"
               >
-                Become a Host
+                <span className="hidden sm:inline">Become a Host</span>
+                <span className="sm:hidden">Host</span>
               </Button>
             </Link>
             
             <Link href="/create-party">
               <Button
                 variant="outline"
-                className="h-10 px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl hidden lg:flex"
+                className="h-9 px-2 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl text-xs sm:text-sm"
               >
-                Create Party
+                <span className="hidden sm:inline">Create Party</span>
+                <span className="sm:hidden">Create</span>
               </Button>
             </Link>
 
             {/* Google Translate */}
-            <div className="hidden sm:block">
+            <div className="scale-75 sm:scale-100 origin-right">
               <GoogleTranslate />
             </div>
 
