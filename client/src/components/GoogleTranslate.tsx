@@ -23,7 +23,7 @@ export default function GoogleTranslate() {
       if (window.google && window.google.translate) {
         new window.google.translate.TranslateElement(
           {
-            pageLanguage: "en",
+            pageLanguage: "ko", // Set to Korean so English appears in the list
             includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
             layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false,
