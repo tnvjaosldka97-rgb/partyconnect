@@ -161,6 +161,32 @@ export function getApprovedParties(): Party[] {
   }
 }
 
+// Delete party
+export function deleteParty(id: string): boolean {
+  try {
+    const parties = getParties();
+    const filteredParties = parties.filter((party) => party.id !== id);
+    localStorage.setItem("parties", JSON.stringify(filteredParties));
+    return true;
+  } catch (error) {
+    console.error("Failed to delete party:", error);
+    return false;
+  }
+}
+
+// Delete host application
+export function deleteHostApplication(id: string): boolean {
+  try {
+    const applications = getHostApplications();
+    const filteredApplications = applications.filter((app) => app.id !== id);
+    localStorage.setItem("hostApplications", JSON.stringify(filteredApplications));
+    return true;
+  } catch (error) {
+    console.error("Failed to delete host application:", error);
+    return false;
+  }
+}
+
 // Auto-create party when host is approved
 export function createPartyFromApplication(application: HostApplication): boolean {
   try {

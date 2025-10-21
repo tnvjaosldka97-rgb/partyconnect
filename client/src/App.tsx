@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import ChangePassword from "./pages/ChangePassword";
 import AllParties from "./pages/AllParties";
+import HostDashboard from "./pages/HostDashboard";
 import { useEffect } from "react";
 import { getParties, saveParty } from "./lib/storage";
 import { initialParties } from "./lib/initialParties";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/become-host" component={BecomeHost} />
       <Route path="/create-party" component={CreateParty} />
       <Route path="/all-parties" component={AllParties} />
+      <Route path="/host/dashboard" component={HostDashboard} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/change-password" component={ChangePassword} />

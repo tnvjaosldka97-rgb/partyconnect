@@ -23,6 +23,8 @@ import {
   createPartyFromApplication,
   getParties,
   updatePartyStatus,
+  deleteParty,
+  deleteHostApplication,
   type HostApplication,
   type Party,
 } from "@/lib/storage";
@@ -122,6 +124,36 @@ export default function Admin() {
     } else {
       toast.error("Rejection Failed", {
         description: "다시 시도해주세요.",
+      });
+    }
+  };
+
+  const handleDeleteParty = (partyId: string) => {
+    const success = deleteParty(partyId);
+    
+    if (success) {
+      toast.success("Party Deleted!", {
+        description: "The party has been successfully deleted.",
+      });
+      loadParties();
+    } else {
+      toast.error("Delete Failed", {
+        description: "Please try again.",
+      });
+    }
+  };
+
+  const handleDeleteHost = (hostId: string) => {
+    const success = deleteHostApplication(hostId);
+    
+    if (success) {
+      toast.success("Host Application Deleted!", {
+        description: "The host application has been successfully deleted.",
+      });
+      loadHostApplications();
+    } else {
+      toast.error("Delete Failed", {
+        description: "Please try again.",
       });
     }
   };
