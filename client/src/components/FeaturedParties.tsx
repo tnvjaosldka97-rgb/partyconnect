@@ -105,7 +105,7 @@ export default function FeaturedParties({
                 : filter.type === "sortBy"
                 ? filters.sortBy === filter.value
                 : filter.type === "priceRange"
-                ? filters.priceRange[1] === (filter.value as [number, number])[1]
+                ? filters.priceRange?.[1] === (filter.value as [number, number])?.[1]
                 : false;
 
             return (
