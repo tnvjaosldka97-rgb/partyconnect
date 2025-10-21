@@ -161,6 +161,24 @@ export function getApprovedParties(): Party[] {
   }
 }
 
+// Update party
+export function updateParty(id: string, updatedParty: Partial<Party>): boolean {
+  try {
+    const parties = getParties();
+    const index = parties.findIndex((party) => party.id === id);
+    
+    if (index === -1) return false;
+    
+    parties[index] = { ...parties[index], ...updatedParty };
+    
+    localStorage.setItem("parties", JSON.stringify(parties));
+    return true;
+  } catch (error) {
+    console.error("Failed to update party:", error);
+    return false;
+  }
+}
+
 // Delete party
 export function deleteParty(id: string): boolean {
   try {

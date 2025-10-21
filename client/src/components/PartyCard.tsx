@@ -100,7 +100,7 @@ export default function PartyCard({
           </div>
           <div className="flex items-center space-x-2">
             <Users className="w-4 h-4 text-secondary" />
-            <span>{attendees}명 Attending</span>
+            <span>{attendees} Attending</span>
           </div>
         </div>
 

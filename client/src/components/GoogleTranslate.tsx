@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
@@ -8,22 +8,24 @@ declare global {
 }
 
 export default function GoogleTranslate() {
-  useEffect(() => {
-    // Google Translate script 로드
-    const addScript = () => {
-      const script = document.createElement("script");
-      script.src =
-        "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      script.async = true;
-      document.body.appendChild(script);
-    };
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scriptLoadedRef = useRef(false);
 
-    // Google Translate 초기화 함수
-    window.googleTranslateElementInit = () => {
-      if (window.google && window.google.translate) {
+  useEffect(() => {
+    // Prevent multiple script loads
+    if (scriptLoadedRef.current) {
+      return;
+    }
+
+    // Google Translate initialization function
+    const initGoogleTranslate = () => {
+      if (window.google && window.google.translate && containerRef.current) {
+        // Clear any existing content
+        containerRef.current.innerHTML = "";
+        
         new window.google.translate.TranslateElement(
           {
-            pageLanguage: "ko", // Set to Korean so English appears in the list
+            pageLanguage: "en",
             includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
             layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false,
@@ -33,28 +35,47 @@ export default function GoogleTranslate() {
       }
     };
 
-    // 스크립트가 이미 로드되었는지 확인
-    if (!document.querySelector('script[src*="translate.google.com"]')) {
-      addScript();
+    // Set up the callback
+    window.googleTranslateElementInit = initGoogleTranslate;
+
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="translate.google.com"]');
+    
+    if (!existingScript) {
+      // Add the script
+      const script = document.createElement("script");
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      script.onerror = () => {
+        console.error("Failed to load Google Translate script");
+        scriptLoadedRef.current = false;
+      };
+      script.onload = () => {
+        scriptLoadedRef.current = true;
+      };
+      document.body.appendChild(script);
     } else if (window.google && window.google.translate) {
-      window.googleTranslateElementInit();
+      // Script already loaded, just initialize
+      initGoogleTranslate();
+      scriptLoadedRef.current = true;
     }
 
     return () => {
-      // Cleanup
-      delete window.googleTranslateElementInit;
+      // Cleanup on unmount
+      if (window.googleTranslateElementInit) {
+        delete window.googleTranslateElementInit;
+      }
     };
   }, []);
 
   return (
     <div
       id="google_translate_element"
-      className="flex items-center scale-75 origin-right"
+      ref={containerRef}
+      className="flex items-center"
       style={{
-        // Google Translate 위젯 스타일링 - 작게 표시
-        filter: "invert(1) hue-rotate(180deg)",
-        transform: "scale(0.85)",
-        transformOrigin: "right center",
+        minWidth: "150px",
+        minHeight: "30px",
       }}
     />
   );

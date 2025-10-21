@@ -6,6 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
   LayoutDashboard,
   Users,
   Ticket,
@@ -15,6 +26,8 @@ import {
   Key,
   Check,
   X,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -23,6 +36,7 @@ import {
   createPartyFromApplication,
   getParties,
   updatePartyStatus,
+  updateParty,
   deleteParty,
   deleteHostApplication,
   type HostApplication,
@@ -35,6 +49,10 @@ export default function Admin() {
   const [isLoading, setIsLoading] = useState(true);
   const [hostApplications, setHostApplications] = useState<HostApplication[]>([]);
   const [parties, setParties] = useState<Party[]>([]);
+  const [editingParty, setEditingParty] = useState<Party | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [partyToDelete, setPartyToDelete] = useState<Party | null>(null);
 
   useEffect(() => {
     // Check authentication with backend
@@ -108,7 +126,7 @@ export default function Admin() {
       loadHostApplications();
     } else {
       toast.error("Approval Failed", {
-        description: "다시 시도해주세요.",
+        description: "Please try again.",
       });
     }
   };
@@ -123,18 +141,51 @@ export default function Admin() {
       loadHostApplications();
     } else {
       toast.error("Rejection Failed", {
-        description: "다시 시도해주세요.",
+        description: "Please try again.",
       });
     }
   };
 
-  const handleDeleteParty = (partyId: string) => {
-    const success = deleteParty(partyId);
+  const handleEditParty = (party: Party) => {
+    setEditingParty({ ...party });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingParty) return;
+
+    const success = updateParty(editingParty.id, editingParty);
+    
+    if (success) {
+      toast.success("Party Updated!", {
+        description: "The party has been successfully updated.",
+      });
+      setIsEditDialogOpen(false);
+      setEditingParty(null);
+      loadParties();
+    } else {
+      toast.error("Update Failed", {
+        description: "Please try again.",
+      });
+    }
+  };
+
+  const handleDeletePartyClick = (party: Party) => {
+    setPartyToDelete(party);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!partyToDelete) return;
+
+    const success = deleteParty(partyToDelete.id);
     
     if (success) {
       toast.success("Party Deleted!", {
         description: "The party has been successfully deleted.",
       });
+      setIsDeleteDialogOpen(false);
+      setPartyToDelete(null);
       loadParties();
     } else {
       toast.error("Delete Failed", {
@@ -177,7 +228,7 @@ export default function Admin() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Shield className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
-          <p className="text-muted-foreground">인증 확인 중...</p>
+          <p className="text-muted-foreground">Verifying authentication...</p>
         </div>
       </div>
     );
@@ -252,7 +303,7 @@ export default function Admin() {
                   <Users className="w-6 h-6 text-primary" />
                 </div>
                 <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500/30">
-                  {pendingApplications.length}개 대기
+                  {pendingApplications.length} Pending
                 </Badge>
               </div>
               <h3 className="text-2xl font-bold mb-1">{hostApplications.length}</h3>
@@ -291,8 +342,8 @@ export default function Admin() {
                   <PartyPopper className="w-6 h-6 text-primary" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold mb-1">{approvedApplications.length}</h3>
-              <p className="text-sm text-muted-foreground">Created Parties</p>
+              <h3 className="text-2xl font-bold mb-1">{parties.length}</h3>
+              <p className="text-sm text-muted-foreground">Total Parties</p>
             </div>
           </div>
         </section>
@@ -311,7 +362,7 @@ export default function Admin() {
               </TabsTrigger>
               <TabsTrigger value="parties" className="data-[state=active]:bg-primary/20">
                 <PartyPopper className="w-4 h-4 mr-2" />
-                Party Management ({approvedApplications.length})
+                Party Management ({parties.length})
               </TabsTrigger>
             </TabsList>
 
@@ -344,14 +395,14 @@ export default function Admin() {
                             }
                           >
                             {application.status === "pending"
-                              ? "대기 중"
+                              ? "Pending"
                               : application.status === "approved"
                               ? "Approved"
                               : "Rejected"}
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Applied: {new Date(application.appliedAt).toLocaleString("ko-KR")}
+                          Applied: {new Date(application.appliedAt).toLocaleString("en-US")}
                         </p>
                       </div>
                       {application.status === "pending" && (
@@ -379,38 +430,38 @@ export default function Admin() {
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
-                        <p className="text-muted-foreground mb-1">전화번호</p>
+                        <p className="text-muted-foreground mb-1">Phone</p>
                         <p className="font-medium">{application.phone}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground mb-1">이메일</p>
+                        <p className="text-muted-foreground mb-1">Email</p>
                         <p className="font-medium">{application.email}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground mb-1">도시</p>
+                        <p className="text-muted-foreground mb-1">City</p>
                         <p className="font-medium">{application.city}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground mb-1">공간 유형</p>
+                        <p className="text-muted-foreground mb-1">Space Type</p>
                         <p className="font-medium">{application.spaceType}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground mb-1">주소</p>
+                        <p className="text-muted-foreground mb-1">Address</p>
                         <p className="font-medium">{application.address}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground mb-1">수용 인원</p>
-                        <p className="font-medium">{application.capacity}명</p>
+                        <p className="text-muted-foreground mb-1">Capacity</p>
+                        <p className="font-medium">{application.capacity} people</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground mb-1">호스팅 경험</p>
+                        <p className="text-muted-foreground mb-1">Experience</p>
                         <p className="font-medium">{application.experience}</p>
                       </div>
                     </div>
                     
                     {application.intro && (
                       <div className="mt-4">
-                        <p className="text-muted-foreground mb-1 text-sm">자기소개</p>
+                        <p className="text-muted-foreground mb-1 text-sm">Introduction</p>
                         <p className="text-sm">{application.intro}</p>
                       </div>
                     )}
@@ -422,9 +473,9 @@ export default function Admin() {
             <TabsContent value="tickets" className="space-y-4">
               <div className="glass-strong rounded-2xl p-8 border border-white/10 text-center">
                 <Ticket className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Ticket Purchases 내역이 없습니다</h3>
+                <h3 className="text-xl font-semibold mb-2">No Ticket Purchases</h3>
                 <p className="text-muted-foreground">
-                  Ticket Purchases가 발생하면 여기에 표시됩니다.
+                  Ticket purchases will appear here when made.
                 </p>
               </div>
             </TabsContent>
@@ -472,43 +523,65 @@ export default function Admin() {
                           <p><strong>Capacity:</strong> {party.capacity} people</p>
                         </div>
                       </div>
-                      {party.status === "pending" && (
+                      <div className="flex flex-col gap-2">
+                        {party.status === "pending" && (
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              className="bg-green-500/20 text-green-500 hover:bg-green-500/30 border border-green-500/30"
+                              onClick={() => {
+                                const success = updatePartyStatus(party.id, "approved");
+                                if (success) {
+                                  toast.success("Party Approved!", {
+                                    description: `${party.title} is now live.`,
+                                  });
+                                  loadParties();
+                                }
+                              }}
+                            >
+                              <Check className="w-4 h-4 mr-2" />
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-red-500/30 text-red-500 hover:bg-red-500/10"
+                              onClick={() => {
+                                const success = updatePartyStatus(party.id, "rejected");
+                                if (success) {
+                                  toast.success("Party Rejected", {
+                                    description: `${party.title} has been rejected.`,
+                                  });
+                                  loadParties();
+                                }
+                              }}
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Reject
+                            </Button>
+                          </div>
+                        )}
                         <div className="flex gap-2">
                           <Button
                             size="sm"
-                            className="bg-green-500/20 text-green-500 hover:bg-green-500/30 border border-green-500/30"
-                            onClick={() => {
-                              const success = updatePartyStatus(party.id, "approved");
-                              if (success) {
-                                toast.success("Party Approved!", {
-                                  description: `${party.title} is now live.`,
-                                });
-                                loadParties();
-                              }
-                            }}
+                            variant="outline"
+                            className="border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
+                            onClick={() => handleEditParty(party)}
                           >
-                            <Check className="w-4 h-4 mr-2" />
-                            Approve
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
                             className="border-red-500/30 text-red-500 hover:bg-red-500/10"
-                            onClick={() => {
-                              const success = updatePartyStatus(party.id, "rejected");
-                              if (success) {
-                                toast.success("Party Rejected", {
-                                  description: `${party.title} has been rejected.`,
-                                });
-                                loadParties();
-                              }
-                            }}
+                            onClick={() => handleDeletePartyClick(party)}
                           >
-                            <X className="w-4 h-4 mr-2" />
-                            Reject
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
                           </Button>
                         </div>
-                      )}
+                      </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-white/10">
                       <p className="text-sm text-muted-foreground">
@@ -522,6 +595,151 @@ export default function Admin() {
           </Tabs>
         </section>
       </main>
+
+      {/* Edit Party Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="glass-strong border-white/10 max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Party</DialogTitle>
+            <DialogDescription>
+              Make changes to the party details below.
+            </DialogDescription>
+          </DialogHeader>
+          {editingParty && (
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={editingParty.title}
+                  onChange={(e) => setEditingParty({ ...editingParty, title: e.target.value })}
+                  className="glass border-white/20"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="date">Date</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={editingParty.date}
+                    onChange={(e) => setEditingParty({ ...editingParty, date: e.target.value })}
+                    className="glass border-white/20"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="time">Time</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={editingParty.time}
+                    onChange={(e) => setEditingParty({ ...editingParty, time: e.target.value })}
+                    className="glass border-white/20"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={editingParty.location}
+                  onChange={(e) => setEditingParty({ ...editingParty, location: e.target.value })}
+                  className="glass border-white/20"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={editingParty.city}
+                  onChange={(e) => setEditingParty({ ...editingParty, city: e.target.value })}
+                  className="glass border-white/20"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="price">Price ($)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={editingParty.price}
+                    onChange={(e) => setEditingParty({ ...editingParty, price: Number(e.target.value) })}
+                    className="glass border-white/20"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="capacity">Capacity</Label>
+                  <Input
+                    id="capacity"
+                    type="number"
+                    value={editingParty.capacity}
+                    onChange={(e) => setEditingParty({ ...editingParty, capacity: Number(e.target.value) })}
+                    className="glass border-white/20"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="ageRange">Age Range</Label>
+                <Input
+                  id="ageRange"
+                  value={editingParty.ageRange}
+                  onChange={(e) => setEditingParty({ ...editingParty, ageRange: e.target.value })}
+                  className="glass border-white/20"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="type">Type</Label>
+                <Input
+                  id="type"
+                  value={editingParty.type}
+                  onChange={(e) => setEditingParty({ ...editingParty, type: e.target.value })}
+                  className="glass border-white/20"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={editingParty.description}
+                  onChange={(e) => setEditingParty({ ...editingParty, description: e.target.value })}
+                  className="glass border-white/20 min-h-[100px]"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEdit} className="gradient-button">
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="glass-strong border-white/10">
+          <DialogHeader>
+            <DialogTitle>Delete Party</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{partyToDelete?.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleConfirmDelete} 
+              className="bg-red-500/20 text-red-500 hover:bg-red-500/30 border-red-500/30"
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

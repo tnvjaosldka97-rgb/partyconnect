@@ -113,7 +113,7 @@ export default function FeaturedParties({
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             {totalResults > 0
-              ? `${totalResults}parties found`
+              ? `${totalResults} parties found`
               : "Join special parties prepared by verified hosts"}
           </p>
         </div>
@@ -168,7 +168,7 @@ export default function FeaturedParties({
             )}
             {filters.dateRange !== "all" && (
               <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                날짜: {quickFilters.find((f) => f.value === filters.dateRange)?.label}
+                Date: {quickFilters.find((f) => f.value === filters.dateRange)?.label}
               </div>
             )}
           </div>
