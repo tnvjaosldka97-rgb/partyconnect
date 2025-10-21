@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { mockParties } from "@/data/mockParties";
+import { getApprovedParties } from "@/lib/storage";
 import {
   Calendar,
   MapPin,
@@ -22,7 +23,11 @@ import { toast } from "sonner";
 
 export default function PartyDetail() {
   const [, params] = useRoute("/party/:id");
-  const party = mockParties.find((p) => p.id === params?.id);
+  
+  // Load parties from both mockParties and localStorage
+  const localParties = getApprovedParties();
+  const allParties = [...mockParties, ...localParties];
+  const party = allParties.find((p) => p.id === params?.id);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
 
