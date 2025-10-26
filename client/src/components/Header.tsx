@@ -118,9 +118,7 @@ export default function Header({
             </Link>
 
             {/* Google Translate */}
-            <div className="scale-75 sm:scale-100 origin-right">
-              <GoogleTranslate />
-            </div>
+            <GoogleTranslate />
 
             {/* User Profile */}
             <DropdownMenu>

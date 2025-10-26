@@ -45,6 +45,7 @@ export default function GoogleTranslate() {
               includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
               layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
               autoDisplay: false,
+              multilanguagePage: true,
             },
             "google_translate_element"
           );
@@ -100,15 +101,76 @@ export default function GoogleTranslate() {
   }, []);
 
   return (
-    <div
-      id="google_translate_element"
-      ref={containerRef}
-      className="flex items-center"
-      style={{
-        minWidth: "150px",
-        minHeight: "30px",
-      }}
-    />
+    <div className="relative">
+      <div
+        id="google_translate_element"
+        ref={containerRef}
+        className="google-translate-container"
+      />
+      <style>{`
+        /* Hide Google Translate branding */
+        .goog-te-gadget {
+          font-family: inherit !important;
+          font-size: 0 !important;
+        }
+        
+        .goog-te-gadget > span {
+          display: none !important;
+        }
+        
+        .goog-te-gadget > div {
+          display: inline-block !important;
+        }
+        
+        /* Style the select dropdown */
+        .goog-te-combo {
+          background: rgba(255, 255, 255, 0.1) !important;
+          border: 1px solid rgba(255, 255, 255, 0.2) !important;
+          border-radius: 0.75rem !important;
+          color: white !important;
+          padding: 0.5rem 0.75rem !important;
+          font-size: 0.875rem !important;
+          cursor: pointer !important;
+          outline: none !important;
+          min-width: 120px !important;
+        }
+        
+        .goog-te-combo:hover {
+          background: rgba(255, 255, 255, 0.15) !important;
+          border-color: rgba(139, 92, 246, 0.5) !important;
+        }
+        
+        .goog-te-combo option {
+          background: #1a1a2e !important;
+          color: white !important;
+        }
+        
+        /* Hide the banner */
+        .goog-te-banner-frame {
+          display: none !important;
+        }
+        
+        body {
+          top: 0 !important;
+        }
+        
+        /* Fix body position when translated */
+        body.translated-ltr {
+          top: 0 !important;
+        }
+        
+        .skiptranslate {
+          display: inline-block !important;
+        }
+        
+        /* Container styling */
+        .google-translate-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
+    </div>
   );
 }
 
