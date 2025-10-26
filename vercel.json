@@ -1,5 +1,6 @@
 {
-  "buildCommand": "cd client && npx vite build",
+  "framework": null,
+  "buildCommand": "pnpm install && cd client && pnpm install && pnpm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
     {
@@ -8,4 +9,3 @@
     }
   ]
 }
-
