@@ -10,19 +10,20 @@ declare global {
 export default function GoogleTranslate() {
   const containerRef = useRef<HTMLDivElement>(null);
   const scriptLoadedRef = useRef(false);
+  const translatorInitialized = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple script loads
-    if (scriptLoadedRef.current) {
+    // Prevent multiple initializations
+    if (translatorInitialized.current) {
       return;
     }
 
     // Google Translate initialization function
     const initGoogleTranslate = () => {
       if (window.google && window.google.translate && containerRef.current) {
-        // Clear any existing content safely
-        while (containerRef.current.firstChild) {
-          containerRef.current.removeChild(containerRef.current.firstChild);
+        // Clear any existing content using innerHTML (safer than removeChild)
+        if (containerRef.current) {
+          containerRef.current.innerHTML = '';
         }
         
         try {
@@ -35,6 +36,7 @@ export default function GoogleTranslate() {
             },
             "google_translate_element"
           );
+          translatorInitialized.current = true;
         } catch (error) {
           console.error("Error initializing Google Translate:", error);
         }
@@ -47,7 +49,7 @@ export default function GoogleTranslate() {
     // Check if script already exists
     const existingScript = document.querySelector('script[src*="translate.google.com"]');
     
-    if (!existingScript) {
+    if (!existingScript && !scriptLoadedRef.current) {
       // Add the script
       const script = document.createElement("script");
       script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
@@ -60,27 +62,23 @@ export default function GoogleTranslate() {
         scriptLoadedRef.current = true;
       };
       document.body.appendChild(script);
-    } else if (window.google && window.google.translate) {
+    } else if (window.google && window.google.translate && !translatorInitialized.current) {
       // Script already loaded, just initialize
       initGoogleTranslate();
-      scriptLoadedRef.current = true;
     }
 
     return () => {
-      // Cleanup on unmount
+      // Minimal cleanup - don't try to remove children
       if (window.googleTranslateElementInit) {
         delete window.googleTranslateElementInit;
       }
       
-      // Clean up container safely
+      // Use innerHTML for safe cleanup
       if (containerRef.current) {
         try {
-          while (containerRef.current.firstChild) {
-            containerRef.current.removeChild(containerRef.current.firstChild);
-          }
+          containerRef.current.innerHTML = '';
         } catch (error) {
-          // Ignore cleanup errors
-          console.debug("Cleanup error (safe to ignore):", error);
+          // Ignore cleanup errors silently
         }
       }
     };
