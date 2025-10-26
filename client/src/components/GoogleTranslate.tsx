@@ -20,18 +20,24 @@ export default function GoogleTranslate() {
     // Google Translate initialization function
     const initGoogleTranslate = () => {
       if (window.google && window.google.translate && containerRef.current) {
-        // Clear any existing content
-        containerRef.current.innerHTML = "";
+        // Clear any existing content safely
+        while (containerRef.current.firstChild) {
+          containerRef.current.removeChild(containerRef.current.firstChild);
+        }
         
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: "en",
-            includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false,
-          },
-          "google_translate_element"
-        );
+        try {
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: "en",
+              includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
+              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+              autoDisplay: false,
+            },
+            "google_translate_element"
+          );
+        } catch (error) {
+          console.error("Error initializing Google Translate:", error);
+        }
       }
     };
 
@@ -64,6 +70,18 @@ export default function GoogleTranslate() {
       // Cleanup on unmount
       if (window.googleTranslateElementInit) {
         delete window.googleTranslateElementInit;
+      }
+      
+      // Clean up container safely
+      if (containerRef.current) {
+        try {
+          while (containerRef.current.firstChild) {
+            containerRef.current.removeChild(containerRef.current.firstChild);
+          }
+        } catch (error) {
+          // Ignore cleanup errors
+          console.debug("Cleanup error (safe to ignore):", error);
+        }
       }
     };
   }, []);

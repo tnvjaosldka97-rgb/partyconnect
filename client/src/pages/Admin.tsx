@@ -39,6 +39,7 @@ import {
   updateParty,
   deleteParty,
   deleteHostApplication,
+  resetPartiesToInitialData,
   type HostApplication,
   type Party,
 } from "@/lib/storage";
@@ -223,6 +224,23 @@ export default function Admin() {
     setLocation("/admin/login");
   };
 
+  const handleResetData = () => {
+    if (window.confirm("Are you sure you want to reset all parties to the default English data? This action cannot be undone.")) {
+      const success = resetPartiesToInitialData();
+      if (success) {
+        toast.success("Data Reset Successful", {
+          description: "All parties have been reset to default English data.",
+        });
+        loadParties();
+        window.location.reload();
+      } else {
+        toast.error("Reset Failed", {
+          description: "Failed to reset party data. Please try again.",
+        });
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -272,6 +290,13 @@ export default function Admin() {
                   onClick={() => setLocation("/")}
                 >
                   Back to Home
+                </Button>
+                <Button
+                  variant="outline"
+                  className="glass border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
+                  onClick={handleResetData}
+                >
+                  Reset to English Data
                 </Button>
                 <Button
                   variant="outline"

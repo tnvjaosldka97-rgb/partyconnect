@@ -236,3 +236,18 @@ export function createPartyFromApplication(application: HostApplication): boolea
   }
 }
 
+
+
+// Reset parties to initial English data
+export function resetPartiesToInitialData(): boolean {
+  try {
+    // Import initial parties data
+    const { initialParties } = require("./initialParties");
+    localStorage.setItem("parties", JSON.stringify(initialParties));
+    return true;
+  } catch (error) {
+    console.error("Failed to reset parties to initial data:", error);
+    return false;
+  }
+}
+
