@@ -1,4 +1,50 @@
 // LocalStorage management utilities
+import { z } from 'zod';
+
+// Zod schemas for runtime validation
+const HostApplicationSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  phone: z.string(),
+  email: z.string(),
+  city: z.string(),
+  spaceType: z.string(),
+  address: z.string(),
+  capacity: z.number(),
+  intro: z.string(),
+  experience: z.string(),
+  images: z.array(z.string()),
+  idCardImage: z.string(),
+  criminalRecordImage: z.string(),
+  agreedToTerms: z.boolean(),
+  agreedToLegalResponsibility: z.boolean(),
+  status: z.enum(["pending", "approved", "rejected"]),
+  appliedAt: z.string(),
+  approvedAt: z.string().optional(),
+});
+
+const PartySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  date: z.string(),
+  time: z.string(),
+  location: z.string(),
+  city: z.string(),
+  host: z.string(),
+  hostId: z.string(),
+  price: z.number(),
+  capacity: z.number(),
+  attendees: z.number(),
+  ageRange: z.string(),
+  type: z.string(),
+  description: z.string(),
+  images: z.array(z.string()),
+  tags: z.array(z.string()),
+  rating: z.number(),
+  reviews: z.number(),
+  status: z.enum(["pending", "approved", "rejected"]).optional(),
+  createdAt: z.string().optional(),
+});
 
 export interface HostApplication {
   id: string;
@@ -46,14 +92,42 @@ export interface Party {
 
 // Host application management
 export function getHostApplications(): HostApplication[] {
-  const data = localStorage.getItem("hostApplications");
-  return data ? JSON.parse(data) : [];
+  try {
+    const data = localStorage.getItem("hostApplications");
+    if (!data) return [];
+    
+    const parsed = JSON.parse(data);
+    
+    // Validate data with Zod
+    const validated = z.array(HostApplicationSchema).safeParse(parsed);
+    
+    if (validated.success) {
+      return validated.data;
+    } else {
+      console.error("Invalid host applications data:", validated.error);
+      // Backup corrupted data
+      localStorage.setItem("hostApplications_backup", data);
+      localStorage.removeItem("hostApplications");
+      return [];
+    }
+  } catch (error) {
+    console.error("Failed to load host applications:", error);
+    return [];
+  }
 }
 
 export function saveHostApplication(application: HostApplication): boolean {
   try {
+    // Validate application data
+    const validated = HostApplicationSchema.safeParse(application);
+    
+    if (!validated.success) {
+      console.error("Invalid application data:", validated.error);
+      return false;
+    }
+    
     const applications = getHostApplications();
-    applications.push(application);
+    applications.push(validated.data);
     localStorage.setItem("hostApplications", JSON.stringify(applications));
     return true;
   } catch (error) {

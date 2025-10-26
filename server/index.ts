@@ -24,7 +24,15 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    cb(null, `idcard-${uniqueSuffix}${ext}`);
+    
+    // 파일 타입에 따른 prefix
+    let prefix = "file";
+    if (req.path.includes("idcard")) prefix = "idcard";
+    else if (req.path.includes("criminal")) prefix = "criminal";
+    else if (req.path.includes("space")) prefix = "space";
+    else if (req.path.includes("party") || req.path.includes("image")) prefix = "party";
+    
+    cb(null, `${prefix}-${uniqueSuffix}${ext}`);
   },
 });
 
@@ -182,7 +190,7 @@ async function startServer() {
     });
   });
 
-  // 파티 사진 업로드
+  // 파티 사진 업로드 (단일)
   app.post("/api/upload/party", upload.single("party"), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ success: false, message: "파일이 업로드되지 않았습니다" });
@@ -195,6 +203,58 @@ async function startServer() {
       fileUrl,
       filename: req.file.filename,
     });
+  });
+
+  // 파티 이미지 업로드 (다중) - CreateParty용
+  app.post("/api/upload-image", upload.single("image"), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No file uploaded" 
+        });
+      }
+
+      const fileUrl = `/uploads/${req.file.filename}`;
+      res.json({
+        success: true,
+        url: fileUrl,
+        filename: req.file.filename,
+      });
+    } catch (error) {
+      console.error("Image upload error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to upload image" 
+      });
+    }
+  });
+
+  // 파티 이미지 다중 업로드 - Admin Edit용
+  app.post("/api/upload-images", upload.array("images", 10), (req, res) => {
+    try {
+      if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No files uploaded" 
+        });
+      }
+
+      const files = req.files as Express.Multer.File[];
+      const urls = files.map(file => `/uploads/${file.filename}`);
+      
+      res.json({
+        success: true,
+        urls,
+        count: files.length,
+      });
+    } catch (error) {
+      console.error("Images upload error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to upload images" 
+      });
+    }
   });
 
   // 호스트 신청 제출

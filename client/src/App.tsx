@@ -15,6 +15,7 @@ import AllParties from "./pages/AllParties";
 import HostDashboard from "./pages/HostDashboard";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import HostApprovals from "./pages/HostApprovals";
 import { useEffect } from "react";
 import { getParties, saveParty } from "./lib/storage";
 import { initialParties } from "./lib/initialParties";
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/admin" component={Admin} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/change-password" component={ChangePassword} />
+      <Route path="/admin/host-approvals" component={HostApprovals} />
       <Route path="/terms" component={TermsOfService} />
       <Route path="/privacy" component={PrivacyPolicy} />
       <Route path={"/404"} component={NotFound} />

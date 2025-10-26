@@ -24,15 +24,17 @@ import {
   Clock,
   Tag,
   Shield,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { saveParty, getHostByEmail } from "@/lib/storage";
+import { sanitizeInput, validatePartyDateTime, validateCapacity, validatePrice } from "@/lib/validation";
 
 export default function CreateParty() {
   const [, setLocation] = useLocation();
   const [hostEmail, setHostEmail] = useState("");
   const [isHostVerified, setIsHostVerified] = useState(false);
-  const [currentHost, setCurrentHost] = useState<any>(null);
+  const [currentHost, setCurrentHost] = useState<{ id: string; name: string; email: string } | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -49,6 +51,11 @@ export default function CreateParty() {
   });
   const [partyImages, setPartyImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+
+  const handleRemoveImage = (index: number) => {
+    setPartyImages((prev) => prev.filter((_, i) => i !== index));
+    toast.success("Image removed");
+  };
 
   const handleHostVerification = () => {
     if (!hostEmail.trim()) {
@@ -70,9 +77,19 @@ export default function CreateParty() {
     }
   };
 
+  const MAX_IMAGES = 10;
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+
+    // Check image count limit
+    if (partyImages.length + files.length > MAX_IMAGES) {
+      toast.error("Too Many Images", {
+        description: `Maximum ${MAX_IMAGES} images allowed. You can upload ${MAX_IMAGES - partyImages.length} more.`,
+      });
+      return;
+    }
 
     // File size and format validation
     for (let i = 0; i < files.length; i++) {
@@ -94,29 +111,82 @@ export default function CreateParty() {
 
     try {
       const uploadedUrls: string[] = [];
+      const failedFiles: string[] = [];
 
-      // Convert images to Base64 for localStorage persistence
+      // Upload each file to server
       for (let i = 0; i < files.length; i++) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(files[i]);
-        });
-        uploadedUrls.push(base64);
+        const file = files[i];
+        
+        try {
+          const formData = new FormData();
+          formData.append("image", file);
+
+          const response = await fetch("/api/upload-image", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            uploadedUrls.push(data.url);
+          } else {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Upload failed: ${response.status}`);
+          }
+        } catch (fileError) {
+          console.error(`Failed to upload ${file.name}:`, fileError);
+          failedFiles.push(file.name);
+          
+          // Retry once for network errors
+          if (fileError instanceof TypeError && fileError.message.includes('fetch')) {
+            try {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              const formData = new FormData();
+              formData.append("image", file);
+              const retryResponse = await fetch("/api/upload-image", {
+                method: "POST",
+                body: formData,
+              });
+              if (retryResponse.ok) {
+                const data = await retryResponse.json();
+                uploadedUrls.push(data.url);
+                failedFiles.pop(); // Remove from failed list
+              }
+            } catch (retryError) {
+              console.error(`Retry failed for ${file.name}:`, retryError);
+            }
+          }
+        }
       }
 
-      setPartyImages((prev) => [...prev, ...uploadedUrls]);
-      toast.success("Party Images Uploaded Successfully!", {
-        description: `${uploadedUrls.length} file(s) uploaded.`,
-      });
+      // Update state with successfully uploaded images
+      if (uploadedUrls.length > 0) {
+        setPartyImages((prev) => [...prev, ...uploadedUrls]);
+      }
+
+      // Show appropriate toast message
+      if (failedFiles.length === 0) {
+        toast.success("Party Images Uploaded Successfully!", {
+          description: `${uploadedUrls.length} file(s) uploaded.`,
+        });
+      } else if (uploadedUrls.length > 0) {
+        toast.warning(`${uploadedUrls.length} uploaded, ${failedFiles.length} failed`, {
+          description: `Failed files: ${failedFiles.join(", ")}`,
+        });
+      } else {
+        toast.error("All uploads failed", {
+          description: "Please check your connection and try again.",
+        });
+      }
     } catch (error) {
       console.error("Party images upload error:", error);
       toast.error("Upload Failed", {
-        description: "An error occurred while uploading party images.",
+        description: error instanceof Error ? error.message : "An error occurred while uploading party images.",
       });
     } finally {
       setIsUploading(false);
+      // Reset input to allow re-uploading same files
+      e.target.value = "";
     }
   };
 
@@ -138,11 +208,33 @@ export default function CreateParty() {
       return;
     }
     
-    if (!formData.maxAttendees || parseInt(formData.maxAttendees) <= 0) {
-      toast.error("Please enter max attendees", {
-        description: "Maximum number of attendees must be greater than 0.",
+    // Date/Time validation
+    const dateTimeValidation = validatePartyDateTime(formData.date, formData.time);
+    if (!dateTimeValidation.valid) {
+      toast.error("Invalid Date/Time", {
+        description: dateTimeValidation.error,
       });
       return;
+    }
+    
+    // Capacity validation
+    const capacityValidation = validateCapacity(formData.maxAttendees);
+    if (!capacityValidation.valid) {
+      toast.error("Invalid Capacity", {
+        description: capacityValidation.error,
+      });
+      return;
+    }
+    
+    // Price validation
+    if (formData.price) {
+      const priceValidation = validatePrice(formData.price);
+      if (!priceValidation.valid) {
+        toast.error("Invalid Price", {
+          description: priceValidation.error,
+        });
+        return;
+      }
     }
 
     if (!isHostVerified || !currentHost) {
@@ -155,24 +247,24 @@ export default function CreateParty() {
     // Check if admin is logged in
     const isAdmin = localStorage.getItem("adminLoggedIn") === "true";
     
-    // 파티 데이터 저장
+    // Sanitize all text inputs to prevent XSS
     const partyData = {
       id: `party-${Date.now()}`,
-      title: formData.title.trim(),
+      title: sanitizeInput(formData.title.trim()),
       date: formData.date,
       time: formData.time || "19:00",
-      location: formData.address.trim(),
-      city: formData.city.trim(),
-      host: currentHost.name,
+      location: sanitizeInput(formData.address.trim()),
+      city: sanitizeInput(formData.city.trim()),
+      host: sanitizeInput(currentHost.name),
       hostId: currentHost.id,
       price: parseInt(formData.price) || 50,
       capacity: parseInt(formData.maxAttendees) || 20,
       attendees: 0,
       ageRange: formData.ageRange || "21-35",
       type: formData.type || "House Party",
-      description: formData.description.trim() || "Join us for an amazing party experience!",
+      description: sanitizeInput(formData.description.trim()) || "Join us for an amazing party experience!",
       images: partyImages.length > 0 ? partyImages : ["https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800"],
-      tags: formData.theme ? [formData.theme, formData.city] : [formData.city],
+      tags: formData.theme ? [sanitizeInput(formData.theme), sanitizeInput(formData.city)] : [sanitizeInput(formData.city)],
       rating: 4.5,
       reviews: 0,
       status: (isAdmin ? "approved" : "pending") as const,
@@ -435,55 +527,71 @@ export default function CreateParty() {
                   <h2 className="text-2xl font-bold">Party Images</h2>
                 </div>
 
-                <div>
-                  <Label htmlFor="partyImages">Click to Upload Images</Label>
-                  <input
-                    id="partyImages"
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png"
-                    multiple
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="partyImages"
-                    className={`mt-2 flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
-                      partyImages.length > 0
-                        ? "border-green-500/50 bg-green-500/10"
-                        : "border-white/20 hover:border-primary/50"
-                    }`}
-                  >
-                    {isUploading ? (
-                      <>
-                        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                        <p className="text-sm text-primary font-semibold">
-                          Uploading...
-                        </p>
-                      </>
-                    ) : partyImages.length > 0 ? (
-                      <>
-                        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-3">
-                          <CheckCircle2 className="w-6 h-6 text-green-500" />
-                        </div>
-                        <p className="text-sm text-green-400 mb-1 font-semibold">
-                          {partyImages.length} image(s) uploaded
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Click to upload more images
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-12 h-12 text-muted-foreground mb-3" />
-                        <p className="text-sm text-muted-foreground mb-1">
-                          Click to Upload Images
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          JPG, PNG (max 10MB) - Multiple files allowed
-                        </p>
-                      </>
-                    )}
-                  </label>
+                <div className="space-y-4">
+                  {/* Image Preview Grid */}
+                  {partyImages.length > 0 && (
+                    <div>
+                      <Label>Uploaded Images ({partyImages.length})</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                        {partyImages.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={image}
+                              alt={`Party image ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg border border-white/20"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(index)}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upload Button */}
+                  <div>
+                    <Label htmlFor="images">Click to Upload Images</Label>
+                    <input
+                      id="images"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      multiple
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="images"
+                      className={`mt-2 flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                        partyImages.length > 0
+                          ? "border-green-500/50 bg-green-500/10"
+                          : "border-white/20 hover:border-primary/50"
+                      }`}
+                    >
+                      {isUploading ? (
+                        <>
+                          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                          <p className="text-sm text-primary font-semibold">
+                            Uploading...
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {partyImages.length > 0 ? "Upload More Images" : "Click to Upload Images"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            JPG, PNG (max 10MB) - Multiple files allowed
+                          </p>
+                        </>
+                      )}
+                    </label>
+                  </div>
                 </div>
               </div>
 

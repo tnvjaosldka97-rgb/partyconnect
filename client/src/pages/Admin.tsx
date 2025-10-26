@@ -43,6 +43,8 @@ import {
   type HostApplication,
   type Party,
 } from "@/lib/storage";
+import { checkAdminAuth, logout } from "@/lib/auth";
+import { sanitizeInput } from "@/lib/validation";
 
 export default function Admin() {
   const [, setLocation] = useLocation();
@@ -54,42 +56,24 @@ export default function Admin() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [partyToDelete, setPartyToDelete] = useState<Party | null>(null);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
   useEffect(() => {
-    // Check authentication with backend
     const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/auth/check");
-        const data = await response.json();
-        
-        if (response.ok && data.authenticated) {
-          setIsAuthenticated(true);
-          // Load host applications and parties
-          loadHostApplications();
-          loadParties();
-        } else {
-          toast.error("Access Denied", {
-            description: "Admin login required.",
-          });
-          setLocation("/admin/login");
-        }
-      } catch (error) {
-        console.log("Auth check failed, trying localStorage auth...");
-        // Fallback to localStorage auth
-        const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
-        if (isLoggedIn) {
-          setIsAuthenticated(true);
-          loadHostApplications();
-          loadParties();
-        } else {
-          toast.error("Access Denied", {
-            description: "Admin login required.",
-          });
-          setLocation("/admin/login");
-        }
-      } finally {
-        setIsLoading(false);
+      const result = await checkAdminAuth();
+      
+      if (result.authenticated) {
+        setIsAuthenticated(true);
+        loadHostApplications();
+        loadParties();
+      } else {
+        toast.error("Access Denied", {
+          description: "Admin login required.",
+        });
+        setLocation("/admin/login");
       }
+      
+      setIsLoading(false);
     };
     
     checkAuth();
@@ -152,10 +136,118 @@ export default function Admin() {
     setIsEditDialogOpen(true);
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !editingParty) return;
+
+    // Check image count limit
+    const MAX_IMAGES = 10;
+    const currentCount = editingParty.images?.length || 0;
+    if (currentCount + files.length > MAX_IMAGES) {
+      toast.error("Too Many Images", {
+        description: `Maximum ${MAX_IMAGES} images allowed. You can upload ${MAX_IMAGES - currentCount} more.`,
+      });
+      return;
+    }
+
+    // File validation
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size > 10 * 1024 * 1024) {
+        toast.error("File size error", {
+          description: "File size must be 10MB or less.",
+        });
+        return;
+      }
+      if (!files[i].type.match(/image\/(jpeg|jpg|png)/)) {
+        toast.error("File format error", {
+          description: "Only JPG or PNG files are allowed.",
+        });
+        return;
+      }
+    }
+
+    setIsUploadingImages(true);
+
+    try {
+      const uploadedUrls: string[] = [];
+      const failedFiles: string[] = [];
+
+      // Upload each file to server
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        try {
+          const formData = new FormData();
+          formData.append("image", file);
+
+          const response = await fetch("/api/upload-image", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            uploadedUrls.push(data.url);
+          } else {
+            throw new Error(`Upload failed: ${response.status}`);
+          }
+        } catch (fileError) {
+          console.error(`Failed to upload ${file.name}:`, fileError);
+          failedFiles.push(file.name);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setEditingParty({
+          ...editingParty,
+          images: [...(editingParty.images || []), ...uploadedUrls],
+        });
+      }
+      
+      if (failedFiles.length === 0) {
+        toast.success("Images Uploaded Successfully!", {
+          description: `${uploadedUrls.length} file(s) uploaded.`,
+        });
+      } else if (uploadedUrls.length > 0) {
+        toast.warning(`${uploadedUrls.length} uploaded, ${failedFiles.length} failed`, {
+          description: `Failed files: ${failedFiles.join(", ")}`,
+        });
+      } else {
+        toast.error("All uploads failed");
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error("Upload Failed", {
+        description: "An error occurred while uploading images.",
+      });
+    } finally {
+      setIsUploadingImages(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    if (!editingParty) return;
+    const newImages = [...(editingParty.images || [])];
+    newImages.splice(index, 1);
+    setEditingParty({ ...editingParty, images: newImages });
+    toast.success("Image removed");
+  };
+
   const handleSaveEdit = () => {
     if (!editingParty) return;
 
-    const success = updateParty(editingParty.id, editingParty);
+    // Sanitize text inputs before saving
+    const sanitizedParty = {
+      ...editingParty,
+      title: sanitizeInput(editingParty.title),
+      description: sanitizeInput(editingParty.description),
+      location: sanitizeInput(editingParty.location),
+      city: sanitizeInput(editingParty.city),
+      host: sanitizeInput(editingParty.host),
+    };
+
+    const success = updateParty(sanitizedParty.id, sanitizedParty);
     
     if (success) {
       toast.success("Party Updated!", {
@@ -210,16 +302,8 @@ export default function Admin() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-    } catch (error) {
-      console.log("Backend logout failed");
-    }
-    
-    localStorage.removeItem("adminLoggedIn");
+  const handleLogout = () => {
+    logout();
     toast.success("Logged out successfully");
     setLocation("/admin/login");
   };
@@ -392,6 +476,25 @@ export default function Admin() {
             </TabsList>
 
             <TabsContent value="hosts" className="space-y-4">
+              {pendingApplications.length > 0 && (
+                <div className="glass-strong rounded-2xl p-6 border border-blue-500/30 bg-blue-500/5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Pending Approvals</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {pendingApplications.length} host application{pendingApplications.length > 1 ? 's' : ''} waiting for background check and approval
+                      </p>
+                    </div>
+                    <Button
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      onClick={() => setLocation("/admin/host-approvals")}
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      Review & Approve
+                    </Button>
+                  </div>
+                </div>
+              )}
               {hostApplications.length === 0 ? (
                 <div className="glass-strong rounded-2xl p-8 border border-white/10 text-center">
                   <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -729,6 +832,48 @@ export default function Admin() {
                   onChange={(e) => setEditingParty({ ...editingParty, description: e.target.value })}
                   className="glass border-white/20 min-h-[100px]"
                 />
+              </div>
+              <div className="grid gap-2">
+                <Label>Party Images</Label>
+                <div className="space-y-3">
+                  {editingParty.images && editingParty.images.length > 0 && (
+                    <div className="grid grid-cols-3 gap-3">
+                      {editingParty.images.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={image}
+                            alt={`Party image ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg border border-white/20"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="party-images"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      multiple
+                      onChange={handleImageUpload}
+                      className="glass border-white/20"
+                      disabled={isUploadingImages}
+                    />
+                    {isUploadingImages && (
+                      <span className="text-sm text-muted-foreground">Uploading...</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Upload party images (JPG or PNG, max 10MB each)
+                  </p>
+                </div>
               </div>
             </div>
           )}
