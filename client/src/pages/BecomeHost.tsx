@@ -73,13 +73,15 @@ export default function BecomeHost() {
     setIsUploading(prev => ({ ...prev, criminalRecord: true }));
 
     try {
-      // Mock upload: Create local URL for preview
-      const localUrl = URL.createObjectURL(file);
+      // Convert image to Base64 for localStorage persistence
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
       
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setCriminalRecordImage(localUrl);
+      setCriminalRecordImage(base64);
       toast.success("Criminal Record Uploaded Successfully", {
         description: "File has been securely saved.",
       });
@@ -116,13 +118,15 @@ export default function BecomeHost() {
     setIsUploading(prev => ({ ...prev, idCard: true }));
 
     try {
-      // Mock upload: Create local URL for preview
-      const localUrl = URL.createObjectURL(file);
+      // Convert image to Base64 for localStorage persistence
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
       
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setIdCardImage(localUrl);
+      setIdCardImage(base64);
       toast.success("ID Card Uploaded Successfully!", {
         description: "ID card copy has been securely uploaded.",
       });
@@ -160,16 +164,18 @@ export default function BecomeHost() {
     setIsUploading(prev => ({ ...prev, space: true }));
 
     try {
-      // Mock upload: Create local URLs for preview
+      // Convert images to Base64 for localStorage persistence
       const uploadedUrls: string[] = [];
 
       for (let i = 0; i < files.length; i++) {
-        const localUrl = URL.createObjectURL(files[i]);
-        uploadedUrls.push(localUrl);
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(files[i]);
+        });
+        uploadedUrls.push(base64);
       }
-
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setSpaceImages((prev) => [...prev, ...uploadedUrls]);
       toast.success("Space Photos Uploaded Successfully", {

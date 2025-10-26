@@ -31,15 +31,27 @@ export default function PartyCard({
   type,
 }: PartyCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [imgSrc, setImgSrc] = useState(image);
+  const [imgError, setImgError] = useState(false);
+
+  const defaultImage = "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop";
+
+  const handleImageError = () => {
+    if (!imgError) {
+      setImgError(true);
+      setImgSrc(defaultImage);
+    }
+  };
 
   return (
     <div className="group glass rounded-3xl overflow-hidden border border-white/10 hover:border-primary/30 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary/20">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
-          src={image}
+          src={imgSrc}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          onError={handleImageError}
         />
         
         {/* Badges */}

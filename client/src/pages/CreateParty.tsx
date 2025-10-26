@@ -95,14 +95,16 @@ export default function CreateParty() {
     try {
       const uploadedUrls: string[] = [];
 
-      // Mock upload: Create local URLs for preview
+      // Convert images to Base64 for localStorage persistence
       for (let i = 0; i < files.length; i++) {
-        const localUrl = URL.createObjectURL(files[i]);
-        uploadedUrls.push(localUrl);
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(files[i]);
+        });
+        uploadedUrls.push(base64);
       }
-
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setPartyImages((prev) => [...prev, ...uploadedUrls]);
       toast.success("Party Images Uploaded Successfully!", {
