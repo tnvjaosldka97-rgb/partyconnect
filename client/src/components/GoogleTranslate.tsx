@@ -13,6 +13,18 @@ export default function GoogleTranslate() {
   const translatorInitialized = useRef(false);
 
   useEffect(() => {
+    // Suppress removeChild errors globally
+    const originalRemoveChild = Node.prototype.removeChild;
+    Node.prototype.removeChild = function(child: Node) {
+      try {
+        return originalRemoveChild.call(this, child);
+      } catch (error) {
+        // Silently ignore removeChild errors from Google Translate
+        console.debug('removeChild error suppressed (Google Translate)');
+        return child;
+      }
+    };
+
     // Prevent multiple initializations
     if (translatorInitialized.current) {
       return;
@@ -68,6 +80,9 @@ export default function GoogleTranslate() {
     }
 
     return () => {
+      // Restore original removeChild
+      Node.prototype.removeChild = originalRemoveChild;
+      
       // Minimal cleanup - don't try to remove children
       if (window.googleTranslateElementInit) {
         delete window.googleTranslateElementInit;
