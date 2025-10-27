@@ -1,5 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 declare global {
   interface Window {
@@ -8,208 +14,167 @@ declare global {
   }
 }
 
+const languages = [
+  { code: "", name: "English" },
+  { code: "ko", name: "한국어" },
+  { code: "ja", name: "日本語" },
+  { code: "zh-CN", name: "中文(简体)" },
+  { code: "zh-TW", name: "中文(繁體)" },
+  { code: "es", name: "Español" },
+  { code: "fr", name: "Français" },
+  { code: "de", name: "Deutsch" },
+  { code: "pt", name: "Português" },
+  { code: "ru", name: "Русский" },
+  { code: "ar", name: "العربية" },
+];
+
 export default function GoogleTranslate() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scriptLoadedRef = useRef(false);
-  const translatorInitialized = useRef(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Suppress removeChild errors globally
-    const originalRemoveChild = Node.prototype.removeChild;
-    Node.prototype.removeChild = function(child: Node) {
-      try {
-        return originalRemoveChild.call(this, child);
-      } catch (error) {
-        console.debug('removeChild error suppressed (Google Translate)');
-        return child;
-      }
-    };
-
-    // Prevent multiple initializations
-    if (translatorInitialized.current) {
+    // Check if already loaded
+    if (window.google?.translate?.TranslateElement) {
+      initializeTranslate();
       return;
     }
 
-    // Google Translate initialization function
-    const initGoogleTranslate = () => {
-      if (window.google && window.google.translate && containerRef.current) {
-        if (containerRef.current) {
-          containerRef.current.innerHTML = '';
-        }
-        
-        try {
-          new window.google.translate.TranslateElement(
-            {
-              pageLanguage: "en",
-              includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
-              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-              autoDisplay: false,
-              multilanguagePage: true,
-            },
-            "google_translate_element"
-          );
-          translatorInitialized.current = true;
-        } catch (error) {
-          console.error("Error initializing Google Translate:", error);
-        }
-      }
+    // Load Google Translate script
+    const script = document.createElement("script");
+    script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    script.async = true;
+    
+    // Initialize function
+    window.googleTranslateElementInit = () => {
+      initializeTranslate();
     };
 
-    // Set up the callback
-    window.googleTranslateElementInit = initGoogleTranslate;
-
-    // Check if script already exists
-    const existingScript = document.querySelector('script[src*="translate.google.com"]');
-    
-    if (!existingScript && !scriptLoadedRef.current) {
-      const script = document.createElement("script");
-      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      script.async = true;
-      script.onerror = () => {
-        console.error("Failed to load Google Translate script");
-        scriptLoadedRef.current = false;
-      };
-      script.onload = () => {
-        scriptLoadedRef.current = true;
-      };
-      document.body.appendChild(script);
-    } else if (window.google && window.google.translate && !translatorInitialized.current) {
-      initGoogleTranslate();
-    }
+    document.body.appendChild(script);
 
     return () => {
-      Node.prototype.removeChild = originalRemoveChild;
+      // Cleanup
+      const scripts = document.querySelectorAll('script[src*="translate.google.com"]');
+      scripts.forEach(s => s.remove());
       
       if (window.googleTranslateElementInit) {
         delete window.googleTranslateElementInit;
       }
-      
-      if (containerRef.current) {
-        try {
-          containerRef.current.innerHTML = '';
-        } catch (error) {
-          // Ignore cleanup errors
-        }
-      }
     };
   }, []);
 
-  const handleGlobeClick = () => {
-    // Find and click the Google Translate select element
-    const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-    if (selectElement) {
-      // Trigger click to open dropdown
-      selectElement.focus();
-      selectElement.click();
+  const initializeTranslate = () => {
+    try {
+      if (!document.getElementById("google_translate_element")) {
+        const div = document.createElement("div");
+        div.id = "google_translate_element";
+        div.style.display = "none";
+        document.body.appendChild(div);
+      }
+
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false,
+        },
+        "google_translate_element"
+      );
       
-      // For mobile devices
-      const event = new MouseEvent('mousedown', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-      });
-      selectElement.dispatchEvent(event);
+      setIsReady(true);
+    } catch (error) {
+      console.error("Failed to initialize Google Translate:", error);
     }
   };
 
-  return (
-    <div className="relative flex items-center gap-2">
-      {/* Globe Button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleGlobeClick}
-        className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl glass border border-white/20 hover:bg-white/10"
-        title="Change Language"
-      >
-        <span className="text-xl">🌐</span>
-      </Button>
+  const changeLanguage = (langCode: string) => {
+    setIsOpen(false);
+    
+    // Wait a bit for Google Translate to be ready
+    setTimeout(() => {
+      const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      
+      if (selectElement) {
+        selectElement.value = langCode;
+        selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+      } else {
+        console.error("Google Translate not ready yet");
+        // Retry after a delay
+        setTimeout(() => {
+          const retrySelect = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+          if (retrySelect) {
+            retrySelect.value = langCode;
+            retrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }, 1000);
+      }
+    }, 100);
+  };
 
-      {/* Hidden Google Translate Element */}
-      <div className="hidden-translate">
-        <div
-          id="google_translate_element"
-          ref={containerRef}
-          className="google-translate-container"
-        />
-      </div>
+  return (
+    <>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl glass border border-white/20 hover:bg-white/10"
+            title="Change Language"
+          >
+            <span className="text-xl">🌐</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 glass border-white/20 bg-black/90 backdrop-blur-xl">
+          {languages.map((lang) => (
+            <DropdownMenuItem
+              key={lang.code}
+              onClick={() => changeLanguage(lang.code)}
+              className="cursor-pointer hover:bg-primary/20 text-white"
+            >
+              {lang.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <style>{`
-        /* Hide the Google Translate element but keep it functional */
-        .hidden-translate {
-          position: absolute;
-          left: -9999px;
-          top: -9999px;
-          opacity: 0;
-          pointer-events: none;
-        }
-        
-        /* When select is focused, show it */
-        .goog-te-combo:focus,
-        .goog-te-combo:active {
-          position: fixed !important;
-          left: auto !important;
-          top: 60px !important;
-          right: 20px !important;
-          opacity: 1 !important;
-          pointer-events: auto !important;
-          z-index: 9999 !important;
-        }
-        
-        /* Style the select dropdown */
-        .goog-te-combo {
-          background: rgba(26, 26, 46, 0.95) !important;
-          border: 1px solid rgba(255, 255, 255, 0.2) !important;
-          border-radius: 0.75rem !important;
-          color: white !important;
-          padding: 0.75rem !important;
-          font-size: 0.875rem !important;
-          cursor: pointer !important;
-          outline: none !important;
-          min-width: 180px !important;
-          backdrop-filter: blur(10px) !important;
-        }
-        
-        .goog-te-combo:hover {
-          background: rgba(26, 26, 46, 1) !important;
-          border-color: rgba(139, 92, 246, 0.5) !important;
-        }
-        
-        .goog-te-combo option {
-          background: #1a1a2e !important;
-          color: white !important;
-          padding: 0.5rem !important;
-        }
-        
-        /* Hide Google Translate branding */
-        .goog-te-gadget {
-          font-size: 0 !important;
-        }
-        
-        .goog-te-gadget > span {
+        /* Hide Google Translate UI elements */
+        #google_translate_element {
           display: none !important;
         }
         
-        /* Hide the banner */
         .goog-te-banner-frame {
+          display: none !important;
+        }
+        
+        .goog-te-gadget {
           display: none !important;
         }
         
         body {
           top: 0 !important;
+          position: static !important;
         }
         
         body.translated-ltr {
           top: 0 !important;
         }
         
-        .google-translate-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        .skiptranslate {
+          display: none !important;
+        }
+        
+        /* Hide iframe */
+        iframe.skiptranslate {
+          display: none !important;
+        }
+        
+        /* Ensure body doesn't get pushed down */
+        body {
+          top: 0px !important;
         }
       `}</style>
-    </div>
+    </>
   );
 }
 

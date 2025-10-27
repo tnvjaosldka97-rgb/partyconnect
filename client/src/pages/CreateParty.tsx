@@ -29,6 +29,7 @@ import {
 import { toast } from "sonner";
 import { saveParty, getHostByEmail } from "@/lib/storage";
 import { sanitizeInput, validatePartyDateTime, validateCapacity, validatePrice } from "@/lib/validation";
+import { uploadMultipleImages } from "@/lib/imageUpload";
 
 export default function CreateParty() {
   const [, setLocation] = useLocation();
@@ -110,54 +111,22 @@ export default function CreateParty() {
     setIsUploading(true);
 
     try {
+      // Convert FileList to Array
+      const fileArray = Array.from(files);
+      
+      // Upload all images to imgbb
+      const results = await uploadMultipleImages(fileArray);
+      
       const uploadedUrls: string[] = [];
       const failedFiles: string[] = [];
-
-      // Upload each file to server
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        try {
-          const formData = new FormData();
-          formData.append("image", file);
-
-          const response = await fetch("/api/upload-image", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            uploadedUrls.push(data.url);
-          } else {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Upload failed: ${response.status}`);
-          }
-        } catch (fileError) {
-          console.error(`Failed to upload ${file.name}:`, fileError);
-          failedFiles.push(file.name);
-          
-          // Retry once for network errors
-          if (fileError instanceof TypeError && fileError.message.includes('fetch')) {
-            try {
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              const formData = new FormData();
-              formData.append("image", file);
-              const retryResponse = await fetch("/api/upload-image", {
-                method: "POST",
-                body: formData,
-              });
-              if (retryResponse.ok) {
-                const data = await retryResponse.json();
-                uploadedUrls.push(data.url);
-                failedFiles.pop(); // Remove from failed list
-              }
-            } catch (retryError) {
-              console.error(`Retry failed for ${file.name}:`, retryError);
-            }
-          }
+      
+      results.forEach((result, index) => {
+        if (result.success && result.url) {
+          uploadedUrls.push(result.url);
+        } else {
+          failedFiles.push(fileArray[index].name);
         }
-      }
+      });
 
       // Update state with successfully uploaded images
       if (uploadedUrls.length > 0) {
