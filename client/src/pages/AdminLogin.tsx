@@ -17,10 +17,18 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('=== Admin Login Debug ===');
+    console.log('Form Data:', formData);
+    console.log('Username:', formData.username);
+    console.log('Password:', formData.password);
+    console.log('Expected: onlyup1! / onlyup12!');
     setIsLoading(true);
 
     try {
       // Check credentials
+      console.log('Checking credentials...');
+      console.log('Username match:', formData.username === "onlyup1!");
+      console.log('Password match:', formData.password === "onlyup12!");
       if (formData.username === "onlyup1!" && formData.password === "onlyup12!") {
         localStorage.setItem("adminLoggedIn", "true");
         
