@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PartyCard from "@/components/PartyCard";
 import { Button } from "@/components/ui/button";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import { mockParties } from "@/data/mockParties";
 import { usePartyFilter } from "@/hooks/usePartyFilter";
 import { getApprovedParties } from "@/lib/storage";
@@ -12,6 +12,18 @@ export default function AllParties() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [approvedParties, setApprovedParties] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Load approved parties from localStorage
   useEffect(() => {
@@ -32,6 +44,11 @@ export default function AllParties() {
   if (filters.city !== selectedCity) {
     updateFilter("city", selectedCity);
   }
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCity, filters.dateRange, filters.priceRange, filters.sortBy]);
 
   const quickFilters = [
     { label: "Tonight", value: "today", type: "dateRange" as const },
@@ -75,6 +92,101 @@ export default function AllParties() {
     }
   };
 
+  // Pagination logic
+  const itemsPerPage = isMobile ? 6 : filteredParties.length; // 6 items per page on mobile, all on desktop
+  const totalPages = Math.ceil(filteredParties.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentParties = filteredParties.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const renderPagination = () => {
+    if (!isMobile || totalPages <= 1) return null;
+
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage < maxVisiblePages - 1) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="flex items-center justify-center gap-2 mt-8">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="w-9 h-9 rounded-lg glass border-white/20 disabled:opacity-50"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        
+        {startPage > 1 && (
+          <>
+            <Button
+              variant="outline"
+              onClick={() => goToPage(1)}
+              className="w-9 h-9 rounded-lg glass border-white/20"
+            >
+              1
+            </Button>
+            {startPage > 2 && <span className="text-muted-foreground">...</span>}
+          </>
+        )}
+        
+        {pageNumbers.map((page) => (
+          <Button
+            key={page}
+            variant="outline"
+            onClick={() => goToPage(page)}
+            className={`w-9 h-9 rounded-lg glass border-white/20 ${
+              currentPage === page 
+                ? 'bg-primary/20 border-primary/50 text-primary font-semibold' 
+                : ''
+            }`}
+          >
+            {page}
+          </Button>
+        ))}
+        
+        {endPage < totalPages && (
+          <>
+            {endPage < totalPages - 1 && <span className="text-muted-foreground">...</span>}
+            <Button
+              variant="outline"
+              onClick={() => goToPage(totalPages)}
+              className="w-9 h-9 rounded-lg glass border-white/20"
+            >
+              {totalPages}
+            </Button>
+          </>
+        )}
+        
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="w-9 h-9 rounded-lg glass border-white/20 disabled:opacity-50"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen">
       <Header
@@ -93,7 +205,7 @@ export default function AllParties() {
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {totalResults > 0
-                ? `${totalResults} parties found`
+                ? `${totalResults} parties found${isMobile && totalPages > 1 ? ` • Page ${currentPage} of ${totalPages}` : ''}`
                 : "Join special parties prepared by verified hosts"}
             </p>
           </div>
@@ -159,17 +271,22 @@ export default function AllParties() {
 
           {/* Party Grid */}
           {filteredParties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredParties.map((party, index) => (
-                <div
-                  key={party.id}
-                  className="animate-fadeIn"
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  <PartyCard {...party} />
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {currentParties.map((party, index) => (
+                  <div
+                    key={party.id}
+                    className="animate-fadeIn"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <PartyCard {...party} />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Pagination */}
+              {renderPagination()}
+            </>
           ) : (
             <div className="text-center py-20">
               <div className="w-24 h-24 mx-auto mb-6 rounded-full glass-strong flex items-center justify-center">
