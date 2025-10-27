@@ -1,4 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 declare global {
   interface Window {
@@ -7,10 +14,25 @@ declare global {
   }
 }
 
+const languages = [
+  { code: "en", name: "English" },
+  { code: "ko", name: "한국어" },
+  { code: "ja", name: "日本語" },
+  { code: "zh-CN", name: "中文(简体)" },
+  { code: "zh-TW", name: "中文(繁體)" },
+  { code: "es", name: "Español" },
+  { code: "fr", name: "Français" },
+  { code: "de", name: "Deutsch" },
+  { code: "pt", name: "Português" },
+  { code: "ru", name: "Русский" },
+  { code: "ar", name: "العربية" },
+];
+
 export default function GoogleTranslate() {
   const containerRef = useRef<HTMLDivElement>(null);
   const scriptLoadedRef = useRef(false);
   const translatorInitialized = useRef(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // Suppress removeChild errors globally
@@ -19,7 +41,6 @@ export default function GoogleTranslate() {
       try {
         return originalRemoveChild.call(this, child);
       } catch (error) {
-        // Silently ignore removeChild errors from Google Translate
         console.debug('removeChild error suppressed (Google Translate)');
         return child;
       }
@@ -33,7 +54,6 @@ export default function GoogleTranslate() {
     // Google Translate initialization function
     const initGoogleTranslate = () => {
       if (window.google && window.google.translate && containerRef.current) {
-        // Clear any existing content using innerHTML (safer than removeChild)
         if (containerRef.current) {
           containerRef.current.innerHTML = '';
         }
@@ -63,7 +83,6 @@ export default function GoogleTranslate() {
     const existingScript = document.querySelector('script[src*="translate.google.com"]');
     
     if (!existingScript && !scriptLoadedRef.current) {
-      // Add the script
       const script = document.createElement("script");
       script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
       script.async = true;
@@ -76,76 +95,71 @@ export default function GoogleTranslate() {
       };
       document.body.appendChild(script);
     } else if (window.google && window.google.translate && !translatorInitialized.current) {
-      // Script already loaded, just initialize
       initGoogleTranslate();
     }
 
     return () => {
-      // Restore original removeChild
       Node.prototype.removeChild = originalRemoveChild;
       
-      // Minimal cleanup - don't try to remove children
       if (window.googleTranslateElementInit) {
         delete window.googleTranslateElementInit;
       }
       
-      // Use innerHTML for safe cleanup
       if (containerRef.current) {
         try {
           containerRef.current.innerHTML = '';
         } catch (error) {
-          // Ignore cleanup errors silently
+          // Ignore cleanup errors
         }
       }
     };
   }, []);
 
+  const changeLanguage = (langCode: string) => {
+    const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+    if (selectElement) {
+      selectElement.value = langCode;
+      selectElement.dispatchEvent(new Event('change'));
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div className="relative">
-      <div
-        id="google_translate_element"
-        ref={containerRef}
-        className="google-translate-container"
-      />
+    <>
+      {/* Hidden Google Translate Element */}
+      <div className="hidden">
+        <div
+          id="google_translate_element"
+          ref={containerRef}
+        />
+      </div>
+
+      {/* Custom Dropdown UI */}
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl glass border border-white/20 hover:bg-white/10"
+          >
+            <span className="text-xl">🌐</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 glass border-white/20">
+          {languages.map((lang) => (
+            <DropdownMenuItem
+              key={lang.code}
+              onClick={() => changeLanguage(lang.code)}
+              className="cursor-pointer hover:bg-primary/10"
+            >
+              {lang.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <style>{`
-        /* Hide Google Translate branding */
-        .goog-te-gadget {
-          font-family: inherit !important;
-          font-size: 0 !important;
-        }
-        
-        .goog-te-gadget > span {
-          display: none !important;
-        }
-        
-        .goog-te-gadget > div {
-          display: inline-block !important;
-        }
-        
-        /* Style the select dropdown */
-        .goog-te-combo {
-          background: rgba(255, 255, 255, 0.1) !important;
-          border: 1px solid rgba(255, 255, 255, 0.2) !important;
-          border-radius: 0.75rem !important;
-          color: white !important;
-          padding: 0.5rem 0.75rem !important;
-          font-size: 0.875rem !important;
-          cursor: pointer !important;
-          outline: none !important;
-          min-width: 120px !important;
-        }
-        
-        .goog-te-combo:hover {
-          background: rgba(255, 255, 255, 0.15) !important;
-          border-color: rgba(139, 92, 246, 0.5) !important;
-        }
-        
-        .goog-te-combo option {
-          background: #1a1a2e !important;
-          color: white !important;
-        }
-        
-        /* Hide the banner */
+        /* Hide Google Translate banner */
         .goog-te-banner-frame {
           display: none !important;
         }
@@ -154,23 +168,11 @@ export default function GoogleTranslate() {
           top: 0 !important;
         }
         
-        /* Fix body position when translated */
         body.translated-ltr {
           top: 0 !important;
         }
-        
-        .skiptranslate {
-          display: inline-block !important;
-        }
-        
-        /* Container styling */
-        .google-translate-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
       `}</style>
-    </div>
+    </>
   );
 }
 

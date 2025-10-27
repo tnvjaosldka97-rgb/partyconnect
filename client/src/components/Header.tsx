@@ -117,10 +117,8 @@ export default function Header({
               </a>
             </Link>
 
-            {/* Google Translate - Hidden on small mobile */}
-            <div className="hidden sm:block">
-              <GoogleTranslate />
-            </div>
+            {/* Google Translate */}
+            <GoogleTranslate />
 
             {/* User Profile */}
             <DropdownMenu>
