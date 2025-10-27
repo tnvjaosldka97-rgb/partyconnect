@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
               <p className="text-gray-700 mb-4">
-                PartyConnect ("we," "us," or "our") respects your privacy and is committed to protecting your personal information. 
+                PartyBear ("we," "us," or "our") respects your privacy and is committed to protecting your personal information. 
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
               </p>
             </section>

@@ -169,33 +169,19 @@ export default function Admin() {
     setIsUploadingImages(true);
 
     try {
+      const { uploadMultipleImages } = await import("@/lib/imageUpload");
+      const results = await uploadMultipleImages(Array.from(files));
+      
       const uploadedUrls: string[] = [];
       const failedFiles: string[] = [];
 
-      // Upload each file to server
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        try {
-          const formData = new FormData();
-          formData.append("image", file);
-
-          const response = await fetch("/api/upload-image", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            uploadedUrls.push(data.url);
-          } else {
-            throw new Error(`Upload failed: ${response.status}`);
-          }
-        } catch (fileError) {
-          console.error(`Failed to upload ${file.name}:`, fileError);
-          failedFiles.push(file.name);
+      results.forEach((result, index) => {
+        if (result.success && result.url) {
+          uploadedUrls.push(result.url);
+        } else {
+          failedFiles.push(files[index].name);
         }
-      }
+      });
 
       if (uploadedUrls.length > 0) {
         setEditingParty({
@@ -361,7 +347,7 @@ export default function Admin() {
                   <span className="text-sm font-medium">Admin Dashboard</span>
                 </div>
                 <h1 className="text-4xl font-bold mb-2">
-                  <span className="gradient-text">PartyConnect</span> Management
+                  <span className="gradient-text">PartyBear</span> Management
                 </h1>
                 <p className="text-muted-foreground">
                   Manage host applications, tickets, and parties in one place

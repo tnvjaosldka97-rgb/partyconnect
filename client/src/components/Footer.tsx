@@ -36,9 +36,9 @@ export default function Footer() {
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-yellow-500 mb-2">Important Legal Notice</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                <strong>PartyConnect is an intermediary platform only.</strong> We connect party hosts with guests but do not organize, host, or manage any parties. 
+                <strong>PartyBear is an intermediary platform only.</strong> We connect party hosts with guests but do not organize, host, or manage any parties. 
                 All legal responsibilities, including compliance with alcohol laws, safety regulations, and liability for any incidents, lie solely with the hosts and guests. 
-                PartyConnect is not liable for any injuries, damages, or legal issues arising from parties listed on the platform. 
+                PartyBear is not liable for any injuries, damages, or legal issues arising from parties listed on the platform. 
                 By using this platform, you acknowledge and accept these terms. For full details, please read our{" "}
                 <Link href="/terms" className="text-yellow-500 hover:text-yellow-400 underline">Terms of Service</Link>.
               </p>

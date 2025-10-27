@@ -41,10 +41,10 @@ export default function Header({
           <Link href="/">
             <div className="flex items-center space-x-2 cursor-pointer">
               <div className="w-10 h-10 rounded-xl gradient-button flex items-center justify-center">
-                <span className="text-2xl">🎉</span>
+                <img src="/party-bear.png" alt="PartyBear" className="h-8 w-8 object-contain" />
               </div>
               <span className="text-2xl font-bold gradient-text hidden sm:block">
-                PartyConnect
+                PartyBear
               </span>
             </div>
           </Link>
@@ -105,17 +105,15 @@ export default function Header({
               </a>
             </Link>
             
-            <Link href="/create-party">
-              <a>
-                <Button
-                  variant="outline"
-                  className="h-9 px-2 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl text-xs sm:text-sm"
-                >
-                  <span className="hidden sm:inline">Create Party</span>
-                  <span className="sm:hidden">Create</span>
-                </Button>
-              </a>
-            </Link>
+            <a href="https://ig.me/m/partybear_" target="_blank" rel="noopener noreferrer">
+              <Button
+                variant="outline"
+                className="h-9 px-2 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl text-xs sm:text-sm"
+              >
+                <span className="hidden sm:inline">Create Party</span>
+                <span className="sm:hidden">Create</span>
+              </Button>
+            </a>
 
             {/* Google Translate */}
             <GoogleTranslate />

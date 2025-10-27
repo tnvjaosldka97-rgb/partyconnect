@@ -21,7 +21,7 @@ export default function TermsOfService() {
                   <h3 className="text-sm font-medium text-yellow-800">Important Notice</h3>
                   <div className="mt-2 text-sm text-yellow-700">
                     <p>
-                      <strong>PartyConnect is an intermediary platform only.</strong> We are not responsible for any issues, 
+                      <strong>PartyBear is an intermediary platform only.</strong> We are not responsible for any issues, 
                       damages, or incidents that occur between hosts and guests. All legal responsibilities lie with the hosts and guests.
                     </p>
                   </div>
@@ -32,11 +32,11 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Platform Role</h2>
               <p className="text-gray-700 mb-4">
-                PartyConnect ("we," "us," or "the Platform") is an online marketplace that connects party hosts with guests. 
+                PartyBear ("we," "us," or "the Platform") is an online marketplace that connects party hosts with guests. 
                 We provide information services and connection tools only.
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>PartyConnect does not organize, host, operate, or manage any parties</li>
+                <li>PartyBear does not organize, host, operate, or manage any parties</li>
                 <li>The Platform is not a party participant or attendee</li>
                 <li>We do not guarantee the accuracy, safety, or legality of any party listings</li>
                 <li>All parties are organized and hosted by independent third-party hosts</li>
@@ -46,7 +46,7 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Host Responsibilities</h2>
               <p className="text-gray-700 mb-4">
-                As a host on PartyConnect, you acknowledge and agree to the following:
+                As a host on PartyBear, you acknowledge and agree to the following:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
                 <li><strong>Legal Compliance:</strong> You must comply with all local, state, and federal laws regarding alcohol service, noise ordinances, safety regulations, and zoning laws</li>
@@ -54,14 +54,14 @@ export default function TermsOfService() {
                 <li><strong>Guest Safety:</strong> You must provide a safe environment and take reasonable precautions to prevent injuries</li>
                 <li><strong>Insurance:</strong> We strongly recommend obtaining appropriate liability insurance (General Liability, Liquor Liability, Property Damage)</li>
                 <li><strong>Full Liability:</strong> You accept all legal and financial responsibility for any incidents, injuries, damages, or violations that occur at your party</li>
-                <li><strong>Indemnification:</strong> You agree to indemnify and hold harmless PartyConnect from any claims, lawsuits, damages, or expenses arising from your party</li>
+                <li><strong>Indemnification:</strong> You agree to indemnify and hold harmless PartyBear from any claims, lawsuits, damages, or expenses arising from your party</li>
               </ul>
             </section>
 
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">3. Guest Responsibilities</h2>
               <p className="text-gray-700 mb-4">
-                As a guest on PartyConnect, you acknowledge and agree to the following:
+                As a guest on PartyBear, you acknowledge and agree to the following:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
                 <li><strong>Voluntary Participation:</strong> Your attendance at any party is entirely voluntary and at your own risk</li>
@@ -70,7 +70,7 @@ export default function TermsOfService() {
                 <li><strong>No Drunk Driving:</strong> You must not drive under the influence of alcohol</li>
                 <li><strong>Host Rules:</strong> You must comply with all rules set by the host</li>
                 <li><strong>Assumption of Risk:</strong> You understand and accept all risks associated with attending parties, including but not limited to alcohol consumption, injuries, property damage, and interactions with other guests</li>
-                <li><strong>Indemnification:</strong> You agree to indemnify and hold harmless PartyConnect from any claims, lawsuits, damages, or expenses arising from your attendance</li>
+                <li><strong>Indemnification:</strong> You agree to indemnify and hold harmless PartyBear from any claims, lawsuits, damages, or expenses arising from your attendance</li>
               </ul>
             </section>
 
@@ -87,14 +87,14 @@ export default function TermsOfService() {
                 To the fullest extent permitted by law:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>PartyConnect provides the platform "AS IS" without any warranties or guarantees</li>
+                <li>PartyBear provides the platform "AS IS" without any warranties or guarantees</li>
                 <li>We do not verify, endorse, or guarantee the safety, legality, or quality of any party or host</li>
                 <li>We are not responsible for the conduct, actions, or omissions of hosts or guests</li>
                 <li>We are not liable for any injuries, deaths, property damage, or losses occurring at parties</li>
                 <li>We are not responsible for alcohol-related incidents, including drunk driving, alcohol poisoning, or underage drinking</li>
                 <li>We are not liable for any violations of law by hosts or guests</li>
                 <li>All disputes between hosts and guests must be resolved directly between the parties</li>
-                <li>Our total liability, if any, shall not exceed the amount of fees paid to PartyConnect</li>
+                <li>Our total liability, if any, shall not exceed the amount of fees paid to PartyBear</li>
               </ul>
             </section>
 
@@ -105,8 +105,8 @@ export default function TermsOfService() {
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
                 <li>A direct contractual relationship is formed between the host and the guest</li>
-                <li>PartyConnect is not a party to this contract</li>
-                <li>PartyConnect merely facilitates the connection and payment processing</li>
+                <li>PartyBear is not a party to this contract</li>
+                <li>PartyBear merely facilitates the connection and payment processing</li>
                 <li>All obligations, responsibilities, and liabilities are between the host and guest only</li>
               </ul>
             </section>
@@ -115,7 +115,7 @@ export default function TermsOfService() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Safety Guidelines (Recommendations Only)</h2>
               <p className="text-gray-700 mb-4">
                 We provide safety guidelines and best practices as recommendations only. These are not legal requirements, 
-                and PartyConnect is not responsible for enforcing them:
+                and PartyBear is not responsible for enforcing them:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
                 <li>Verify guest ages to prevent underage drinking</li>
@@ -144,7 +144,7 @@ export default function TermsOfService() {
                 <li>Violations of local, state, or federal laws</li>
               </ul>
               <p className="text-gray-700 mt-4">
-                Violation of these terms may result in account suspension or termination. However, PartyConnect is not 
+                Violation of these terms may result in account suspension or termination. However, PartyBear is not 
                 responsible for monitoring or enforcing compliance.
               </p>
             </section>
@@ -152,7 +152,7 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Dispute Resolution</h2>
               <p className="text-gray-700 mb-4">
-                Any disputes between hosts and guests must be resolved directly between the parties. PartyConnect may 
+                Any disputes between hosts and guests must be resolved directly between the parties. PartyBear may 
                 offer mediation services at its sole discretion, but is not obligated to do so.
               </p>
             </section>
@@ -160,7 +160,7 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Indemnification</h2>
               <p className="text-gray-700 mb-4">
-                You agree to indemnify, defend, and hold harmless PartyConnect, its officers, directors, employees, and 
+                You agree to indemnify, defend, and hold harmless PartyBear, its officers, directors, employees, and 
                 agents from and against any claims, liabilities, damages, losses, and expenses (including legal fees) 
                 arising from:
               </p>
@@ -184,7 +184,7 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Changes to Terms</h2>
               <p className="text-gray-700">
-                PartyConnect reserves the right to modify these Terms of Service at any time. Continued use of the Platform 
+                PartyBear reserves the right to modify these Terms of Service at any time. Continued use of the Platform 
                 constitutes acceptance of the updated terms.
               </p>
             </section>
@@ -202,7 +202,7 @@ export default function TermsOfService() {
 
             <div className="bg-gray-100 border-l-4 border-gray-400 p-4 mt-8">
               <p className="text-sm text-gray-700">
-                <strong>By using PartyConnect, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</strong>
+                <strong>By using PartyBear, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</strong>
               </p>
             </div>
           </div>

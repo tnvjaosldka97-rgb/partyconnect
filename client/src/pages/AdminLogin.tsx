@@ -74,7 +74,7 @@ export default function AdminLogin() {
                   <span className="gradient-text">Admin Login</span>
                 </h1>
                 <p className="text-muted-foreground">
-                  Access PartyConnect Admin Dashboard
+                  Access PartyBear Admin Dashboard
                 </p>
               </div>
 
