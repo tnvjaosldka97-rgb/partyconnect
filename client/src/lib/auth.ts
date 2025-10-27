@@ -20,43 +20,16 @@ export async function checkAdminAuth(): Promise<AuthResult> {
     return { authenticated: false };
   }
   
-  // 2. 서버 검증 (선택적)
-  try {
-    const response = await fetch("/api/admin/check", {
-      credentials: "include",
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        authenticated: true,
-        user: {
-          id: data.username || "admin",
-          username: data.username || "admin",
-          role: "admin",
-        },
-      };
-    }
-  } catch (error) {
-    console.error("Auth check failed:", error);
-  }
-  
-  // localStorage는 true지만 서버 검증 실패
-  // 개발 환경에서는 허용, 프로덕션에서는 로그아웃
-  if (import.meta.env.DEV) {
-    return { 
-      authenticated: true,
-      user: {
-        id: "admin",
-        username: "admin",
-        role: "admin",
-      },
-    };
-  } else {
-    // 프로덕션에서는 서버 검증 실패 시 로그아웃
-    localStorage.removeItem("adminLoggedIn");
-    return { authenticated: false };
-  }
+  // localStorage가 true면 인증됨으로 처리
+  // 서버 API가 없으므로 localStorage만 사용
+  return { 
+    authenticated: true,
+    user: {
+      id: "admin",
+      username: "admin",
+      role: "admin",
+    },
+  };
 }
 
 /**
@@ -76,32 +49,15 @@ export function logout() {
  * Login admin
  */
 export async function login(username: string, password: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    const response = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-      credentials: "include",
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok && data.success) {
-      localStorage.setItem("adminLoggedIn", "true");
-      return { success: true };
-    } else {
-      return { 
-        success: false, 
-        error: data.message || "Login failed" 
-      };
-    }
-  } catch (error) {
-    console.error("Login error:", error);
+  // 서버 API가 없으므로 클라이언트에서 직접 검증
+  // 실제 프로덕션에서는 서버 API를 사용해야 함
+  if (username === "onlyup1!" && password === "onlyup12!") {
+    localStorage.setItem("adminLoggedIn", "true");
+    return { success: true };
+  } else {
     return { 
       success: false, 
-      error: "Network error. Please try again." 
+      error: "Invalid username or password" 
     };
   }
 }
