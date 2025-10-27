@@ -15,7 +15,7 @@ declare global {
 }
 
 const languages = [
-  { code: "en", name: "English" },
+  { code: "", name: "English" },
   { code: "ko", name: "한국어" },
   { code: "ja", name: "日本語" },
   { code: "zh-CN", name: "中文(简体)" },
@@ -29,35 +29,13 @@ const languages = [
 ];
 
 export default function GoogleTranslate() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scriptLoadedRef = useRef(false);
-  const translatorInitialized = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Suppress removeChild errors globally
-    const originalRemoveChild = Node.prototype.removeChild;
-    Node.prototype.removeChild = function(child: Node) {
-      try {
-        return originalRemoveChild.call(this, child);
-      } catch (error) {
-        console.debug('removeChild error suppressed (Google Translate)');
-        return child;
-      }
-    };
-
-    // Prevent multiple initializations
-    if (translatorInitialized.current) {
-      return;
-    }
-
-    // Google Translate initialization function
+    // Function to initialize Google Translate
     const initGoogleTranslate = () => {
-      if (window.google && window.google.translate && containerRef.current) {
-        if (containerRef.current) {
-          containerRef.current.innerHTML = '';
-        }
-        
+      if (window.google?.translate?.TranslateElement) {
         try {
           new window.google.translate.TranslateElement(
             {
@@ -65,73 +43,73 @@ export default function GoogleTranslate() {
               includedLanguages: "en,ko,es,fr,de,ja,zh-CN,zh-TW,pt,ru,ar",
               layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
               autoDisplay: false,
-              multilanguagePage: true,
             },
             "google_translate_element"
           );
-          translatorInitialized.current = true;
+          setIsReady(true);
         } catch (error) {
           console.error("Error initializing Google Translate:", error);
         }
       }
     };
 
-    // Set up the callback
+    // Set global callback
     window.googleTranslateElementInit = initGoogleTranslate;
 
     // Check if script already exists
     const existingScript = document.querySelector('script[src*="translate.google.com"]');
     
-    if (!existingScript && !scriptLoadedRef.current) {
+    if (!existingScript) {
+      // Load the script
       const script = document.createElement("script");
       script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
       script.async = true;
       script.onerror = () => {
         console.error("Failed to load Google Translate script");
-        scriptLoadedRef.current = false;
-      };
-      script.onload = () => {
-        scriptLoadedRef.current = true;
       };
       document.body.appendChild(script);
-    } else if (window.google && window.google.translate && !translatorInitialized.current) {
+    } else if (window.google?.translate) {
+      // Script already loaded
       initGoogleTranslate();
     }
 
     return () => {
-      Node.prototype.removeChild = originalRemoveChild;
-      
+      // Cleanup
       if (window.googleTranslateElementInit) {
         delete window.googleTranslateElementInit;
-      }
-      
-      if (containerRef.current) {
-        try {
-          containerRef.current.innerHTML = '';
-        } catch (error) {
-          // Ignore cleanup errors
-        }
       }
     };
   }, []);
 
   const changeLanguage = (langCode: string) => {
-    const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-    if (selectElement) {
-      selectElement.value = langCode;
-      selectElement.dispatchEvent(new Event('change'));
-      setIsOpen(false);
-    }
+    // Wait for Google Translate to be ready
+    const maxAttempts = 20;
+    let attempts = 0;
+
+    const tryChangeLanguage = () => {
+      const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      
+      if (selectElement) {
+        selectElement.value = langCode;
+        selectElement.dispatchEvent(new Event('change'));
+        setIsOpen(false);
+      } else if (attempts < maxAttempts) {
+        attempts++;
+        setTimeout(tryChangeLanguage, 100);
+      } else {
+        console.error("Google Translate select element not found");
+        setIsOpen(false);
+      }
+    };
+
+    tryChangeLanguage();
   };
 
   return (
     <>
       {/* Hidden Google Translate Element */}
-      <div className="hidden">
-        <div
-          id="google_translate_element"
-          ref={containerRef}
-        />
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+        <div id="google_translate_element" />
       </div>
 
       {/* Custom Dropdown UI */}
@@ -141,6 +119,7 @@ export default function GoogleTranslate() {
             variant="ghost"
             size="icon"
             className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl glass border border-white/20 hover:bg-white/10"
+            title="Change Language"
           >
             <span className="text-xl">🌐</span>
           </Button>
@@ -159,17 +138,35 @@ export default function GoogleTranslate() {
       </DropdownMenu>
 
       <style>{`
-        /* Hide Google Translate banner */
+        /* Hide Google Translate banner and branding */
         .goog-te-banner-frame {
+          display: none !important;
+        }
+        
+        .goog-te-gadget {
           display: none !important;
         }
         
         body {
           top: 0 !important;
+          position: static !important;
         }
         
         body.translated-ltr {
           top: 0 !important;
+        }
+        
+        .skiptranslate {
+          display: none !important;
+        }
+        
+        /* Hide the Google Translate toolbar */
+        .goog-te-banner-frame.skiptranslate {
+          display: none !important;
+        }
+        
+        body {
+          top: 0px !important;
         }
       `}</style>
     </>
