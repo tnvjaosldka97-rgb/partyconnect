@@ -94,6 +94,17 @@ export default function HeroSection() {
               <div className="text-xs sm:text-sm text-muted-foreground mt-1">Operating Experience</div>
             </div>
           </div>
+
+          {/* PartyBear Logo - Mobile Only */}
+          <div className="mt-12 sm:mt-16 md:hidden flex justify-center animate-fadeIn" style={{ animationDelay: '0.8s' }}>
+            <div className="w-48 h-48 flex items-center justify-center">
+              <img 
+                src={`/party-bear.png?v=${Date.now()}`} 
+                alt="PartyBear" 
+                className="w-full h-full object-contain drop-shadow-2xl"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>

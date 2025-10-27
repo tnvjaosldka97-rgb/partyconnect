@@ -28,7 +28,35 @@ export default function AllParties() {
   // Load approved parties from localStorage
   useEffect(() => {
     const approved = getApprovedParties();
-    setApprovedParties(approved);
+    
+    // Map localStorage parties to match mockParties format
+    const mappedParties = approved.map((p: any) => {
+      const price = Number(p.price) || 0;
+      const attendees = Number(p.attendees) || 0;
+      const capacity = Number(p.capacity) || 20;
+      
+      return {
+        id: p.id,
+        title: p.title || "Untitled Party",
+        image: (Array.isArray(p.images) && p.images.length > 0) ? p.images[0] : "/placeholder-party.jpg",
+        date: p.date,
+        dateTimestamp: new Date(p.date).getTime(),
+        location: p.location || p.city || "TBA",
+        city: p.city || "Unknown",
+        price: price,
+        priceFormatted: `$${price.toLocaleString()}`,
+        attendees: attendees,
+        maxAttendees: capacity,
+        ageRange: p.ageRange || "21-35",
+        type: p.type || "Party",
+        theme: p.type || "Party",
+        description: p.description || "",
+        hostName: p.host || "Host",
+        rating: Number(p.rating) || 4.5,
+      };
+    });
+    
+    setApprovedParties(mappedParties);
   }, []);
   
   // Combine mockParties with approved parties
