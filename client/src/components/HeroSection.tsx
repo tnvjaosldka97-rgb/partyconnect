@@ -97,7 +97,7 @@ export default function HeroSection() {
 
           {/* PartyBear Logo - Mobile Only */}
           <div className="mt-12 sm:mt-16 md:hidden flex justify-center animate-fadeIn" style={{ animationDelay: '0.8s' }}>
-            <div className="w-64 h-64 flex items-center justify-center">
+            <div className="w-80 h-80 flex items-center justify-center">
               <img 
                 src={`/party-bear.png?v=${Date.now()}`} 
                 alt="PartyBear" 
