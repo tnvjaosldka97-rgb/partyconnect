@@ -35,15 +35,15 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10">
-      <div className="container">
-        <div className="flex items-center justify-between h-20">
+      <div className="container px-3 sm:px-4">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center space-x-2 cursor-pointer">
-              <div className="w-10 h-10 rounded-xl gradient-button flex items-center justify-center">
-                <img src="/party-bear.png" alt="PartyBear" className="h-8 w-8 object-contain" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl gradient-button flex items-center justify-center">
+                <img src="/party-bear.png" alt="PartyBear" className="h-6 w-6 sm:h-8 sm:w-8 object-contain" />
               </div>
-              <span className="text-2xl font-bold gradient-text hidden sm:block">
+              <span className="text-lg sm:text-2xl font-bold gradient-text">
                 PartyBear
               </span>
             </div>
@@ -72,7 +72,7 @@ export default function Header({
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* City Selector */}
             <Select value={selectedCity} onValueChange={onCityChange}>
               <SelectTrigger className="w-32 h-10 glass border-white/20 rounded-xl hidden lg:flex">
@@ -97,23 +97,23 @@ export default function Header({
               <a>
                 <Button
                   variant="outline"
-                  className="h-9 px-2 sm:h-10 sm:px-4 glass border-primary/50 hover:bg-primary/10 rounded-xl text-xs sm:text-sm"
+                  className="h-8 px-3 sm:h-10 sm:px-4 glass border-primary/50 hover:bg-primary/10 rounded-lg text-xs sm:text-sm whitespace-nowrap"
                 >
-                  <span className="hidden sm:inline">Become a Host</span>
-                  <span className="sm:hidden">Host</span>
+                  Host
                 </Button>
               </a>
             </Link>
             
-            <a href="https://ig.me/m/partybear_" target="_blank" rel="noopener noreferrer">
-              <Button
-                variant="outline"
-                className="h-9 px-2 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-xl text-xs sm:text-sm"
-              >
-                <span className="hidden sm:inline">Create Party</span>
-                <span className="sm:hidden">Create</span>
-              </Button>
-            </a>
+            <Link href="/create-party">
+              <a>
+                <Button
+                  variant="outline"
+                  className="h-8 px-3 sm:h-10 sm:px-4 glass border-accent/50 hover:bg-accent/10 rounded-lg text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Create
+                </Button>
+              </a>
+            </Link>
 
             {/* Google Translate */}
             <GoogleTranslate />
@@ -162,7 +162,7 @@ export default function Header({
         </div>
 
         {/* Mobile Search Bar */}
-        <div className="pb-4 md:hidden">
+        <div className="pb-3 md:hidden">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
