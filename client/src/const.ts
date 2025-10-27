@@ -2,7 +2,7 @@ export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 export const APP_TITLE = "PartyBear 🐻";
 
-export const APP_LOGO = "/party-bear.png";
+export const APP_LOGO = `/party-bear.png?v=${Date.now()}`;
 
 // Generate login URL at runtime so redirect URI reflects the current origin.
 export const getLoginUrl = () => {

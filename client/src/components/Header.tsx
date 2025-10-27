@@ -41,7 +41,7 @@ export default function Header({
           <Link href="/">
             <div className="flex items-center space-x-2 cursor-pointer">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl gradient-button flex items-center justify-center">
-                <img src="/party-bear.png" alt="PartyBear" className="h-6 w-6 sm:h-8 sm:w-8 object-contain" />
+                <img src={`/party-bear.png?v=${Date.now()}`} alt="PartyBear" className="h-6 w-6 sm:h-8 sm:w-8 object-contain" />
               </div>
               <span className="text-lg sm:text-2xl font-bold gradient-text">
                 PartyBear
