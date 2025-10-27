@@ -325,3 +325,37 @@ export function resetPartiesToInitialData(): boolean {
   }
 }
 
+
+
+// Purchase ticket and increase attendees count
+export function purchaseTicket(partyId: string, ticketCount: number = 1): boolean {
+  try {
+    const parties = getParties();
+    const partyIndex = parties.findIndex((p) => p.id === partyId);
+    
+    if (partyIndex === -1) {
+      console.error("Party not found");
+      return false;
+    }
+    
+    const party = parties[partyIndex];
+    
+    // Check if there are enough spots
+    if (party.attendees + ticketCount > party.capacity) {
+      console.error("Not enough spots available");
+      return false;
+    }
+    
+    // Increase attendees count
+    parties[partyIndex].attendees += ticketCount;
+    
+    // Save to localStorage
+    localStorage.setItem("parties", JSON.stringify(parties));
+    
+    return true;
+  } catch (error) {
+    console.error("Failed to purchase ticket:", error);
+    return false;
+  }
+}
+

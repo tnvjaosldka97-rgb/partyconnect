@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { mockParties } from "@/data/mockParties";
-import { getApprovedParties } from "@/lib/storage";
+import { getApprovedParties, purchaseTicket } from "@/lib/storage";
 import {
   Calendar,
   MapPin,
@@ -72,9 +72,22 @@ export default function PartyDetail() {
   const availableSpots = party.maxAttendees - party.attendees;
 
   const handlePurchase = () => {
-    toast.success("Ticket Purchase Complete!", {
-      description: `${party.title} - ${ticketCount} ticket(s)`,
-    });
+    const success = purchaseTicket(party.id, ticketCount);
+    
+    if (success) {
+      toast.success("Ticket Purchase Complete!", {
+        description: `${party.title} - ${ticketCount} ticket(s)`,
+      });
+      
+      // Reload page to show updated attendees count
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      toast.error("Purchase Failed", {
+        description: "Not enough spots available or an error occurred.",
+      });
+    }
   };
 
   const handleShare = () => {
