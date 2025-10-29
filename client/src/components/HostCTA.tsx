@@ -5,19 +5,19 @@ import { Link } from "wouter";
 const benefits = [
   {
     icon: DollarSign,
-    text: "월 최대 $2,000 수익",
+    text: "Earn up to $2,000/month",
   },
   {
     icon: Home,
-    text: "자신의 공간 활용",
+    text: "Use your own space",
   },
   {
     icon: Users,
-    text: "새로운 사람들과 네트워킹",
+    text: "Network with new people",
   },
   {
     icon: TrendingUp,
-    text: "유연한 일정 관리",
+    text: "Flexible scheduling",
   },
 ];
 
@@ -43,14 +43,14 @@ export default function HostCTA() {
             <h2 className="animate-fadeIn">
               Host Parties and
               <br />
-              <span className="gradient-text">월 $2,000 수익 창출</span>
+              <span className="gradient-text">Generate $2,000 Monthly Income</span>
             </h2>
 
             {/* Description */}
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              당신의 공간을 활용하여 멋진 파티를 주최하고 수익을 얻으세요.
+              Host amazing parties using your space and earn income.
               <br className="hidden sm:block" />
-              우리가 All 것을 도와드립니다.
+              We'll help you with everything.
             </p>
 
             {/* Benefits */}
@@ -77,7 +77,7 @@ export default function HostCTA() {
                   size="lg"
                   className="gradient-button h-14 px-10 rounded-2xl text-lg font-semibold shadow-2xl group"
                 >
-                  호스팅 시작하기
+                  Start Hosting
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -85,7 +85,7 @@ export default function HostCTA() {
 
             {/* Additional Info */}
             <p className="text-sm text-muted-foreground">
-              무료 가입 · 수수료 없음 · 언제든지 시작 가능
+              Free to join · No fees · Start anytime
             </p>
           </div>
         </div>
