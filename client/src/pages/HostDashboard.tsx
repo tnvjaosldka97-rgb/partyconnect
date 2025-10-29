@@ -45,6 +45,20 @@ export default function HostDashboard() {
     const host = getHostByEmail(loginEmail);
     
     if (host) {
+      // Check if host application was rejected
+      if (host.status === "rejected") {
+        setLocation("/host/rejected");
+        return;
+      }
+      
+      // Check if host is approved
+      if (host.status !== "approved") {
+        toast.error("Access Denied", {
+          description: "Your host application is still pending review.",
+        });
+        return;
+      }
+      
       setHostInfo(host);
       setIsLoggedIn(true);
       setEmail(loginEmail);
