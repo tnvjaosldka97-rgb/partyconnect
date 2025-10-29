@@ -309,6 +309,67 @@ export default function HostApprovals() {
                     </div>
                   )}
 
+                  {/* Uploaded Documents */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    {/* ID Document */}
+                    <div className="glass rounded-xl p-4 border border-white/10">
+                      <h4 className="font-semibold mb-3 flex items-center">
+                        <Shield className="w-5 h-5 mr-2 text-primary" />
+                        ID Document
+                      </h4>
+                      {application.idCardImage ? (
+                        <div className="relative group">
+                          <img
+                            src={application.idCardImage}
+                            alt="ID Document"
+                            className="w-full h-48 object-cover rounded-lg border border-white/10"
+                          />
+                          <a
+                            href={application.idCardImage}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg"
+                          >
+                            <span className="text-white font-medium">View Full Size</span>
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+                          No ID document uploaded
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Criminal Record Document */}
+                    <div className="glass rounded-xl p-4 border border-white/10">
+                      <h4 className="font-semibold mb-3 flex items-center">
+                        <Shield className="w-5 h-5 mr-2 text-primary" />
+                        Criminal Record Document
+                      </h4>
+                      {application.criminalRecordImage ? (
+                        <div className="relative group">
+                          <img
+                            src={application.criminalRecordImage}
+                            alt="Criminal Record"
+                            className="w-full h-48 object-cover rounded-lg border border-white/10"
+                          />
+                          <a
+                            href={application.criminalRecordImage}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg"
+                          >
+                            <span className="text-white font-medium">View Full Size</span>
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+                          No criminal record document uploaded
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Verification Checklist (for pending view only) */}
                   {viewMode === "pending" && (
                   <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
