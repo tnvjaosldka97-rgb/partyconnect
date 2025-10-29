@@ -32,6 +32,8 @@ export default function BecomeHost() {
   const [previousApplication, setPreviousApplication] = useState<HostApplication | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     city: "",
@@ -63,6 +65,8 @@ export default function BecomeHost() {
         // Pre-fill form with previous data
         setFormData({
           fullName: previous.name,
+          firstName: previous.firstName || "",
+          lastName: previous.lastName || "",
           email: previous.email,
           phone: previous.phone,
           city: previous.city,
@@ -266,9 +270,13 @@ export default function BecomeHost() {
       console.log('ID Card Image:', idCardImage ? 'Uploaded' : 'Missing');
       console.log('Criminal Record Image:', criminalRecordImage ? 'Uploaded' : 'Missing');
       
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      
       const application: HostApplication = {
         id: `host-${Date.now()}`,
-        name: formData.fullName,
+        name: fullName,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         phone: formData.phone,
         email: formData.email,
         city: formData.city,
@@ -419,17 +427,31 @@ export default function BecomeHost() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="fullName">Full Name *</Label>
+                        <Label htmlFor="firstName">First Name *</Label>
                         <Input
-                          id="fullName"
+                          id="firstName"
                           required
-                          value={formData.fullName}
-                          onChange={(e) => updateField("fullName", e.target.value)}
+                          value={formData.firstName}
+                          onChange={(e) => updateField("firstName", e.target.value)}
                           className="glass border-white/20 mt-2"
-                          placeholder="John Doe"
+                          placeholder="John"
                         />
                       </div>
                       
+                      <div>
+                        <Label htmlFor="lastName">Last Name *</Label>
+                        <Input
+                          id="lastName"
+                          required
+                          value={formData.lastName}
+                          onChange={(e) => updateField("lastName", e.target.value)}
+                          className="glass border-white/20 mt-2"
+                          placeholder="Doe"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="phone">Phone Number *</Label>
                         <Input
@@ -442,19 +464,19 @@ export default function BecomeHost() {
                           placeholder="010-1234-5678"
                         />
                       </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="email">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => updateField("email", e.target.value)}
-                        className="glass border-white/20 mt-2"
-                        placeholder="example@email.com"
-                      />
+                      
+                      <div>
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => updateField("email", e.target.value)}
+                          className="glass border-white/20 mt-2"
+                          placeholder="john@example.com"
+                        />
+                      </div>
                     </div>
                   </div>
 

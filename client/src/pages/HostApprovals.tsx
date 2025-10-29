@@ -278,6 +278,18 @@ export default function HostApprovals() {
 
                   {/* Host Details */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
+                    {application.firstName && application.lastName && (
+                      <>
+                        <div>
+                          <p className="text-muted-foreground mb-1">First Name</p>
+                          <p className="font-medium">{application.firstName}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground mb-1">Last Name</p>
+                          <p className="font-medium">{application.lastName}</p>
+                        </div>
+                      </>
+                    )}
                     <div>
                       <p className="text-muted-foreground mb-1">Phone</p>
                       <p className="font-medium">{application.phone}</p>
