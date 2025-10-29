@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,8 +27,35 @@ export default function Header({
   selectedCity = "all",
   onCityChange,
 }: HeaderProps) {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show header when scrolling up or at the top
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true);
+      } 
+      // Hide header when scrolling down (after 100px)
+      else if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10 transition-transform duration-300 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
       <div className="container px-4 sm:px-4">
         {/* Main Header Row */}
         <div className="flex items-center justify-between h-14 sm:h-20">
