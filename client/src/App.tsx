@@ -17,6 +17,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HostApprovals from "./pages/HostApprovals";
 import UserProfile from "./pages/UserProfile";
+import HostRejected from "./pages/HostRejected";
 import { useEffect } from "react";
 import { getParties, saveParty } from "./lib/storage";
 import { initialParties } from "./lib/initialParties";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/terms" component={TermsOfService} />
       <Route path="/privacy" component={PrivacyPolicy} />
       <Route path="/profile" component={UserProfile} />
+      <Route path="/host/rejected" component={HostRejected} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

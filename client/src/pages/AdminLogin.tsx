@@ -14,23 +14,33 @@ export default function AdminLogin() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('=== Admin Login Debug ===');
-    console.log('Form Data:', formData);
-    console.log('Username:', formData.username);
-    console.log('Password:', formData.password);
-    console.log('Expected: onlyup1! / onlyup12!');
+    
+    // Check if account is locked
+    if (isLocked) {
+      toast.error("Account Locked", {
+        description: "Too many failed attempts. Please try again in 5 minutes.",
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
+      // Trim whitespace from inputs
+      const username = formData.username.trim();
+      const password = formData.password.trim();
+      
       // Check credentials
-      console.log('Checking credentials...');
-      console.log('Username match:', formData.username === "onlyup1!");
-      console.log('Password match:', formData.password === "onlyup12!");
-      if (formData.username === "onlyup1!" && formData.password === "onlyup12!") {
+      if (username === "onlyup1!" && password === "onlyup12!") {
+        // Reset login attempts on success
+        setLoginAttempts(0);
         localStorage.setItem("adminLoggedIn", "true");
+        localStorage.setItem("adminLoginTime", Date.now().toString());
         
         toast.success("Login Successful!", {
           description: "Redirecting to admin dashboard.",
@@ -40,9 +50,26 @@ export default function AdminLogin() {
           setLocation("/admin");
         }, 1000);
       } else {
-        toast.error("Login Failed", {
-          description: "Invalid username or password.",
-        });
+        // Increment login attempts
+        const newAttempts = loginAttempts + 1;
+        setLoginAttempts(newAttempts);
+        
+        // Lock account after 5 failed attempts
+        if (newAttempts >= 5) {
+          setIsLocked(true);
+          setTimeout(() => {
+            setIsLocked(false);
+            setLoginAttempts(0);
+          }, 5 * 60 * 1000); // 5 minutes
+          
+          toast.error("Account Locked", {
+            description: "Too many failed attempts. Try again in 5 minutes.",
+          });
+        } else {
+          toast.error("Login Failed", {
+            description: `Invalid credentials. ${5 - newAttempts} attempts remaining.`,
+          });
+        }
       }
     } catch (error) {
       toast.error("Login Failed", {

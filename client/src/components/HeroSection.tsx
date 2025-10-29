@@ -3,7 +3,7 @@ import { ArrowRight, Award, Calendar, Users } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[calc(100vh-3.5rem)] sm:min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20">
+    <section className="relative min-h-[calc(100vh-3.5rem)] sm:min-h-screen flex items-center justify-center overflow-hidden pt-32 sm:pt-20">
       {/* Background Video with Overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/80 z-10" />
