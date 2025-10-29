@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { saveHostApplication, getHostByEmail, type HostApplication } from "@/lib/storage";
+import { compressImage } from "@/lib/imageCompression";
 
 export default function BecomeHost() {
   const [, setLocation] = useLocation();
@@ -118,15 +119,10 @@ export default function BecomeHost() {
     setIsUploading(prev => ({ ...prev, criminalRecord: true }));
 
     try {
-      // Convert image to Base64 for localStorage persistence
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Compress image before storing
+      const compressedBase64 = await compressImage(file);
       
-      setCriminalRecordImage(base64);
+      setCriminalRecordImage(compressedBase64);
       toast.success("Criminal Record Uploaded Successfully", {
         description: "File has been securely saved.",
       });
@@ -163,15 +159,10 @@ export default function BecomeHost() {
     setIsUploading(prev => ({ ...prev, idCard: true }));
 
     try {
-      // Convert image to Base64 for localStorage persistence
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Compress image before storing
+      const compressedBase64 = await compressImage(file);
       
-      setIdCardImage(base64);
+      setIdCardImage(compressedBase64);
       toast.success("ID Card Uploaded Successfully!", {
         description: "ID card copy has been securely uploaded.",
       });
@@ -213,13 +204,9 @@ export default function BecomeHost() {
       const uploadedUrls: string[] = [];
 
       for (let i = 0; i < files.length; i++) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(files[i]);
-        });
-        uploadedUrls.push(base64);
+        // Compress each image before storing
+        const compressedBase64 = await compressImage(files[i]);
+        uploadedUrls.push(compressedBase64);
       }
 
       setSpaceImages((prev) => [...prev, ...uploadedUrls]);
