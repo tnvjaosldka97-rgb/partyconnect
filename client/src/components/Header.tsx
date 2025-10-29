@@ -11,14 +11,7 @@ import { APP_TITLE } from "@/const";
 import { MapPin, Search, User, LayoutDashboard, Shield, LogOut } from "lucide-react";
 import { Link } from "wouter";
 import GoogleTranslate from "@/components/GoogleTranslate";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import UserDropdown from "@/components/UserDropdown";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -121,51 +114,7 @@ export default function Header({
             <GoogleTranslate />
 
             {/* User Profile */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl glass hover:bg-white/10"
-                >
-                  <User className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 glass-strong border-white/20 bg-black/90 backdrop-blur-xl z-[100]">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <Link href="/profile">
-                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
-                    <User className="w-4 h-4 mr-2" />
-                    My Profile
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/host/dashboard">
-                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Host Dashboard
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/admin/login">
-                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
-                    <Shield className="w-4 h-4 mr-2" />
-                    Admin Login
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem
-                  className="cursor-pointer hover:bg-white/10 text-red-500"
-                  onClick={() => {
-                    localStorage.removeItem("hostEmail");
-                    localStorage.removeItem("adminLoggedIn");
-                    window.location.reload();
-                  }}
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserDropdown />
           </div>
         </div>
 
