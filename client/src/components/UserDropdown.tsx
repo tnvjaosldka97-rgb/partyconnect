@@ -2,10 +2,20 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { User, LayoutDashboard, Shield, LogOut } from "lucide-react";
 import { Link } from "wouter";
+import { isHostApproved } from "@/lib/storage";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isHost, setIsHost] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Check if user is an approved host
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail") || localStorage.getItem("hostEmail") || "";
+    if (userEmail && isHostApproved(userEmail)) {
+      setIsHost(true);
+    }
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -58,15 +68,17 @@ export default function UserDropdown() {
               </button>
             </Link>
 
-            <Link href="/host/dashboard">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="w-full px-4 py-2.5 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-sm"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Host Dashboard</span>
-              </button>
-            </Link>
+            {isHost && (
+              <Link href="/host/dashboard">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-full px-4 py-2.5 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-sm"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Host Dashboard</span>
+                </button>
+              </Link>
+            )}
 
             <Link href="/admin/login">
               <button
