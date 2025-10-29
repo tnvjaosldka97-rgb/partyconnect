@@ -131,7 +131,7 @@ export default function Header({
                   <User className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 glass-strong border-white/10">
+              <DropdownMenuContent align="end" className="w-56 glass-strong border-white/20 bg-black/90 backdrop-blur-xl z-[100]">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <Link href="/profile">
