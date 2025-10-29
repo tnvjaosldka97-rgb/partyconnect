@@ -21,15 +21,20 @@ export default function UserProfile() {
     setEmail(userEmail);
 
     // Check if user is an approved host
-    if (userEmail && isHostApproved(userEmail)) {
-      const host = getHostByEmail(userEmail);
-      if (host) {
-        setIsHost(true);
-        setHostInfo(host);
+    if (userEmail) {
+      const approved = isHostApproved(userEmail);
+      
+      if (approved) {
+        const host = getHostByEmail(userEmail);
         
-        // Get parties hosted by this user
-        const parties = getPartiesByHostEmail(userEmail);
-        setHostedParties(parties);
+        if (host) {
+          setIsHost(true);
+          setHostInfo(host);
+          
+          // Get parties hosted by this user
+          const parties = getPartiesByHostEmail(userEmail);
+          setHostedParties(parties);
+        }
       }
     }
   }, []);

@@ -37,7 +37,7 @@ function Router() {
       <Route path="/admin/host-approvals" component={HostApprovals} />
       <Route path="/terms" component={TermsOfService} />
       <Route path="/privacy" component={PrivacyPolicy} />
-      <Route path="/profile" component={UserProfile} />
+      <Route path="/user-profile" component={UserProfile} />
       <Route path="/host/rejected" component={HostRejected} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
