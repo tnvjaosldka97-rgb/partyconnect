@@ -382,6 +382,35 @@ export default function HostApprovals() {
                     </div>
                   </div>
 
+                  {/* Space Photos */}
+                  {application.images && application.images.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-3 flex items-center">
+                        <Home className="w-5 h-5 mr-2 text-primary" />
+                        Space Photos ({application.images.length})
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {application.images.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={image}
+                              alt={`Space Photo ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg border border-white/10"
+                            />
+                            <a
+                              href={image}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg"
+                            >
+                              <span className="text-white font-medium text-sm">View Full Size</span>
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Verification Checklist (for pending view only) */}
                   {viewMode === "pending" && (
                   <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">

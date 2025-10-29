@@ -239,6 +239,11 @@ export default function BecomeHost() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!formData.firstName || !formData.lastName) {
+      toast.error("Please enter your first name and last name");
+      return;
+    }
+    
     if (!formData.agreedToTerms) {
       toast.error("Please agree to the terms of service");
       return;
@@ -285,7 +290,7 @@ export default function BecomeHost() {
         capacity: parseInt(formData.capacity) || 0,
         intro: formData.bio,
         experience: formData.experience,
-        images: [],
+        images: spaceImages,
         idCardImage: idCardImage || "",
         criminalRecordImage: criminalRecordImage || "",
         agreedToTerms: formData.agreedToTerms,
