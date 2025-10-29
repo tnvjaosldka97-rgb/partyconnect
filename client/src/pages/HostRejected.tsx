@@ -46,17 +46,31 @@ export default function HostRejected() {
               </p>
             </div>
 
+            {/* Rejection Reason */}
+            {hostInfo?.rejectionReason && (
+              <div className="glass-strong rounded-2xl p-6 sm:p-8 border border-red-500/20 mb-8">
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <XCircle className="w-5 h-5 text-red-500" />
+                  Rejection Reason
+                </h2>
+                
+                <p className="text-muted-foreground leading-relaxed">
+                  {hostInfo.rejectionReason}
+                </p>
+              </div>
+            )}
+
             {/* Rejection Details */}
-            <div className="glass-strong rounded-2xl p-6 sm:p-8 border border-red-500/20 mb-8">
+            <div className="glass-strong rounded-2xl p-6 sm:p-8 border border-white/10 mb-8">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-red-500" />
-                Possible Reasons
+                <HelpCircle className="w-5 h-5 text-primary" />
+                Common Reasons for Rejection
               </h2>
               
               <ul className="space-y-3 text-muted-foreground">
                 <li className="flex items-start gap-3">
-                  <span className="text-red-500 mt-1">•</span>
-                  <span>Your application did not meet our current hosting requirements</span>
+                  <span className="text-primary mt-1">•</span>
+                  <span>Application did not meet our current hosting requirements</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-500 mt-1">•</span>

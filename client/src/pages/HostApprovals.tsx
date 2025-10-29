@@ -27,6 +27,10 @@ export default function HostApprovals() {
   const [isLoading, setIsLoading] = useState(true);
   const [hostApplications, setHostApplications] = useState<HostApplication[]>([]);
   const [checkedHosts, setCheckedHosts] = useState<Record<string, { idVerified: boolean; sorChecked: boolean }>>({});
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState<HostApplication | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [viewMode, setViewMode] = useState<"pending" | "rejected">("pending");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -47,18 +51,28 @@ export default function HostApprovals() {
     
     checkAuth();
   }, [setLocation]);
+  
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadHostApplications();
+    }
+  }, [viewMode, isAuthenticated]);
 
   const loadHostApplications = () => {
     const applications = getHostApplications();
-    const pending = applications.filter((app) => app.status === "pending");
-    setHostApplications(pending);
+    const filtered = applications.filter((app) => 
+      viewMode === "pending" ? app.status === "pending" : app.status === "rejected"
+    );
+    setHostApplications(filtered);
     
-    // Initialize checked state
-    const initialChecked: Record<string, { idVerified: boolean; sorChecked: boolean }> = {};
-    pending.forEach((app) => {
-      initialChecked[app.id] = { idVerified: false, sorChecked: false };
-    });
-    setCheckedHosts(initialChecked);
+    // Initialize checked state only for pending applications
+    if (viewMode === "pending") {
+      const initialChecked: Record<string, { idVerified: boolean; sorChecked: boolean }> = {};
+      filtered.forEach((app) => {
+        initialChecked[app.id] = { idVerified: false, sorChecked: false };
+      });
+      setCheckedHosts(initialChecked);
+    }
   };
 
   const handleCheckboxChange = (hostId: string, field: "idVerified" | "sorChecked", checked: boolean) => {
@@ -116,12 +130,34 @@ export default function HostApprovals() {
   };
 
   const handleReject = (application: HostApplication) => {
-    const success = updateHostApplicationStatus(application.id, "rejected");
+    setSelectedApplication(application);
+    setRejectionReason("");
+    setShowRejectDialog(true);
+  };
+  
+  const confirmReject = () => {
+    if (!selectedApplication) return;
+    
+    if (!rejectionReason.trim()) {
+      toast.error("Rejection Reason Required", {
+        description: "Please provide a reason for rejection.",
+      });
+      return;
+    }
+    
+    const success = updateHostApplicationStatus(
+      selectedApplication.id,
+      "rejected",
+      rejectionReason.trim()
+    );
     
     if (success) {
       toast.success("Host Application Rejected", {
-        description: `${application.name}'s application has been rejected.`,
+        description: `${selectedApplication.name}'s application has been rejected.`,
       });
+      setShowRejectDialog(false);
+      setSelectedApplication(null);
+      setRejectionReason("");
       loadHostApplications();
     } else {
       toast.error("Rejection Failed", {
@@ -162,10 +198,12 @@ export default function HostApprovals() {
                   <span className="text-sm font-medium">Host Approvals</span>
                 </div>
                 <h1 className="text-4xl font-bold mb-2">
-                  Pending <span className="gradient-text">Host Applications</span>
+                  {viewMode === "pending" ? "Pending" : "Rejected"} <span className="gradient-text">Host Applications</span>
                 </h1>
                 <p className="text-muted-foreground">
-                  Review and verify host applications with background checks
+                  {viewMode === "pending" 
+                    ? "Review and verify host applications with background checks"
+                    : "View rejected applications and their rejection reasons"}
                 </p>
               </div>
               <Button
@@ -176,6 +214,26 @@ export default function HostApprovals() {
                 Back to Dashboard
               </Button>
             </div>
+          </div>
+        </section>
+
+        {/* Tab Switcher */}
+        <section className="container mb-8">
+          <div className="flex space-x-2 glass-strong p-2 rounded-2xl inline-flex">
+            <Button
+              variant={viewMode === "pending" ? "default" : "ghost"}
+              className={viewMode === "pending" ? "gradient-button" : ""}
+              onClick={() => setViewMode("pending")}
+            >
+              Pending Applications
+            </Button>
+            <Button
+              variant={viewMode === "rejected" ? "default" : "ghost"}
+              className={viewMode === "rejected" ? "gradient-button" : ""}
+              onClick={() => setViewMode("rejected")}
+            >
+              Rejected Applications
+            </Button>
           </div>
         </section>
 
@@ -201,13 +259,20 @@ export default function HostApprovals() {
                     <div>
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-xl font-bold">{application.name}</h3>
-                        <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500/30">
-                          Pending Review
+                        <Badge className={viewMode === "pending" 
+                          ? "bg-yellow-500/20 text-yellow-500 border-yellow-500/30"
+                          : "bg-red-500/20 text-red-500 border-red-500/30"}>
+                          {viewMode === "pending" ? "Pending Review" : "Rejected"}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
                         Applied: {new Date(application.appliedAt).toLocaleString("en-US")}
                       </p>
+                      {viewMode === "rejected" && application.rejectedAt && (
+                        <p className="text-sm text-muted-foreground">
+                          Rejected: {new Date(application.rejectedAt).toLocaleString("en-US")}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -231,7 +296,21 @@ export default function HostApprovals() {
                     </div>
                   </div>
 
-                  {/* Verification Checklist */}
+                  {/* Rejection Reason (for rejected view) */}
+                  {viewMode === "rejected" && application.rejectionReason && (
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6">
+                      <h4 className="font-semibold mb-2 flex items-center text-red-500">
+                        <X className="w-5 h-5 mr-2" />
+                        Rejection Reason
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        {application.rejectionReason}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Verification Checklist (for pending view only) */}
+                  {viewMode === "pending" && (
                   <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
                     <h4 className="font-semibold mb-4 flex items-center">
                       <AlertTriangle className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
@@ -293,8 +372,10 @@ export default function HostApprovals() {
                       </div>
                     </div>
                   </div>
+                  )}
 
-                  {/* Action Buttons */}
+                  {/* Action Buttons (for pending view only) */}
+                  {viewMode === "pending" && (
                   <div className="flex gap-3">
                     <Button
                       className={`flex-1 ${
@@ -317,6 +398,7 @@ export default function HostApprovals() {
                       Reject Application
                     </Button>
                   </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -325,6 +407,59 @@ export default function HostApprovals() {
       </main>
 
       <Footer />
+      
+      {/* Rejection Dialog */}
+      {showRejectDialog && selectedApplication && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-strong rounded-2xl p-8 border border-white/10 max-w-2xl w-full">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Reject Host Application</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowRejectDialog(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-muted-foreground mb-4">
+                You are about to reject the application from <span className="text-white font-semibold">{selectedApplication.name}</span> ({selectedApplication.email}).
+              </p>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Rejection Reason *</label>
+                <textarea
+                  className="w-full h-32 px-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:border-primary/50 resize-none"
+                  placeholder="Please provide a detailed reason for rejection. This will be shown to the applicant."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Example: "The provided ID document was not clear enough for verification" or "The space does not meet our safety requirements"
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowRejectDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 bg-red-500/20 text-red-500 hover:bg-red-500/30 border-red-500/30"
+                onClick={confirmReject}
+              >
+                Confirm Rejection
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

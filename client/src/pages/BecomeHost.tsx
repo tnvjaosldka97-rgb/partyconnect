@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -24,10 +24,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import { saveHostApplication, type HostApplication } from "@/lib/storage";
+import { saveHostApplication, getHostByEmail, type HostApplication } from "@/lib/storage";
 
 export default function BecomeHost() {
   const [, setLocation] = useLocation();
+  const [isLoadingPrevious, setIsLoadingPrevious] = useState(true);
+  const [previousApplication, setPreviousApplication] = useState<HostApplication | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -49,6 +51,45 @@ export default function BecomeHost() {
     idCard: false,
     criminalRecord: false,
   });
+  
+  // Load previous application if user was rejected
+  useEffect(() => {
+    const hostEmail = localStorage.getItem("hostEmail");
+    if (hostEmail) {
+      const previous = getHostByEmail(hostEmail);
+      if (previous && previous.status === "rejected") {
+        setPreviousApplication(previous);
+        
+        // Pre-fill form with previous data
+        setFormData({
+          fullName: previous.name,
+          email: previous.email,
+          phone: previous.phone,
+          city: previous.city,
+          address: previous.address,
+          spaceType: previous.spaceType,
+          capacity: previous.capacity.toString(),
+          bio: previous.intro,
+          experience: previous.experience,
+          agreedToTerms: false, // Reset checkboxes
+          agreedToLegalWarning: false,
+        });
+        
+        // Pre-fill images if available
+        if (previous.idCardImage) {
+          setIdCardImage(previous.idCardImage);
+        }
+        if (previous.criminalRecordImage) {
+          setCriminalRecordImage(previous.criminalRecordImage);
+        }
+        
+        toast.info("Previous Application Loaded", {
+          description: "Your previous application data has been loaded. You can update it and reapply.",
+        });
+      }
+    }
+    setIsLoadingPrevious(false);
+  }, []);
 
   const handleCriminalRecordUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

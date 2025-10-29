@@ -21,6 +21,8 @@ const HostApplicationSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]),
   appliedAt: z.string(),
   approvedAt: z.string().optional(),
+  rejectionReason: z.string().optional(),
+  rejectedAt: z.string().optional(),
 });
 
 const PartySchema = z.object({
@@ -65,6 +67,8 @@ export interface HostApplication {
   status: "pending" | "approved" | "rejected";
   appliedAt: string;
   approvedAt?: string;
+  rejectionReason?: string;
+  rejectedAt?: string;
 }
 
 export interface Party {
@@ -155,7 +159,8 @@ export function saveHostApplication(application: HostApplication): boolean {
 
 export function updateHostApplicationStatus(
   id: string,
-  status: "approved" | "rejected"
+  status: "approved" | "rejected",
+  rejectionReason?: string
 ): boolean {
   try {
     const applications = getHostApplications();
@@ -164,7 +169,13 @@ export function updateHostApplicationStatus(
     if (index === -1) return false;
     
     applications[index].status = status;
-    applications[index].approvedAt = new Date().toISOString();
+    
+    if (status === "approved") {
+      applications[index].approvedAt = new Date().toISOString();
+    } else if (status === "rejected") {
+      applications[index].rejectedAt = new Date().toISOString();
+      applications[index].rejectionReason = rejectionReason || "Application did not meet our requirements.";
+    }
     
     localStorage.setItem("hostApplications", JSON.stringify(applications));
     return true;
