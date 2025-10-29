@@ -16,8 +16,8 @@ export default function UserProfile() {
   const [hostedParties, setHostedParties] = useState<Party[]>([]);
 
   useEffect(() => {
-    // Check if user is logged in
-    const userEmail = localStorage.getItem("userEmail") || "";
+    // Check if user is logged in - check both userEmail and hostEmail keys
+    const userEmail = localStorage.getItem("userEmail") || localStorage.getItem("hostEmail") || "";
     setEmail(userEmail);
 
     // Check if user is an approved host
@@ -106,7 +106,7 @@ export default function UserProfile() {
                       </div>
                       <div className="flex-1">
                         <Label className="text-sm text-muted-foreground">Full Name</Label>
-                        <p className="text-base font-medium">{hostInfo.fullName}</p>
+                        <p className="text-base font-medium">{hostInfo.name || `${hostInfo.firstName || ''} ${hostInfo.lastName || ''}`.trim()}</p>
                       </div>
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                     </div>
