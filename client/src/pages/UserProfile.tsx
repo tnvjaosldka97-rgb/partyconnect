@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, User, Mail, Phone, MapPin, Calendar, Shield } from "lucide-react";
-import { getHostByEmail, isHostApproved } from "@/lib/storage";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, User, Mail, Phone, MapPin, Calendar, Shield, PartyPopper, Clock, Users } from "lucide-react";
+import { getHostByEmail, isHostApproved, getPartiesByHostEmail, type Party } from "@/lib/storage";
 
 export default function UserProfile() {
   const [email, setEmail] = useState("");
   const [isHost, setIsHost] = useState(false);
   const [hostInfo, setHostInfo] = useState<any>(null);
+  const [hostedParties, setHostedParties] = useState<Party[]>([]);
 
   useEffect(() => {
     // Check if user is logged in
@@ -23,6 +26,10 @@ export default function UserProfile() {
       if (host) {
         setIsHost(true);
         setHostInfo(host);
+        
+        // Get parties hosted by this user
+        const parties = getPartiesByHostEmail(userEmail);
+        setHostedParties(parties);
       }
     }
   }, []);
@@ -171,6 +178,73 @@ export default function UserProfile() {
                 )}
               </div>
             </div>
+
+            {/* Hosted Parties Section */}
+            {isHost && hostedParties.length > 0 && (
+              <div className="glass-strong rounded-3xl p-8 border border-white/10 mt-8">
+                <div className="flex items-center space-x-3 mb-6">
+                  <PartyPopper className="w-6 h-6 text-primary" />
+                  <h2 className="text-2xl font-bold">My Hosted Parties</h2>
+                  <Badge variant="secondary" className="ml-auto">
+                    {hostedParties.length} {hostedParties.length === 1 ? 'Party' : 'Parties'}
+                  </Badge>
+                </div>
+                
+                <div className="grid gap-4">
+                  {hostedParties.map((party) => (
+                    <Link key={party.id} href={`/party/${party.id}`}>
+                      <div className="glass rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-all cursor-pointer group">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                              {party.title}
+                            </h3>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {party.status && (
+                                <Badge 
+                                  variant={party.status === 'approved' ? 'default' : party.status === 'pending' ? 'secondary' : 'destructive'}
+                                  className="text-xs"
+                                >
+                                  {party.status.charAt(0).toUpperCase() + party.status.slice(1)}
+                                </Badge>
+                              )}
+                              <Badge variant="outline" className="text-xs">
+                                {party.type}
+                              </Badge>
+                            </div>
+                          </div>
+                          {party.images && party.images.length > 0 && (
+                            <img 
+                              src={party.images[0]} 
+                              alt={party.title}
+                              className="w-24 h-24 object-cover rounded-lg ml-4"
+                            />
+                          )}
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="flex items-center space-x-2 text-muted-foreground">
+                            <Calendar className="w-4 h-4" />
+                            <span>{party.date} at {party.time}</span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-muted-foreground">
+                            <MapPin className="w-4 h-4" />
+                            <span>{party.city}</span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-muted-foreground">
+                            <Users className="w-4 h-4" />
+                            <span>{party.attendees}/{party.capacity} attendees</span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-primary font-medium">
+                            <span>${party.price}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       </main>

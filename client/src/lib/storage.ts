@@ -267,6 +267,17 @@ export function getApprovedParties(): Party[] {
   }
 }
 
+// Get parties by host email
+export function getPartiesByHostEmail(email: string): Party[] {
+  try {
+    const parties = getParties();
+    return parties.filter((party) => party.hostId === email);
+  } catch (error) {
+    console.error("Failed to get parties by host email:", error);
+    return [];
+  }
+}
+
 // Update party
 export function updateParty(id: string, updatedParty: Partial<Party>): boolean {
   try {
