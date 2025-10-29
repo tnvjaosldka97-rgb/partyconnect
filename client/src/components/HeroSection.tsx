@@ -52,8 +52,8 @@ export default function HeroSection() {
             Make new friends and create unforgettable moments
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 animate-fadeIn px-4" style={{ animationDelay: '0.4s' }}>
+          {/* CTA Button */}
+          <div className="flex items-center justify-center animate-fadeIn px-4" style={{ animationDelay: '0.4s' }}>
             <Button
               size="lg"
               onClick={() => {
@@ -62,17 +62,10 @@ export default function HeroSection() {
                   featuredSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
               }}
-              className="gradient-button h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl text-base sm:text-lg font-semibold shadow-2xl group w-full sm:w-auto"
+              className="gradient-button h-12 sm:h-14 px-8 sm:px-10 rounded-xl sm:rounded-2xl text-base sm:text-lg font-semibold shadow-2xl group"
             >
               Explore Now
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl text-base sm:text-lg font-semibold glass border-white/20 hover:bg-white/10 w-full sm:w-auto"
-            >
-              Host a Party
             </Button>
           </div>
 
