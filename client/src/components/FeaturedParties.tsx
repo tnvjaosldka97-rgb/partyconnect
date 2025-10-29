@@ -163,18 +163,39 @@ export default function FeaturedParties({
           <div className="mb-8 flex flex-wrap items-center gap-3">
             <span className="text-sm text-muted-foreground">Active Filters:</span>
             {searchQuery && (
-              <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                Search: "{searchQuery}"
+              <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30 flex items-center gap-2">
+                <span>Search: "{searchQuery}"</span>
+                <button
+                  onClick={() => updateFilter("searchQuery", "")}
+                  className="hover:text-red-500 transition-colors w-4 h-4 flex items-center justify-center"
+                  aria-label="Remove search filter"
+                >
+                  ✕
+                </button>
               </div>
             )}
             {selectedCity !== "all" && (
-              <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                City: {selectedCity}
+              <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30 flex items-center gap-2">
+                <span>City: {selectedCity}</span>
+                <button
+                  onClick={() => updateFilter("city", "all")}
+                  className="hover:text-red-500 transition-colors w-4 h-4 flex items-center justify-center"
+                  aria-label="Remove city filter"
+                >
+                  ✕
+                </button>
               </div>
             )}
             {filters.dateRange !== "all" && (
-              <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30">
-                Date: {quickFilters.find((f) => f.value === filters.dateRange)?.label}
+              <div className="glass rounded-full px-4 py-2 text-sm border border-primary/30 flex items-center gap-2">
+                <span>Date: {quickFilters.find((f) => f.value === filters.dateRange)?.label}</span>
+                <button
+                  onClick={() => updateFilter("dateRange", "all")}
+                  className="hover:text-red-500 transition-colors w-4 h-4 flex items-center justify-center"
+                  aria-label="Remove date filter"
+                >
+                  ✕
+                </button>
               </div>
             )}
           </div>
