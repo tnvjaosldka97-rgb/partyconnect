@@ -220,6 +220,11 @@ export default function BecomeHost() {
     }
 
     try {
+      console.log('=== Host Application Submission ===');
+      console.log('Form Data:', formData);
+      console.log('ID Card Image:', idCardImage ? 'Uploaded' : 'Missing');
+      console.log('Criminal Record Image:', criminalRecordImage ? 'Uploaded' : 'Missing');
+      
       const application: HostApplication = {
         id: `host-${Date.now()}`,
         name: formData.fullName,
@@ -240,9 +245,16 @@ export default function BecomeHost() {
         appliedAt: new Date().toISOString(),
       };
 
+      console.log('Application object created:', application);
+      console.log('Attempting to save...');
+      
       const success = saveHostApplication(application);
+      console.log('Save result:', success);
 
       if (success) {
+        // Store email in localStorage for future reference
+        localStorage.setItem("hostEmail", formData.email);
+        
         toast.success("Host application submitted successfully!", {
           description: "We will contact you within 24 hours after review.",
         });
@@ -251,13 +263,15 @@ export default function BecomeHost() {
           setLocation("/");
         }, 2000);
       } else {
+        console.error('Save failed - saveHostApplication returned false');
         toast.error("Application Failed", {
-          description: "Failed to submit application.",
+          description: "Failed to submit application. Please try again or contact support.",
         });
       }
     } catch (error) {
+      console.error('Application submission error:', error);
       toast.error("Error Occurred", {
-        description: "An error occurred while submitting application.",
+        description: error instanceof Error ? error.message : "An error occurred while submitting application.",
       });
     }
   };

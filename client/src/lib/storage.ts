@@ -118,20 +118,37 @@ export function getHostApplications(): HostApplication[] {
 
 export function saveHostApplication(application: HostApplication): boolean {
   try {
+    console.log('saveHostApplication called with:', application);
+    
     // Validate application data
     const validated = HostApplicationSchema.safeParse(application);
     
     if (!validated.success) {
       console.error("Invalid application data:", validated.error);
+      console.error("Validation errors:", JSON.stringify(validated.error.errors, null, 2));
       return false;
     }
     
+    console.log('Validation passed, getting existing applications...');
     const applications = getHostApplications();
+    console.log('Existing applications count:', applications.length);
+    
     applications.push(validated.data);
-    localStorage.setItem("hostApplications", JSON.stringify(applications));
+    console.log('New applications count:', applications.length);
+    
+    const dataToSave = JSON.stringify(applications);
+    console.log('Data size to save:', dataToSave.length, 'characters');
+    
+    localStorage.setItem("hostApplications", dataToSave);
+    console.log('Data saved successfully to localStorage');
+    
     return true;
   } catch (error) {
     console.error("Failed to save host application:", error);
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
     return false;
   }
 }
