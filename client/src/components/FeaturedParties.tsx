@@ -110,7 +110,7 @@ export default function FeaturedParties({
   };
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative" data-featured-parties>
       <div className="container">
         {/* Section Header */}
         <div className="text-center mb-12 space-y-4">

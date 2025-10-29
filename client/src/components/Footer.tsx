@@ -3,12 +3,14 @@ import { Input } from "./ui/input";
 import { APP_TITLE } from "@/const";
 import { Facebook, Instagram, Twitter, Youtube, AlertTriangle } from "lucide-react";
 import { Link } from "wouter";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const platformLinks = [
-  { label: "소개", href: "#" },
+  { label: "About", href: "#" },
   { label: "Host a Party", href: "#" },
   { label: "Explore Parties", href: "#" },
-  { label: "브랜드 제휴", href: "#" },
+  { label: "Brand Partnerships", href: "#" },
 ];
 
 const legalLinks = [
@@ -26,6 +28,43 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = () => {
+    if (!email) {
+      toast.error("Email Required", {
+        description: "Please enter your email address.",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid Email", {
+        description: "Please enter a valid email address.",
+      });
+      return;
+    }
+
+    // Save to localStorage for campaign notifications
+    const subscribers = JSON.parse(localStorage.getItem("newsletterSubscribers") || "[]");
+    if (subscribers.includes(email)) {
+      toast.info("Already Subscribed", {
+        description: "This email is already subscribed to our newsletter.",
+      });
+      return;
+    }
+
+    subscribers.push(email);
+    localStorage.setItem("newsletterSubscribers", JSON.stringify(subscribers));
+
+    toast.success("Subscription Successful!", {
+      description: "You'll receive notifications when new campaigns are created.",
+    });
+    setEmail("");
+  };
+
   return (
     <footer className="relative border-t border-white/10 mt-20">
       <div className="container py-16">
@@ -50,18 +89,18 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-xl gradient-button flex items-center justify-center">
-                <span className="text-2xl">🎉</span>
+                <img src="/party-bear.png" alt="PartyBear" className="w-8 h-8 object-contain" />
               </div>
               <span className="text-2xl font-bold gradient-text">{APP_TITLE}</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Premium party experience with verified people. 새로운 친구들과 특별한 순간을 만들어보세요.
+              Premium party experience with verified people. Make new friends & create unforgettable moments.
             </p>
           </div>
 
           {/* Platform Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">플랫폼</h4>
+            <h4 className="text-lg font-semibold mb-4">Platform</h4>
             <ul className="space-y-3">
               {platformLinks.map((link) => (
                 <li key={link.label}>
@@ -78,7 +117,7 @@ export default function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">법적 고지</h4>
+            <h4 className="text-lg font-semibold mb-4">Legal Notice</h4>
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.label}>
@@ -104,18 +143,21 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">뉴스레터 구독</h4>
+            <h4 className="text-lg font-semibold mb-4">Newsletter Subscription</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Get the latest party news and special offers
+              Get notified when new campaigns are created
             </p>
             <div className="flex space-x-2">
               <Input
                 type="email"
-                placeholder="이메일 주소"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubscribe()}
                 className="glass border-white/20 rounded-xl"
               />
-              <Button className="gradient-button rounded-xl px-6">
-                구독
+              <Button onClick={handleSubscribe} className="gradient-button rounded-xl px-6">
+                Subscribe
               </Button>
             </div>
           </div>
@@ -131,7 +173,7 @@ export default function Footer() {
 
             {/* Social Links */}
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground mr-2">팔로우:</span>
+              <span className="text-sm text-muted-foreground mr-2">Follow:</span>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (

@@ -3,9 +3,9 @@ import { CheckCircle2, Shield, Star, Users } from "lucide-react";
 const features = [
   {
     icon: Shield,
-    title: "검증된 프로필",
+    title: "Verified Profiles",
     description:
-      "All 게스트는 OTP, ID 업로드, 셀카 매칭, 전화 인증을 포함한 엄격한 검증 절차를 거칩니다.",
+      "All guests undergo rigorous verification including OTP, ID upload, selfie matching, and phone verification.",
     color: "text-primary",
     bgColor: "bg-primary/10",
   },
@@ -13,15 +13,15 @@ const features = [
     icon: Users,
     title: "Balanced Parties",
     description:
-      "각 파티는 최소 7명의 참석자와 60:40 성비를 요구하여 활기차고 포용적인 분위기를 보장합니다.",
+      "Each party requires a minimum of 7 attendees and a 60:40 gender ratio to ensure a vibrant and inclusive atmosphere.",
     color: "text-accent",
     bgColor: "bg-accent/10",
   },
   {
     icon: Star,
-    title: "실제 리뷰",
+    title: "Real Reviews",
     description:
-      "Rate hosts and guests to 다른 사람들을 돕고, 분위기와 엔터테인먼트에 대한 피드백을 공유하세요.",
+      "Rate hosts and guests to help others, and share feedback on atmosphere and entertainment.",
     color: "text-secondary",
     bgColor: "bg-secondary/10",
   },
@@ -49,15 +49,15 @@ export default function TrustSection() {
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full border border-primary/30 mb-4">
             <CheckCircle2 className="w-5 h-5 text-primary" />
-            <span className="text-sm font-medium">안전하고 신뢰할 수 있는</span>
+            <span className="text-sm font-medium">Safe & Reliable</span>
           </div>
           <h2 className="animate-fadeIn">
-            <span className="gradient-text">검증된 커뮤니티</span>에서
+            Enjoy with Peace of Mind
             <br />
-            안심하고 즐기세요
+            in a <span className="gradient-text">Verified Community</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            6년간 30,000+ members 이상의 회원이 신뢰한 안전한 파티 플랫폼
+            A trusted party platform with 30,000+ members over 6 years
           </p>
         </div>
 
@@ -101,11 +101,11 @@ export default function TrustSection() {
             </div>
             <div className="space-y-2">
               <div className="text-4xl font-bold gradient-text">4.9/5</div>
-              <div className="text-sm text-muted-foreground">평균 만족도 점수</div>
+              <div className="text-sm text-muted-foreground">Average Satisfaction Score</div>
             </div>
             <div className="space-y-2">
               <div className="text-4xl font-bold gradient-text">24/7</div>
-              <div className="text-sm text-muted-foreground">고객 지원 서비스</div>
+              <div className="text-sm text-muted-foreground">Customer Support Service</div>
             </div>
           </div>
         </div>

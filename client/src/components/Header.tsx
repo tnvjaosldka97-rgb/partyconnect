@@ -134,6 +134,12 @@ export default function Header({
               <DropdownMenuContent align="end" className="w-56 glass-strong border-white/10">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/10" />
+                <Link href="/profile">
+                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
+                    <User className="w-4 h-4 mr-2" />
+                    My Profile
+                  </DropdownMenuItem>
+                </Link>
                 <Link href="/host/dashboard">
                   <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
                     <LayoutDashboard className="w-4 h-4 mr-2" />

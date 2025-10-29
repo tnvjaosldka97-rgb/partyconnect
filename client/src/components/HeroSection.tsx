@@ -56,6 +56,12 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 animate-fadeIn px-4" style={{ animationDelay: '0.4s' }}>
             <Button
               size="lg"
+              onClick={() => {
+                const featuredSection = document.querySelector('[data-featured-parties]');
+                if (featuredSection) {
+                  featuredSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
               className="gradient-button h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl text-base sm:text-lg font-semibold shadow-2xl group w-full sm:w-auto"
             >
               Explore Now

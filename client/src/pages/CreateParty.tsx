@@ -577,7 +577,7 @@ export default function CreateParty() {
               </div>
 
               <p className="text-center text-sm text-muted-foreground">
-                등록 후 24Time 내에 검토 결과를 알려드립니다
+                Review results will be notified within 24 hours after registration
               </p>
             </form>
           </div>

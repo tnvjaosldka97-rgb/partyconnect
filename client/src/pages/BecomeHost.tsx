@@ -504,10 +504,10 @@ export default function BecomeHost() {
                           <SelectValue placeholder="Select Experience Level" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="None">None (처음입니다)</SelectItem>
-                          <SelectItem value="Beginner">Beginner (1-5회)</SelectItem>
-                          <SelectItem value="Intermediate">Intermediate (6-20회)</SelectItem>
-                          <SelectItem value="Expert">Expert (20회 이상)</SelectItem>
+                          <SelectItem value="First Time">First Time</SelectItem>
+                          <SelectItem value="Beginner">Beginner (1-5 times)</SelectItem>
+                          <SelectItem value="Intermediate">Intermediate (6-20 times)</SelectItem>
+                          <SelectItem value="Expert">Expert (20+ times)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
