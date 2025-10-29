@@ -409,6 +409,7 @@ export default function CreateParty() {
                       type="time"
                       value={formData.time}
                       onChange={(e) => updateField("time", e.target.value)}
+                      lang="en-US"
                       required
                     />
                   </div>
