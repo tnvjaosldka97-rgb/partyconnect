@@ -22,32 +22,37 @@ export async function uploadImage(file: File): Promise<ImageUploadResult> {
     // Convert file to base64
     const base64 = await fileToBase64(file);
     
-    // Remove data URL prefix
-    const base64Data = base64.split(',')[1];
+    // Try imgbb first
+    try {
+      const base64Data = base64.split(',')[1];
+      const formData = new FormData();
+      formData.append("key", IMGBB_API_KEY);
+      formData.append("image", base64Data);
 
-    const formData = new FormData();
-    formData.append("key", IMGBB_API_KEY);
-    formData.append("image", base64Data);
+      const response = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    const response = await fetch("https://api.imgbb.com/1/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.status}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data && data.data.url) {
+          return {
+            success: true,
+            url: data.data.url,
+          };
+        }
+      }
+    } catch (imgbbError) {
+      console.warn("imgbb upload failed, using Base64 fallback:", imgbbError);
     }
-
-    const data = await response.json();
     
-    if (data.success && data.data && data.data.url) {
-      return {
-        success: true,
-        url: data.data.url,
-      };
-    } else {
-      throw new Error("Invalid response from server");
-    }
+    // Fallback: Use Base64 data URL directly
+    // This stores images locally in the browser
+    return {
+      success: true,
+      url: base64,
+    };
   } catch (error) {
     console.error("Image upload error:", error);
     return {

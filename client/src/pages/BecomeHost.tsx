@@ -351,7 +351,7 @@ export default function BecomeHost() {
               <div className="glass-strong rounded-3xl p-8 md:p-12 border border-white/10">
                 <h2 className="text-3xl font-bold mb-2">Apply to Become a Host</h2>
                 <p className="text-muted-foreground mb-8">
-                  아래 정보를 입력해주시면 We will contact you within 24 hours after review.
+                  Please fill out the information below and we will contact you within 24 hours after review.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
