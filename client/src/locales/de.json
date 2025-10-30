@@ -1,0 +1,26 @@
+{
+  "header": {
+    "search": "Partys, Gastgeber, Themen, Orte suchen... (z.B.: New York, Musik)",
+    "allCities": "Alle Städte",
+    "host": "Gastgeber",
+    "create": "Erstellen"
+  },
+  "home": {
+    "hero": {
+      "title": "Premium Party Erlebnis",
+      "subtitle": "Mit Verifizierten Menschen",
+      "cta": "Jetzt Erkunden"
+    },
+    "stats": {
+      "members": "Verifizierte Mitglieder",
+      "parties": "Erfolgreiche Partys",
+      "experience": "Betriebserfahrung"
+    }
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "success": "Erfolg"
+  }
+}
+

@@ -1,0 +1,26 @@
+{
+  "header": {
+    "search": "Rechercher des fêtes, hôtes, thèmes, lieux... (ex: New York, musique)",
+    "allCities": "Toutes les villes",
+    "host": "Hôte",
+    "create": "Créer"
+  },
+  "home": {
+    "hero": {
+      "title": "Expérience de Fête Premium",
+      "subtitle": "Avec des Personnes Vérifiées",
+      "cta": "Explorer Maintenant"
+    },
+    "stats": {
+      "members": "Membres Vérifiés",
+      "parties": "Fêtes Réussies",
+      "experience": "Expérience Opérationnelle"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès"
+  }
+}
+

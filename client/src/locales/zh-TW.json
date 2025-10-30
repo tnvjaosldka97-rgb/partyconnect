@@ -1,0 +1,26 @@
+{
+  "header": {
+    "search": "搜尋派對、主持人、主題、地點... (例如：紐約、音樂)",
+    "allCities": "所有城市",
+    "host": "主持人",
+    "create": "創建"
+  },
+  "home": {
+    "hero": {
+      "title": "優質派對體驗",
+      "subtitle": "與經過驗證的人一起",
+      "cta": "立即探索"
+    },
+    "stats": {
+      "members": "已驗證會員",
+      "parties": "成功舉辦的派對",
+      "experience": "運營經驗"
+    }
+  },
+  "common": {
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "success": "成功"
+  }
+}
+

@@ -1,8 +1,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import enTranslations from "@/locales/en.json";
 import koTranslations from "@/locales/ko.json";
+import jaTranslations from "@/locales/ja.json";
+import zhCNTranslations from "@/locales/zh-CN.json";
+import zhTWTranslations from "@/locales/zh-TW.json";
+import esTranslations from "@/locales/es.json";
+import frTranslations from "@/locales/fr.json";
+import deTranslations from "@/locales/de.json";
+import viTranslations from "@/locales/vi.json";
+import thTranslations from "@/locales/th.json";
 
-type Language = "en" | "ko";
+type Language = "en" | "ko" | "ja" | "zh-CN" | "zh-TW" | "es" | "fr" | "de" | "vi" | "th";
 
 type Translations = typeof enTranslations;
 
@@ -14,9 +22,17 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations: Record<Language, Translations> = {
+const translations: Record<Language, any> = {
   en: enTranslations,
   ko: koTranslations,
+  ja: jaTranslations,
+  "zh-CN": zhCNTranslations,
+  "zh-TW": zhTWTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+  de: deTranslations,
+  vi: viTranslations,
+  th: thTranslations,
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

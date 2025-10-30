@@ -1,0 +1,26 @@
+{
+  "header": {
+    "search": "Tìm kiếm bữa tiệc, chủ nhà, chủ đề, địa điểm... (ví dụ: New York, âm nhạc)",
+    "allCities": "Tất cả thành phố",
+    "host": "Chủ nhà",
+    "create": "Tạo"
+  },
+  "home": {
+    "hero": {
+      "title": "Trải Nghiệm Tiệc Cao Cấp",
+      "subtitle": "Với Những Người Đã Xác Minh",
+      "cta": "Khám Phá Ngay"
+    },
+    "stats": {
+      "members": "Thành Viên Đã Xác Minh",
+      "parties": "Bữa Tiệc Thành Công",
+      "experience": "Kinh Nghiệm Vận Hành"
+    }
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Đã xảy ra lỗi",
+    "success": "Thành công"
+  }
+}
+

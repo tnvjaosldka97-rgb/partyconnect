@@ -1,0 +1,26 @@
+{
+  "header": {
+    "search": "搜索派对、主持人、主题、地点... (例如：纽约、音乐)",
+    "allCities": "所有城市",
+    "host": "主持人",
+    "create": "创建"
+  },
+  "home": {
+    "hero": {
+      "title": "优质派对体验",
+      "subtitle": "与经过验证的人一起",
+      "cta": "立即探索"
+    },
+    "stats": {
+      "members": "已验证会员",
+      "parties": "成功举办的派对",
+      "experience": "运营经验"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "发生错误",
+    "success": "成功"
+  }
+}
+

@@ -1,0 +1,26 @@
+{
+  "header": {
+    "search": "Buscar fiestas, anfitriones, temas, ubicaciones... (ej: Nueva York, música)",
+    "allCities": "Todas las ciudades",
+    "host": "Anfitrión",
+    "create": "Crear"
+  },
+  "home": {
+    "hero": {
+      "title": "Experiencia de Fiesta Premium",
+      "subtitle": "Con Personas Verificadas",
+      "cta": "Explorar Ahora"
+    },
+    "stats": {
+      "members": "Miembros Verificados",
+      "parties": "Fiestas Exitosas",
+      "experience": "Experiencia Operativa"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "success": "Éxito"
+  }
+}
+
