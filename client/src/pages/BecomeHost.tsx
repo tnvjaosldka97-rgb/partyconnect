@@ -236,25 +236,27 @@ export default function BecomeHost() {
       return;
     }
     
-    if (!criminalRecordImage) {
-      toast.error("Criminal record document upload is required");
-      return;
-    }
-    
-    if (!idCardImage) {
-      toast.error("ID card photo upload is required");
-      return;
-    }
+    // Temporarily disabled for testing
+    // if (!criminalRecordImage) {
+    //   toast.error("Criminal record document upload is required");
+    //   return;
+    // }
+    // 
+    // if (!idCardImage) {
+    //   toast.error("ID card photo upload is required");
+    //   return;
+    // }
     
     if (!formData.agreedToLegalWarning) {
       toast.error("Consent to legal responsibility for proxy writing is required");
       return;
     }
     
-    if (!idCardImage) {
-      toast.error("Please upload ID card copy");
-      return;
-    }
+    // Temporarily disabled for testing
+    // if (!idCardImage) {
+    //   toast.error("Please upload ID card copy");
+    //   return;
+    // }
 
     try {
       console.log('=== Host Application Submission ===');

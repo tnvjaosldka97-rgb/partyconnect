@@ -53,6 +53,19 @@ export default function CreateParty() {
   const [partyImages, setPartyImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Auto-verify host on page load if hostEmail exists in localStorage
+  useEffect(() => {
+    const savedHostEmail = localStorage.getItem("hostEmail");
+    if (savedHostEmail) {
+      setHostEmail(savedHostEmail);
+      const host = getHostByEmail(savedHostEmail);
+      if (host) {
+        setIsHostVerified(true);
+        setCurrentHost(host);
+      }
+    }
+  }, []);
+
   const handleRemoveImage = (index: number) => {
     setPartyImages((prev) => prev.filter((_, i) => i !== index));
     toast.success("Image removed");
