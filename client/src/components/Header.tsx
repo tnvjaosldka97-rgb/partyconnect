@@ -11,7 +11,8 @@ import {
 import { APP_TITLE } from "@/const";
 import { MapPin, Search, User, LayoutDashboard, Shield, LogOut } from "lucide-react";
 import { Link } from "wouter";
-import GoogleTranslate from "@/components/GoogleTranslate";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 import UserDropdown from "@/components/UserDropdown";
 
 interface HeaderProps {
@@ -27,6 +28,7 @@ export default function Header({
   selectedCity = "all",
   onCityChange,
 }: HeaderProps) {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -77,7 +79,7 @@ export default function Header({
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search parties, hosts, themes, locations... (e.g., New York, music)"
+                placeholder={t("header.search")}
                 value={searchQuery}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 className="pl-12 pr-4 h-12 glass border-white/20 focus:border-primary/50 rounded-2xl text-base"
@@ -138,8 +140,8 @@ export default function Header({
               </a>
             </Link>
 
-            {/* Google Translate */}
-            <GoogleTranslate />
+            {/* Language Toggle */}
+            <LanguageToggle />
 
             {/* User Profile */}
             <UserDropdown />
@@ -152,7 +154,7 @@ export default function Header({
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search parties..."
+              placeholder={t("header.search")}
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
               className="pl-12 pr-4 h-11 glass border-white/20 focus:border-primary/50 rounded-xl text-base"

@@ -1,7 +1,10 @@
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowRight, Award, Calendar, Users } from "lucide-react";
 
 export default function HeroSection() {
+  const { t } = useLanguage();
+  
   return (
     <section className="relative min-h-[calc(100vh-3.5rem)] sm:min-h-screen flex items-center justify-center overflow-hidden pt-32 sm:pt-20">
       {/* Background Video with Overlay */}
@@ -40,9 +43,9 @@ export default function HeroSection() {
 
           {/* Headline */}
           <h1 className="animate-fadeIn text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-            Premium Party Experience
+            {t("home.hero.title")}
             <br />
-            <span className="gradient-text">With Verified People</span>
+            <span className="gradient-text">{t("home.hero.subtitle")}</span>
           </h1>
 
           {/* Subheadline */}
@@ -64,7 +67,7 @@ export default function HeroSection() {
               }}
               className="gradient-button h-12 sm:h-14 px-8 sm:px-10 rounded-xl sm:rounded-2xl text-base sm:text-lg font-semibold shadow-2xl group"
             >
-              Explore Now
+              {t("home.hero.cta")}
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
@@ -76,7 +79,7 @@ export default function HeroSection() {
                 <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
               </div>
               <div className="text-xl sm:text-3xl font-bold gradient-text">30,000+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">Verified Members</div>
+              <div className="text-xs sm:text-sm text-muted-foreground mt-1">{t("home.stats.members")}</div>
             </div>
             <div className="glass-strong rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10">
               <div className="flex items-center justify-center mb-1 sm:mb-2">
@@ -90,7 +93,7 @@ export default function HeroSection() {
                 <Award className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
               </div>
               <div className="text-xl sm:text-3xl font-bold gradient-text">6 Years</div>
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">Operating Experience</div>
+              <div className="text-xs sm:text-sm text-muted-foreground mt-1">{t("home.stats.experience")}</div>
             </div>
           </div>
 

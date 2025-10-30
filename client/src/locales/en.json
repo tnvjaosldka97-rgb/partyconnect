@@ -1,0 +1,155 @@
+{
+  "header": {
+    "search": "Search parties, hosts, themes, locations... (e.g., New York, music)",
+    "allCities": "All Cities",
+    "host": "Host",
+    "create": "Create",
+    "profile": "Profile"
+  },
+  "home": {
+    "hero": {
+      "title": "Premium Party Experience",
+      "subtitle": "With Verified People",
+      "description": "Join 30,000+ verified members on the most trusted party platform",
+      "cta": "Explore Now"
+    },
+    "stats": {
+      "members": "Verified Members",
+      "parties": "Successful Parties",
+      "experience": "Operating Experience"
+    },
+    "featured": "Featured Parties",
+    "filters": {
+      "tonight": "Tonight",
+      "weekend": "This Weekend",
+      "price": "$40 or less",
+      "popular": "Popular",
+      "topRated": "Top Rated"
+    }
+  },
+  "party": {
+    "attending": "Attending",
+    "entryFee": "Entry Fee",
+    "viewDetails": "View Details",
+    "ageRange": "Age Range",
+    "type": "Party Type"
+  },
+  "becomeHost": {
+    "title": "Become a Host and Generate $2,000 Monthly Income",
+    "subtitle": "Host amazing parties using your space and earn income",
+    "benefits": {
+      "earn": "Earn up to $2,000/month",
+      "space": "Use your own space",
+      "network": "Network with new people",
+      "flexible": "Flexible scheduling"
+    },
+    "form": {
+      "personalInfo": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "email": "Email",
+      "city": "City",
+      "spaceInfo": "Space Information",
+      "spaceType": "Space Type",
+      "address": "Address",
+      "capacity": "Capacity",
+      "aboutYou": "About You",
+      "intro": "Introduction",
+      "experience": "Hosting Experience",
+      "documents": "Documents",
+      "idCard": "ID Card Copy",
+      "criminalRecord": "Criminal Record Document",
+      "terms": "Terms Agreement",
+      "submit": "Submit Application"
+    }
+  },
+  "createParty": {
+    "title": "Create a New Party",
+    "subtitle": "Join special parties prepared by verified hosts",
+    "verification": {
+      "title": "Host Verification",
+      "description": "You must be a verified host to create a party.",
+      "emailPlaceholder": "Email address used for host registration",
+      "verify": "Verify Host",
+      "notHost": "Not a host yet?",
+      "apply": "Apply to Become a Host"
+    },
+    "form": {
+      "basicInfo": "Basic Information",
+      "title": "Party Title",
+      "description": "Party Description",
+      "dateTime": "Date and Time",
+      "date": "Date",
+      "time": "Time",
+      "location": "Location",
+      "city": "City",
+      "address": "Address",
+      "attendees": "Attendees and Price",
+      "maxAttendees": "Max Attendees",
+      "entryFee": "Entry Fee ($)",
+      "details": "Details",
+      "type": "Party Type",
+      "theme": "Theme",
+      "ageRange": "Age Range",
+      "included": "What's Included",
+      "images": "Images",
+      "uploadImages": "Upload Party Images",
+      "submit": "Create Party"
+    }
+  },
+  "profile": {
+    "title": "User Profile",
+    "subtitle": "Manage your account information",
+    "email": "Email",
+    "accountType": "Account Type",
+    "client": "Client",
+    "host": "Host",
+    "notLoggedIn": "Not logged in",
+    "becomeHost": "Want to become a host?",
+    "applyNow": "Apply now",
+    "backToHome": "Back to Home",
+    "hostInfo": {
+      "title": "Host Information",
+      "name": "Name",
+      "phone": "Phone",
+      "city": "City",
+      "experience": "Hosting Experience"
+    },
+    "hostedParties": {
+      "title": "My Hosted Parties",
+      "none": "No hosted parties yet",
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      }
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "hostApprovals": "Host Approvals",
+    "pending": "Pending",
+    "rejected": "Rejected",
+    "noApplications": "No applications",
+    "approve": "Approve",
+    "reject": "Reject",
+    "backgroundCheck": "Background Check"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "viewMore": "View More",
+    "viewLess": "View Less"
+  }
+}
+
