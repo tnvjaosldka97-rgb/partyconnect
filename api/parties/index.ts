@@ -1,5 +1,24 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getDatabase } from '../lib/mongodb';
+import { MongoClient, Db } from 'mongodb';
+
+// MongoDB connection
+const uri = process.env.MONGODB_URI || '';
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
+
+async function connectToDatabase() {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb };
+  }
+
+  const client = await MongoClient.connect(uri);
+  const db = client.db('partybear');
+
+  cachedClient = client;
+  cachedDb = db;
+
+  return { client, db };
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
@@ -12,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const db = await getDatabase();
+    const { db } = await connectToDatabase();
     const partiesCollection = db.collection('parties');
 
     if (req.method === 'GET') {
