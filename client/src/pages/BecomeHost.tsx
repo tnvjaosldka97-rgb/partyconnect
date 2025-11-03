@@ -316,8 +316,26 @@ export default function BecomeHost() {
         // Store email in localStorage for future reference
         localStorage.setItem("hostEmail", formData.email);
         
-        toast.success("Host application submitted successfully!", {
-          description: "We will contact you within 24 hours after review.",
+        // Create Instagram DM message with host application details
+        const message = encodeURIComponent(
+          `🏠 호스트 신청 문의\n\n` +
+          `이름: ${fullName}\n` +
+          `닉네임: ${formData.nickname}\n` +
+          `이메일: ${formData.email}\n` +
+          `전화: ${formData.phone}\n` +
+          `도시: ${formData.city}\n` +
+          `공간 타입: ${formData.spaceType}\n` +
+          `수용 인원: ${formData.capacity}명\n` +
+          `경험: ${formData.experience}\n\n` +
+          `호스트 신청을 진행하고 싶습니다.`
+        );
+        
+        // Redirect to Instagram DM
+        const instagramDM = `https://www.instagram.com/direct/t/17842340226608213/?text=${message}`;
+        window.open(instagramDM, '_blank');
+        
+        toast.success("Instagram DM으로 이동합니다!", {
+          description: "DM에서 호스트 신청을 진행해주세요.",
         });
         
         setTimeout(() => {

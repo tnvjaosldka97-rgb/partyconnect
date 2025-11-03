@@ -332,8 +332,27 @@ export default function CreateParty() {
     
     if (success) {
       console.log("Party saved successfully:", partyData);
-      toast.success("Party Created Successfully!", {
-        description: "Your party will be reviewed and published soon.",
+      
+      // Create Instagram DM message with party details for approval and deposit
+      const message = encodeURIComponent(
+        `🎉 파티 개최 승인 요청 및 보증금 결제\n\n` +
+        `파티 제목: ${partyData.title}\n` +
+        `날짜: ${partyData.date} ${partyData.time}\n` +
+        `장소: ${partyData.location}\n` +
+        `도시: ${partyData.city}\n` +
+        `최대 인원: ${partyData.capacity}명\n` +
+        `입장료: $${partyData.price}\n` +
+        `타입: ${partyData.type}\n` +
+        `호스트: ${partyData.host}\n\n` +
+        `파티 개최 승인과 보증금 결제를 진행하고 싶습니다.`
+      );
+      
+      // Redirect to Instagram DM
+      const instagramDM = `https://www.instagram.com/direct/t/17842340226608213/?text=${message}`;
+      window.open(instagramDM, '_blank');
+      
+      toast.success("Instagram DM으로 이동합니다!", {
+        description: "DM에서 파티 승인 요청 및 보증금 결제를 진행해주세요.",
       });
       
       setTimeout(() => {

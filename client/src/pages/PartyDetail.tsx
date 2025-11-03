@@ -85,22 +85,25 @@ export default function PartyDetail() {
       return;
     }
     
-    const success = purchaseTicket(party.id, ticketCount);
+    // Create Instagram DM message with party details
+    const message = encodeURIComponent(
+      `🎉 파티 입장권 구매 문의\n\n` +
+      `파티: ${party.title}\n` +
+      `날짜: ${party.date} ${party.time || ''}\n` +
+      `장소: ${party.location}\n` +
+      `인원: ${ticketCount}명\n` +
+      `성별: ${gender}\n` +
+      `금액: $${totalPrice}\n\n` +
+      `입장권 구매를 진행하고 싶습니다.`
+    );
     
-    if (success) {
-      toast.success("Ticket Purchase Complete!", {
-        description: `${party.title} - ${ticketCount} ticket(s)`,
-      });
-      
-      // Reload page to show updated attendees count
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } else {
-      toast.error("Purchase Failed", {
-        description: "Not enough spots available or an error occurred.",
-      });
-    }
+    // Redirect to Instagram DM
+    const instagramDM = `https://www.instagram.com/direct/t/17842340226608213/?text=${message}`;
+    window.open(instagramDM, '_blank');
+    
+    toast.success("Instagram DM으로 이동합니다!", {
+      description: "DM에서 결제를 진행해주세요.",
+    });
   };
 
   const handleShare = () => {
