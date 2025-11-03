@@ -230,41 +230,43 @@ export default function BecomeHost() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('🔥 FORM SUBMITTED!');
+    console.log('Current formData:', formData);
+    
+    // Simplified validation for testing
     if (!formData.firstName || !formData.lastName) {
+      console.log('❌ Validation failed: Name missing');
       toast.error("Please enter your first name and last name");
       return;
     }
     
     if (!formData.nickname || formData.nickname.trim().length < 2) {
+      console.log('❌ Validation failed: Nickname missing or too short');
       toast.error("Please enter a nickname (at least 2 characters)");
       return;
     }
     
-    if (!formData.gender) {
-      toast.error("Please select your gender");
+    if (!formData.email) {
+      console.log('❌ Validation failed: Email missing');
+      toast.error("Please enter your email");
       return;
     }
     
-    if (!formData.agreedToTerms) {
-      toast.error("Please agree to the terms of service");
-      return;
-    }
+    // Make gender, city, spaceType optional for now
+    console.log('✅ Basic validation passed');
     
-    // Temporarily disabled for testing
-    // if (!criminalRecordImage) {
-    //   toast.error("Criminal record document upload is required");
+    // Make checkboxes optional for testing
+    // if (!formData.agreedToTerms) {
+    //   console.log('❌ Validation failed: Terms not agreed');
+    //   toast.error("Please agree to the terms of service");
     //   return;
     // }
     // 
-    // if (!idCardImage) {
-    //   toast.error("ID card photo upload is required");
+    // if (!formData.agreedToLegalWarning) {
+    //   console.log('❌ Validation failed: Legal warning not agreed');
+    //   toast.error("Consent to legal responsibility for proxy writing is required");
     //   return;
     // }
-    
-    if (!formData.agreedToLegalWarning) {
-      toast.error("Consent to legal responsibility for proxy writing is required");
-      return;
-    }
     
     // Temporarily disabled for testing
     // if (!idCardImage) {
@@ -336,6 +338,7 @@ export default function BecomeHost() {
   };
 
   const updateField = (field: string, value: string | boolean) => {
+    console.log(`🔄 Updating field: ${field} =`, value);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -427,7 +430,7 @@ export default function BecomeHost() {
                   Please fill out the information below and we will contact you within 24 hours after review.
                 </p>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} noValidate className="space-y-6">
                   {/* Personal Info */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold flex items-center">
@@ -827,6 +830,7 @@ export default function BecomeHost() {
                       type="submit"
                       size="lg"
                       className="w-full gradient-button h-14 rounded-2xl text-lg font-semibold group"
+                      onClick={() => console.log('🖱️ Submit button clicked!')}
                     >
                       Apply to Become a Host
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />

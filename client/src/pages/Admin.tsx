@@ -81,7 +81,14 @@ export default function Admin() {
 
   const loadHostApplications = () => {
     const applications = getHostApplications();
-    setHostApplications(applications);
+    // Sort applications: pending first, then approved, then rejected
+    const sortedApplications = [...applications].sort((a, b) => {
+      const statusOrder = { pending: 0, approved: 1, rejected: 2 };
+      const aOrder = statusOrder[a.status] !== undefined ? statusOrder[a.status] : 3;
+      const bOrder = statusOrder[b.status] !== undefined ? statusOrder[b.status] : 3;
+      return aOrder - bOrder;
+    });
+    setHostApplications(sortedApplications);
   };
 
   const loadParties = () => {
