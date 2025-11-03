@@ -269,17 +269,26 @@ export default function CreateParty() {
       }
     }
 
-    if (!isHostVerified || !currentHost) {
+    // Check if admin is logged in
+    const isAdmin = localStorage.getItem("adminLoggedIn") === "true";
+    
+    // Admin can bypass host verification
+    if (!isAdmin && (!isHostVerified || !currentHost)) {
       toast.error("Host verification required", {
         description: "Please verify your host email first.",
       });
       return;
     }
-
-    // Check if admin is logged in
-    const isAdmin = localStorage.getItem("adminLoggedIn") === "true";
     
     // Sanitize all text inputs to prevent XSS
+    // Use admin default host if admin is creating party without host verification
+    const hostInfo = currentHost || {
+      id: 'admin-host',
+      name: 'Admin Host',
+      nickname: 'Admin',
+      email: hostEmail || 'admin@partybear.com'
+    };
+    
     const partyData = {
       id: `party-${Date.now()}`,
       title: sanitizeInput(formData.title.trim()),
@@ -287,9 +296,9 @@ export default function CreateParty() {
       time: formData.time || "19:00",
       location: sanitizeInput(formData.address.trim()),
       city: sanitizeInput(formData.city.trim()),
-      host: sanitizeInput(currentHost.name),
-      hostNickname: sanitizeInput(currentHost.nickname || currentHost.name),
-      hostId: currentHost.id,
+      host: sanitizeInput(hostInfo.name),
+      hostNickname: sanitizeInput(hostInfo.nickname || hostInfo.name),
+      hostId: hostInfo.id,
       price: parseInt(formData.price) || 50,
       capacity: parseInt(formData.maxAttendees) || 20,
       attendees: 0,
