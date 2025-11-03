@@ -1,5 +1,6 @@
-// LocalStorage management utilities
+// Storage management utilities - hybrid approach with localStorage and API
 import { z } from 'zod';
+import * as api from './api';
 
 // Zod schemas for runtime validation
 const HostApplicationSchema = z.object({
@@ -56,6 +57,7 @@ const PartySchema = z.object({
 export interface HostApplication {
   id: string;
   name: string;
+  nickname: string;
   firstName?: string;
   lastName?: string;
   gender?: string;
@@ -87,6 +89,7 @@ export interface Party {
   location: string;
   city: string;
   host: string;
+  hostNickname: string;
   hostId: string;
   price: number;
   capacity: number;
@@ -102,6 +105,42 @@ export interface Party {
   createdAt?: string;
 }
 
+// Background sync flag
+let isSyncing = false;
+
+// Sync localStorage with API in background
+async function syncWithAPI() {
+  if (isSyncing) return;
+  isSyncing = true;
+  
+  try {
+    // Fetch from API and update localStorage
+    const [hosts, parties] = await Promise.all([
+      api.fetchHostApplications(),
+      api.fetchParties()
+    ]);
+    
+    if (hosts.length > 0) {
+      localStorage.setItem("hostApplications", JSON.stringify(hosts));
+    }
+    
+    if (parties.length > 0) {
+      localStorage.setItem("parties", JSON.stringify(parties));
+    }
+  } catch (error) {
+    console.error('Background sync failed:', error);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+// Start background sync on load
+if (typeof window !== 'undefined') {
+  syncWithAPI();
+  // Sync every 30 seconds
+  setInterval(syncWithAPI, 30000);
+}
+
 // Host application management
 export function getHostApplications(): HostApplication[] {
   try {
@@ -109,17 +148,12 @@ export function getHostApplications(): HostApplication[] {
     if (!data) return [];
     
     const parsed = JSON.parse(data);
-    
-    // Validate data with Zod
     const validated = z.array(HostApplicationSchema).safeParse(parsed);
     
     if (validated.success) {
       return validated.data;
     } else {
       console.error("Invalid host applications data:", validated.error);
-      // Backup corrupted data
-      localStorage.setItem("hostApplications_backup", data);
-      localStorage.removeItem("hostApplications");
       return [];
     }
   } catch (error) {
@@ -137,30 +171,22 @@ export function saveHostApplication(application: HostApplication): boolean {
     
     if (!validated.success) {
       console.error("Invalid application data:", validated.error);
-      console.error("Validation errors:", JSON.stringify(validated.error.errors, null, 2));
       return false;
     }
     
-    console.log('Validation passed, getting existing applications...');
+    // Save to localStorage immediately
     const applications = getHostApplications();
-    console.log('Existing applications count:', applications.length);
-    
     applications.push(validated.data);
-    console.log('New applications count:', applications.length);
+    localStorage.setItem("hostApplications", JSON.stringify(applications));
     
-    const dataToSave = JSON.stringify(applications);
-    console.log('Data size to save:', dataToSave.length, 'characters');
-    
-    localStorage.setItem("hostApplications", dataToSave);
-    console.log('Data saved successfully to localStorage');
+    // Save to API in background
+    api.createHostApplication(validated.data).catch(error => {
+      console.error('Failed to save to API:', error);
+    });
     
     return true;
   } catch (error) {
     console.error("Failed to save host application:", error);
-    if (error instanceof Error) {
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
-    }
     return false;
   }
 }
@@ -186,6 +212,12 @@ export function updateHostApplicationStatus(
     }
     
     localStorage.setItem("hostApplications", JSON.stringify(applications));
+    
+    // Update API in background
+    api.updateHostApplicationStatus(id, status, rejectionReason).catch(error => {
+      console.error('Failed to update API:', error);
+    });
+    
     return true;
   } catch (error) {
     console.error("Failed to update application status:", error);
@@ -223,8 +255,13 @@ export function getHostByEmail(email: string): HostApplication | null {
 
 // Party management
 export function getParties(): Party[] {
-  const data = localStorage.getItem("parties");
-  return data ? JSON.parse(data) : [];
+  try {
+    const data = localStorage.getItem("parties");
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Failed to load parties:", error);
+    return [];
+  }
 }
 
 export function saveParty(party: Party): boolean {
@@ -233,16 +270,19 @@ export function saveParty(party: Party): boolean {
     const validation = PartySchema.safeParse(party);
     if (!validation.success) {
       console.error("Party validation failed:", validation.error.errors);
-      // Log specific validation errors for debugging
-      validation.error.errors.forEach(err => {
-        console.error(`Validation error in ${err.path.join('.')}: ${err.message}`);
-      });
       return false;
     }
     
+    // Save to localStorage immediately
     const parties = getParties();
     parties.push(party);
     localStorage.setItem("parties", JSON.stringify(parties));
+    
+    // Save to API in background
+    api.createParty(party).catch(error => {
+      console.error('Failed to save to API:', error);
+    });
+    
     return true;
   } catch (error) {
     console.error("Failed to save party:", error);
@@ -262,8 +302,13 @@ export function updatePartyStatus(
     if (index === -1) return false;
     
     parties[index].status = status;
-    
     localStorage.setItem("parties", JSON.stringify(parties));
+    
+    // Update API in background
+    api.updatePartyStatus(id, status).catch(error => {
+      console.error('Failed to update API:', error);
+    });
+    
     return true;
   } catch (error) {
     console.error("Failed to update party status:", error);
@@ -302,8 +347,13 @@ export function updateParty(id: string, updatedParty: Partial<Party>): boolean {
     if (index === -1) return false;
     
     parties[index] = { ...parties[index], ...updatedParty };
-    
     localStorage.setItem("parties", JSON.stringify(parties));
+    
+    // Update API in background
+    api.updateParty(id, updatedParty).catch(error => {
+      console.error('Failed to update API:', error);
+    });
+    
     return true;
   } catch (error) {
     console.error("Failed to update party:", error);
@@ -317,6 +367,12 @@ export function deleteParty(id: string): boolean {
     const parties = getParties();
     const filteredParties = parties.filter((party) => party.id !== id);
     localStorage.setItem("parties", JSON.stringify(filteredParties));
+    
+    // Delete from API in background
+    api.deleteParty(id).catch(error => {
+      console.error('Failed to delete from API:', error);
+    });
+    
     return true;
   } catch (error) {
     console.error("Failed to delete party:", error);
@@ -330,6 +386,12 @@ export function deleteHostApplication(id: string): boolean {
     const applications = getHostApplications();
     const filteredApplications = applications.filter((app) => app.id !== id);
     localStorage.setItem("hostApplications", JSON.stringify(filteredApplications));
+    
+    // Delete from API in background
+    api.deleteHostApplication(id).catch(error => {
+      console.error('Failed to delete from API:', error);
+    });
+    
     return true;
   } catch (error) {
     console.error("Failed to delete host application:", error);
@@ -343,11 +405,12 @@ export function createPartyFromApplication(application: HostApplication): boolea
     const party: Party = {
       id: `party-${Date.now()}`,
       title: `${application.spaceType} Party - ${application.city}`,
-      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 7 days later
+      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       time: "19:00",
       location: application.address,
       city: application.city,
       host: application.name,
+      hostNickname: application.nickname,
       hostId: application.id,
       price: 45,
       capacity: application.capacity,
@@ -368,12 +431,9 @@ export function createPartyFromApplication(application: HostApplication): boolea
   }
 }
 
-
-
 // Reset parties to initial English data
 export function resetPartiesToInitialData(): boolean {
   try {
-    // Import initial parties data
     const { initialParties } = require("./initialParties");
     localStorage.setItem("parties", JSON.stringify(initialParties));
     return true;
@@ -382,8 +442,6 @@ export function resetPartiesToInitialData(): boolean {
     return false;
   }
 }
-
-
 
 // Purchase ticket and increase attendees count
 export function purchaseTicket(partyId: string, ticketCount: number = 1): boolean {
@@ -406,9 +464,12 @@ export function purchaseTicket(partyId: string, ticketCount: number = 1): boolea
     
     // Increase attendees count
     parties[partyIndex].attendees += ticketCount;
-    
-    // Save to localStorage
     localStorage.setItem("parties", JSON.stringify(parties));
+    
+    // Update API in background
+    api.updateParty(partyId, { attendees: party.attendees + ticketCount }).catch(error => {
+      console.error('Failed to update API:', error);
+    });
     
     return true;
   } catch (error) {
