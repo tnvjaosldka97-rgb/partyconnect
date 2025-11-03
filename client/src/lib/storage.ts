@@ -229,6 +229,17 @@ export function getParties(): Party[] {
 
 export function saveParty(party: Party): boolean {
   try {
+    // Validate party data before saving
+    const validation = PartySchema.safeParse(party);
+    if (!validation.success) {
+      console.error("Party validation failed:", validation.error.errors);
+      // Log specific validation errors for debugging
+      validation.error.errors.forEach(err => {
+        console.error(`Validation error in ${err.path.join('.')}: ${err.message}`);
+      });
+      return false;
+    }
+    
     const parties = getParties();
     parties.push(party);
     localStorage.setItem("parties", JSON.stringify(parties));

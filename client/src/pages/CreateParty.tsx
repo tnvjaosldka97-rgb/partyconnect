@@ -183,6 +183,30 @@ export default function CreateParty() {
       return;
     }
     
+    // Title length validation
+    if (formData.title.trim().length < 3) {
+      toast.error("Title too short", {
+        description: "Party title must be at least 3 characters long.",
+      });
+      return;
+    }
+    
+    // Description length validation
+    if (formData.description.trim().length < 10) {
+      toast.error("Description too short", {
+        description: "Party description must be at least 10 characters long.",
+      });
+      return;
+    }
+    
+    // Address length validation
+    if (formData.address.trim().length < 5) {
+      toast.error("Address too short", {
+        description: "Address must be at least 5 characters long.",
+      });
+      return;
+    }
+    
     if (!formData.time) {
       toast.error("Please select a time", {
         description: "Party time is required.",
