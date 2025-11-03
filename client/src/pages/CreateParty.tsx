@@ -563,23 +563,13 @@ export default function CreateParty() {
                   </div>
 
                   <div>
-                    <Label htmlFor="time">Time *</Label>
+                    <Label htmlFor="price">Entry Fee ($) *</Label>
                     <Input
-                      id="time"
-                      type="text"
-                      placeholder="HH:MM (24-hour format)"
-                      value={formData.time}
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-                        if (value.length >= 2) {
-                          value = value.slice(0, 2) + ':' + value.slice(2);
-                        }
-                        if (value.length > 5) {
-                          value = value.slice(0, 5); // Limit to HH:MM
-                        }
-                        updateField("time", value);
-                      }}
-                      maxLength={5}
+                      id="price"
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) => updateField("price", e.target.value)}
+                      placeholder="45"
                       required
                     />
                   </div>
