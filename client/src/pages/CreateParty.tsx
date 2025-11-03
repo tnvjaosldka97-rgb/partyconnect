@@ -412,6 +412,7 @@ export default function CreateParty() {
                       type="date"
                       value={formData.date}
                       onChange={(e) => updateField("date", e.target.value)}
+                      lang="en-US"
                       required
                     />
                   </div>
@@ -463,7 +464,7 @@ export default function CreateParty() {
                       id="address"
                       value={formData.address}
                       onChange={(e) => updateField("address", e.target.value)}
-                      placeholder="Enter detailed address"
+                      placeholder="Enter the detailed address where the party will be held"
                       required
                     />
                   </div>
@@ -497,7 +498,7 @@ export default function CreateParty() {
                       type="number"
                       value={formData.price}
                       onChange={(e) => updateField("price", e.target.value)}
-                      placeholder="50000"
+                      placeholder="10000"
                       required
                     />
                   </div>

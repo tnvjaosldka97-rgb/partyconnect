@@ -479,7 +479,7 @@ export default function BecomeHost() {
                           value={formData.phone}
                           onChange={(e) => updateField("phone", e.target.value)}
                           className="glass border-white/20 mt-2"
-                          placeholder="010-1234-5678"
+                          placeholder="+1 (512) 555-1234"
                         />
                       </div>
                       
@@ -550,7 +550,7 @@ export default function BecomeHost() {
                         value={formData.address}
                         onChange={(e) => updateField("address", e.target.value)}
                         className="glass border-white/20 mt-2"
-                        placeholder="123 Teheran-ro, Manhattan, New York"
+                        placeholder="123 Congress Avenue, Austin, TX 78701"
                       />
                     </div>
 
