@@ -77,7 +77,16 @@ export default function CreateParty() {
       return;
     }
 
+    console.log("[DEBUG] Verifying host:", hostEmail);
+    
+    // Debug: Check localStorage
+    const hostApps = JSON.parse(localStorage.getItem('hostApplications') || '[]');
+    console.log("[DEBUG] Total host applications:", hostApps.length);
+    console.log("[DEBUG] Host applications:", hostApps);
+    
     const host = getHostByEmail(hostEmail);
+    console.log("[DEBUG] getHostByEmail result:", host);
+    
     if (host) {
       setIsHostVerified(true);
       setCurrentHost(host);
@@ -85,9 +94,17 @@ export default function CreateParty() {
         description: `Welcome, ${host.name}님!`,
       });
     } else {
-      toast.error("Not an Approved Host", {
-        description: "You must apply as a host and get approved before creating parties.",
-      });
+      // More detailed error message
+      const matchingApp = hostApps.find(app => app.email.toLowerCase() === hostEmail.toLowerCase());
+      if (matchingApp) {
+        toast.error("Host Not Approved", {
+          description: `Your application status is: ${matchingApp.status}. Please wait for admin approval.`,
+        });
+      } else {
+        toast.error("Not an Approved Host", {
+          description: "You must apply as a host and get approved before creating parties.",
+        });
+      }
     }
   };
 
