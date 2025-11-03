@@ -413,6 +413,7 @@ export default function CreateParty() {
                       value={formData.date}
                       onChange={(e) => updateField("date", e.target.value)}
                       lang="en-US"
+                      placeholder="mm/dd/yyyy"
                       required
                     />
                   </div>
