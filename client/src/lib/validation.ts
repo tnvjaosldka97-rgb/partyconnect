@@ -165,6 +165,37 @@ export function safeParseHost(data: unknown) {
 // Date/Time Validation
 // ============================================
 
+export function validateDateFormat(date: string): { valid: boolean; error?: string } {
+  // Accept MM/DD/YYYY or YYYY-MM-DD formats
+  const mmddyyyyPattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+  const yyyymmddPattern = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+  
+  if (!mmddyyyyPattern.test(date) && !yyyymmddPattern.test(date)) {
+    return {
+      valid: false,
+      error: "Please enter date in MM/DD/YYYY format (e.g., 12/25/2024)",
+    };
+  }
+  
+  // Convert MM/DD/YYYY to YYYY-MM-DD for validation
+  let dateStr = date;
+  if (mmddyyyyPattern.test(date)) {
+    const [month, day, year] = date.split('/');
+    dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  // Validate actual date
+  const dateObj = new Date(dateStr);
+  if (isNaN(dateObj.getTime())) {
+    return {
+      valid: false,
+      error: "Invalid date",
+    };
+  }
+  
+  return { valid: true };
+}
+
 export function validatePartyDateTime(date: string, time: string): { valid: boolean; error?: string } {
   try {
     const partyDateTime = new Date(`${date}T${time}`);

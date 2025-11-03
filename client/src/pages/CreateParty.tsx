@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { saveParty, getHostByEmail } from "@/lib/storage";
-import { sanitizeInput, validatePartyDateTime, validateCapacity, validatePrice } from "@/lib/validation";
+import { sanitizeInput, validateDateFormat, validatePartyDateTime, validateCapacity, validatePrice } from "@/lib/validation";
 import { uploadMultipleImages } from "@/lib/imageUpload";
 
 export default function CreateParty() {
@@ -190,8 +190,25 @@ export default function CreateParty() {
       return;
     }
     
+    // Date format validation
+    const dateFormatValidation = validateDateFormat(formData.date);
+    if (!dateFormatValidation.valid) {
+      toast.error("Invalid Date Format", {
+        description: dateFormatValidation.error,
+      });
+      return;
+    }
+    
+    // Convert MM/DD/YYYY to YYYY-MM-DD for storage
+    let dateForStorage = formData.date;
+    const mmddyyyyPattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+    if (mmddyyyyPattern.test(formData.date)) {
+      const [month, day, year] = formData.date.split('/');
+      dateForStorage = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    
     // Date/Time validation
-    const dateTimeValidation = validatePartyDateTime(formData.date, formData.time);
+    const dateTimeValidation = validatePartyDateTime(dateForStorage, formData.time);
     if (!dateTimeValidation.valid) {
       toast.error("Invalid Date/Time", {
         description: dateTimeValidation.error,
@@ -233,7 +250,7 @@ export default function CreateParty() {
     const partyData = {
       id: `party-${Date.now()}`,
       title: sanitizeInput(formData.title.trim()),
-      date: formData.date,
+      date: dateForStorage,
       time: formData.time || "19:00",
       location: sanitizeInput(formData.address.trim()),
       city: sanitizeInput(formData.city.trim()),
@@ -409,12 +426,12 @@ export default function CreateParty() {
                     <Label htmlFor="date">Date *</Label>
                     <Input
                       id="date"
-                      type="date"
+                      type="text"
                       value={formData.date}
                       onChange={(e) => updateField("date", e.target.value)}
-                      lang="en-US"
-                      placeholder="mm/dd/yyyy"
+                      placeholder="MM/DD/YYYY"
                       required
+                      className="glass border-white/20"
                     />
                   </div>
 
