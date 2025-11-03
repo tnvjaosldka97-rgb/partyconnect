@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { saveParty, getHostByEmail } from "@/lib/storage";
-import { sanitizeInput, validateDateFormat, validatePartyDateTime, validateCapacity, validatePrice } from "@/lib/validation";
+import { sanitizeInput, validateDateFormat, validateTimeFormat, validatePartyDateTime, validateCapacity, validatePrice } from "@/lib/validation";
 import { uploadMultipleImages } from "@/lib/imageUpload";
 
 export default function CreateParty() {
@@ -210,6 +210,15 @@ export default function CreateParty() {
     if (!formData.time) {
       toast.error("Please select a time", {
         description: "Party time is required.",
+      });
+      return;
+    }
+    
+    // Time format validation
+    const timeFormatValidation = validateTimeFormat(formData.time);
+    if (!timeFormatValidation.valid) {
+      toast.error("Invalid Time Format", {
+        description: timeFormatValidation.error,
       });
       return;
     }
@@ -473,10 +482,20 @@ export default function CreateParty() {
                     <Label htmlFor="time">Time *</Label>
                     <Input
                       id="time"
-                      type="time"
+                      type="text"
+                      placeholder="HH:MM (24-hour format)"
                       value={formData.time}
-                      onChange={(e) => updateField("time", e.target.value)}
-                      lang="en-US"
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                        if (value.length >= 2) {
+                          value = value.slice(0, 2) + ':' + value.slice(2);
+                        }
+                        if (value.length > 5) {
+                          value = value.slice(0, 5); // Limit to HH:MM
+                        }
+                        updateField("time", value);
+                      }}
+                      maxLength={5}
                       required
                     />
                   </div>
@@ -544,13 +563,23 @@ export default function CreateParty() {
                   </div>
 
                   <div>
-                    <Label htmlFor="price">Entry Fee ($) *</Label>
+                    <Label htmlFor="time">Time *</Label>
                     <Input
-                      id="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) => updateField("price", e.target.value)}
-                      placeholder="10000"
+                      id="time"
+                      type="text"
+                      placeholder="HH:MM (24-hour format)"
+                      value={formData.time}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                        if (value.length >= 2) {
+                          value = value.slice(0, 2) + ':' + value.slice(2);
+                        }
+                        if (value.length > 5) {
+                          value = value.slice(0, 5); // Limit to HH:MM
+                        }
+                        updateField("time", value);
+                      }}
+                      maxLength={5}
                       required
                     />
                   </div>

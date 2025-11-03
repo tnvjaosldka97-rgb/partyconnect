@@ -165,6 +165,20 @@ export function safeParseHost(data: unknown) {
 // Date/Time Validation
 // ============================================
 
+export function validateTimeFormat(time: string): { valid: boolean; error?: string } {
+  // Accept HH:MM format (24-hour)
+  const timePattern = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
+  
+  if (!timePattern.test(time)) {
+    return {
+      valid: false,
+      error: "Please enter time in HH:MM format (e.g., 14:30 for 2:30 PM)",
+    };
+  }
+  
+  return { valid: true };
+}
+
 export function validateDateFormat(date: string): { valid: boolean; error?: string } {
   // Accept MM/DD/YYYY or YYYY-MM-DD formats
   const mmddyyyyPattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
