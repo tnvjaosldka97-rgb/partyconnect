@@ -33,6 +33,7 @@ export default function BecomeHost() {
   const [previousApplication, setPreviousApplication] = useState<HostApplication | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
+    nickname: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -66,6 +67,7 @@ export default function BecomeHost() {
         // Pre-fill form with previous data
         setFormData({
           fullName: previous.name,
+          nickname: previous.nickname || "",
           firstName: previous.firstName || "",
           lastName: previous.lastName || "",
           email: previous.email,
@@ -231,6 +233,11 @@ export default function BecomeHost() {
       return;
     }
     
+    if (!formData.nickname || formData.nickname.trim().length < 2) {
+      toast.error("Please enter a nickname (at least 2 characters)");
+      return;
+    }
+    
     if (!formData.agreedToTerms) {
       toast.error("Please agree to the terms of service");
       return;
@@ -269,6 +276,7 @@ export default function BecomeHost() {
       const application: HostApplication = {
         id: `host-${Date.now()}`,
         name: fullName,
+        nickname: formData.nickname,
         firstName: formData.firstName,
         lastName: formData.lastName,
         phone: formData.phone,
@@ -443,6 +451,22 @@ export default function BecomeHost() {
                           placeholder="Doe"
                         />
                       </div>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="nickname">Nickname (Public Display Name) *</Label>
+                      <Input
+                        id="nickname"
+                        required
+                        value={formData.nickname}
+                        onChange={(e) => updateField("nickname", e.target.value)}
+                        className="glass border-white/20 mt-2"
+                        placeholder="e.g., PartyKing, DJ Sarah, etc."
+                      />
+                      <p className="text-xs text-white/60 mt-1">This will be displayed publicly instead of your real name for privacy</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

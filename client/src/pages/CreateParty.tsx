@@ -238,6 +238,7 @@ export default function CreateParty() {
       location: sanitizeInput(formData.address.trim()),
       city: sanitizeInput(formData.city.trim()),
       host: sanitizeInput(currentHost.name),
+      hostNickname: sanitizeInput(currentHost.nickname || currentHost.name),
       hostId: currentHost.id,
       price: parseInt(formData.price) || 50,
       capacity: parseInt(formData.maxAttendees) || 20,

@@ -45,7 +45,7 @@ export default function FeaturedParties({
         type: p.type || "Party",
         theme: p.type || "Party",
         description: p.description || "",
-        hostName: p.host || "Host",
+        hostName: p.hostNickname || p.host || "Host",
         rating: Number(p.rating) || 4.5,
       };
     });

@@ -105,13 +105,28 @@ export default function UserProfile() {
                 {/* Host Information (if approved) */}
                 {isHost && hostInfo && (
                   <>
+                    {hostInfo.nickname && (
+                      <div className="flex items-start space-x-4 p-4 rounded-xl glass">
+                        <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                          <User className="w-5 h-5 text-accent" />
+                        </div>
+                        <div className="flex-1">
+                          <Label className="text-sm text-muted-foreground">Nickname (Public)</Label>
+                          <p className="text-base font-medium">{hostInfo.nickname}</p>
+                          <p className="text-xs text-muted-foreground mt-1">This is displayed publicly for privacy</p>
+                        </div>
+                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      </div>
+                    )}
+                    
                     <div className="flex items-start space-x-4 p-4 rounded-xl glass">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <User className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <Label className="text-sm text-muted-foreground">Full Name</Label>
+                        <Label className="text-sm text-muted-foreground">Full Name (Private)</Label>
                         <p className="text-base font-medium">{hostInfo.name || `${hostInfo.firstName || ''} ${hostInfo.lastName || ''}`.trim()}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Only visible to you and admins</p>
                       </div>
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                     </div>

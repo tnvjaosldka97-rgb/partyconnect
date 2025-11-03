@@ -44,7 +44,7 @@ export default function PartyDetail() {
     type: p.type,
     theme: p.type,
     description: p.description,
-    hostName: p.host,
+    hostName: p.hostNickname || p.host,
     rating: p.rating || 4.5,
     time: p.time,
     tags: p.tags || [],

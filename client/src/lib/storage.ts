@@ -5,6 +5,7 @@ import { z } from 'zod';
 const HostApplicationSchema = z.object({
   id: z.string(),
   name: z.string(),
+  nickname: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   phone: z.string(),
@@ -35,6 +36,7 @@ const PartySchema = z.object({
   location: z.string(),
   city: z.string(),
   host: z.string(),
+  hostNickname: z.string(),
   hostId: z.string(),
   price: z.number(),
   capacity: z.number(),
