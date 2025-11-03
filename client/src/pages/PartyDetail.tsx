@@ -4,6 +4,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { mockParties } from "@/data/mockParties";
 import { getApprovedParties, purchaseTicket } from "@/lib/storage";
 import {
@@ -54,6 +61,7 @@ export default function PartyDetail() {
   const party = allParties.find((p) => p.id === params?.id);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
+  const [gender, setGender] = useState("");
 
   if (!party) {
     return (
@@ -72,6 +80,11 @@ export default function PartyDetail() {
   const availableSpots = party.maxAttendees - party.attendees;
 
   const handlePurchase = () => {
+    if (!gender) {
+      toast.error("Please select your gender");
+      return;
+    }
+    
     const success = purchaseTicket(party.id, ticketCount);
     
     if (success) {
@@ -296,6 +309,20 @@ export default function PartyDetail() {
                     <span className="font-semibold">{party.rating}</span>
                     <span className="text-muted-foreground">(128 reviews)</span>
                   </div>
+                </div>
+
+                {/* Gender Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-3">Gender *</label>
+                  <Select value={gender} onValueChange={setGender}>
+                    <SelectTrigger className="glass border-white/10">
+                      <SelectValue placeholder="Select your gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Ticket Count */}

@@ -36,6 +36,7 @@ export default function BecomeHost() {
     nickname: "",
     firstName: "",
     lastName: "",
+    gender: "",
     email: "",
     phone: "",
     city: "",
@@ -70,6 +71,7 @@ export default function BecomeHost() {
           nickname: previous.nickname || "",
           firstName: previous.firstName || "",
           lastName: previous.lastName || "",
+          gender: previous.gender || "",
           email: previous.email,
           phone: previous.phone,
           city: previous.city,
@@ -238,6 +240,11 @@ export default function BecomeHost() {
       return;
     }
     
+    if (!formData.gender) {
+      toast.error("Please select your gender");
+      return;
+    }
+    
     if (!formData.agreedToTerms) {
       toast.error("Please agree to the terms of service");
       return;
@@ -279,6 +286,7 @@ export default function BecomeHost() {
         nickname: formData.nickname,
         firstName: formData.firstName,
         lastName: formData.lastName,
+        gender: formData.gender,
         phone: formData.phone,
         email: formData.email,
         city: formData.city,
@@ -466,7 +474,20 @@ export default function BecomeHost() {
                       <p className="text-xs text-white/60 mt-1">This will be displayed publicly instead of your real name for privacy</p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="gender">Gender *</Label>
+                      <Select
+                        value={formData.gender}
+                        onValueChange={(value) => updateField("gender", value)}
+                      >
+                        <SelectTrigger className="glass border-white/20 mt-2">
+                          <SelectValue placeholder="Select your gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

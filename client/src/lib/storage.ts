@@ -8,6 +8,7 @@ const HostApplicationSchema = z.object({
   nickname: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  gender: z.string().optional(),
   phone: z.string(),
   email: z.string(),
   city: z.string(),
@@ -57,6 +58,7 @@ export interface HostApplication {
   name: string;
   firstName?: string;
   lastName?: string;
+  gender?: string;
   phone: string;
   email: string;
   city: string;
