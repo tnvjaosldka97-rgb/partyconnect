@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -30,6 +30,11 @@ import { toast } from "sonner";
 
 export default function PartyDetail() {
   const [, params] = useRoute("/party/:id");
+  
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   // Load parties from both mockParties and localStorage
   const localParties = getApprovedParties();
