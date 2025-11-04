@@ -328,10 +328,39 @@ export default function CreateParty() {
       createdAt: new Date().toISOString(),
     };
 
-    const success = saveParty(partyData);
-    
-    if (success) {
-      console.log("Party saved successfully:", partyData);
+    // Show loading toast
+    toast.loading("파티를 생성하고 있습니다...", {
+      id: "creating-party",
+    });
+
+    try {
+      // Save party to MongoDB via API
+      const response = await fetch('/api/parties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(partyData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Failed to create party');
+      }
+
+      console.log("Party saved successfully:", result.party);
+      
+      // Dismiss loading toast
+      toast.dismiss("creating-party");
+      
+      // Show success message
+      toast.success("파티가 생성되었습니다!", {
+        description: "Instagram DM으로 승인 요청을 진행합니다.",
+      });
+      
+      // Wait a moment for user to see the success message
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Create Instagram DM message with party details for approval and deposit
       const message = encodeURIComponent(
@@ -351,17 +380,19 @@ export default function CreateParty() {
       const instagramDM = `https://www.instagram.com/direct/t/17842340226608213/?text=${message}`;
       window.open(instagramDM, '_blank');
       
-      toast.success("Instagram DM으로 이동합니다!", {
-        description: "DM에서 파티 승인 요청 및 보증금 결제를 진행해주세요.",
-      });
-      
+      // Navigate to all parties page after a short delay
       setTimeout(() => {
         setLocation("/all-parties");
-      }, 2000);
-    } else {
-      console.error("Failed to save party");
-      toast.error("Failed to Create Party", {
-        description: "Please try again.",
+      }, 1500);
+      
+    } catch (error) {
+      console.error("Failed to save party:", error);
+      
+      // Dismiss loading toast
+      toast.dismiss("creating-party");
+      
+      toast.error("파티 생성 실패", {
+        description: error instanceof Error ? error.message : "다시 시도해주세요.",
       });
     }
   };
