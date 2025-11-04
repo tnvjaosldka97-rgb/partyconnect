@@ -386,14 +386,50 @@ export default function CreateParty() {
       }, 1500);
       
     } catch (error) {
-      console.error("Failed to save party:", error);
+      console.error("API failed, falling back to localStorage:", error);
+      
+      // Fallback: Save to localStorage
+      const success = saveParty(partyData);
       
       // Dismiss loading toast
       toast.dismiss("creating-party");
       
-      toast.error("파티 생성 실패", {
-        description: error instanceof Error ? error.message : "다시 시도해주세요.",
-      });
+      if (success) {
+        // Show success message
+        toast.success("파티가 생성되었습니다!", {
+          description: "Instagram DM으로 승인 요청을 진행합니다.",
+        });
+        
+        // Wait a moment for user to see the success message
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Create Instagram DM message
+        const message = encodeURIComponent(
+          `🎉 파티 개최 승인 요청 및 보증금 결제\n\n` +
+          `파티 제목: ${partyData.title}\n` +
+          `날짜: ${partyData.date} ${partyData.time}\n` +
+          `장소: ${partyData.location}\n` +
+          `도시: ${partyData.city}\n` +
+          `최대 인원: ${partyData.capacity}명\n` +
+          `입장료: $${partyData.price}\n` +
+          `타입: ${partyData.type}\n` +
+          `호스트: ${partyData.host}\n\n` +
+          `파티 개최 승인과 보증금 결제를 진행하고 싶습니다.`
+        );
+        
+        // Redirect to Instagram DM
+        const instagramDM = `https://www.instagram.com/direct/t/17842340226608213/?text=${message}`;
+        window.open(instagramDM, '_blank');
+        
+        // Navigate to all parties page after a short delay
+        setTimeout(() => {
+          setLocation("/all-parties");
+        }, 1500);
+      } else {
+        toast.error("파티 생성 실패", {
+          description: "다시 시도해주세요.",
+        });
+      }
     }
   };
 
