@@ -19,38 +19,86 @@ export default function FeaturedParties({
 }: FeaturedPartiesProps) {
   const [approvedParties, setApprovedParties] = useState<any[]>([]);
   
-  // Load approved parties from localStorage
+  // Load approved parties from API and localStorage
   useEffect(() => {
-    const approved = getApprovedParties();
+    const loadParties = async () => {
+      try {
+        // Fetch from API
+        const response = await fetch('/api/parties');
+        const data = await response.json();
+        const apiParties = data.parties || [];
+        
+        // Also get from localStorage as fallback
+        const localParties = getApprovedParties();
+        
+        // Combine and deduplicate
+        const allParties = [...apiParties, ...localParties];
+        const uniqueParties = allParties.filter((party, index, self) => 
+          index === self.findIndex((p) => p.id === party.id)
+        );
+        
+        // Map to match mockParties format
+        const mappedParties = uniqueParties.map((p: any) => {
+          const price = Number(p.price) || 0;
+          const attendees = Number(p.attendees) || 0;
+          const capacity = Number(p.capacity) || 20;
+          
+          return {
+            id: p.id,
+            title: p.title || "Untitled Party",
+            image: (Array.isArray(p.images) && p.images.length > 0) ? p.images[0] : "/placeholder-party.jpg",
+            date: p.date,
+            dateTimestamp: new Date(p.date).getTime(),
+            location: p.location || p.city || "TBA",
+            city: p.city || "Unknown",
+            price: price,
+            priceFormatted: `$${price.toLocaleString()}`,
+            attendees: attendees,
+            maxAttendees: capacity,
+            ageRange: p.ageRange || "21-35",
+            type: p.type || "Party",
+            theme: p.type || "Party",
+            description: p.description || "",
+            hostName: p.hostNickname || p.host || "Host",
+            rating: Number(p.rating) || 4.5,
+          };
+        });
+        
+        setApprovedParties(mappedParties);
+      } catch (error) {
+        console.error('Failed to load parties from API, using localStorage only:', error);
+        // Fallback to localStorage only
+        const approved = getApprovedParties();
+        const mappedParties = approved.map((p: any) => {
+          const price = Number(p.price) || 0;
+          const attendees = Number(p.attendees) || 0;
+          const capacity = Number(p.capacity) || 20;
+          
+          return {
+            id: p.id,
+            title: p.title || "Untitled Party",
+            image: (Array.isArray(p.images) && p.images.length > 0) ? p.images[0] : "/placeholder-party.jpg",
+            date: p.date,
+            dateTimestamp: new Date(p.date).getTime(),
+            location: p.location || p.city || "TBA",
+            city: p.city || "Unknown",
+            price: price,
+            priceFormatted: `$${price.toLocaleString()}`,
+            attendees: attendees,
+            maxAttendees: capacity,
+            ageRange: p.ageRange || "21-35",
+            type: p.type || "Party",
+            theme: p.type || "Party",
+            description: p.description || "",
+            hostName: p.hostNickname || p.host || "Host",
+            rating: Number(p.rating) || 4.5,
+          };
+        });
+        setApprovedParties(mappedParties);
+      }
+    };
     
-    // Map localStorage parties to match mockParties format
-    const mappedParties = approved.map((p: any) => {
-      const price = Number(p.price) || 0;
-      const attendees = Number(p.attendees) || 0;
-      const capacity = Number(p.capacity) || 20;
-      
-      return {
-        id: p.id,
-        title: p.title || "Untitled Party",
-        image: (Array.isArray(p.images) && p.images.length > 0) ? p.images[0] : "/placeholder-party.jpg",
-        date: p.date,
-        dateTimestamp: new Date(p.date).getTime(),
-        location: p.location || p.city || "TBA",
-        city: p.city || "Unknown",
-        price: price,
-        priceFormatted: `$${price.toLocaleString()}`,
-        attendees: attendees,
-        maxAttendees: capacity,
-        ageRange: p.ageRange || "21-35",
-        type: p.type || "Party",
-        theme: p.type || "Party",
-        description: p.description || "",
-        hostName: p.hostNickname || p.host || "Host",
-        rating: Number(p.rating) || 4.5,
-      };
-    });
-    
-    setApprovedParties(mappedParties);
+    loadParties();
   }, []);
   
   // Combine mockParties with approved parties

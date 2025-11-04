@@ -35,8 +35,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const partiesCollection = db.collection('parties');
 
     if (req.method === 'GET') {
-      // Get all parties
-      const parties = await partiesCollection.find({}).toArray();
+      // Get only approved parties for public display
+      // Admin can get all parties by passing ?admin=true query parameter
+      const isAdmin = req.query.admin === 'true';
+      const filter = isAdmin ? {} : { status: 'approved' };
+      
+      const parties = await partiesCollection.find(filter).toArray();
       return res.status(200).json({ parties });
     }
 

@@ -91,9 +91,29 @@ export default function Admin() {
     setHostApplications(sortedApplications);
   };
 
-  const loadParties = () => {
-    const allParties = getParties();
-    setParties(allParties);
+  const loadParties = async () => {
+    try {
+      // Fetch all parties from API (including pending) with admin parameter
+      const response = await fetch('/api/parties?admin=true');
+      const data = await response.json();
+      const apiParties = data.parties || [];
+      
+      // Also get from localStorage as fallback
+      const localParties = getParties();
+      
+      // Combine and deduplicate
+      const allParties = [...apiParties, ...localParties];
+      const uniqueParties = allParties.filter((party, index, self) => 
+        index === self.findIndex((p) => p.id === party.id)
+      );
+      
+      setParties(uniqueParties);
+    } catch (error) {
+      console.error('Failed to load parties from API, using localStorage only:', error);
+      // Fallback to localStorage only
+      const allParties = getParties();
+      setParties(allParties);
+    }
   };
 
   const handleApprove = (application: HostApplication) => {
