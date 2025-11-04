@@ -34,7 +34,7 @@ import { uploadMultipleImages } from "@/lib/imageUpload";
 export default function CreateParty() {
   const [, setLocation] = useLocation();
   const [hostEmail, setHostEmail] = useState("");
-  const [isHostVerified, setIsHostVerified] = useState(false);
+  const [isHostVerified, setIsHostVerified] = useState(true); // TEMPORARY: Bypass verification for testing
   const [currentHost, setCurrentHost] = useState<{ id: string; name: string; email: string } | null>(null);
   const [formData, setFormData] = useState({
     title: "",
