@@ -396,8 +396,8 @@ export default function CreateParty() {
       
       if (success) {
         // Show success message
-        toast.success("파티가 생성되었습니다!", {
-          description: "Instagram DM으로 승인 요청을 진행합니다.",
+        toast.success("Party Created Successfully!", {
+          description: "Please proceed with approval request via Instagram DM.",
         });
         
         // Wait a moment for user to see the success message

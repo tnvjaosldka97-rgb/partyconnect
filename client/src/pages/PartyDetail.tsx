@@ -92,14 +92,16 @@ export default function PartyDetail() {
     
     // Create Instagram DM message with party details
     const message = encodeURIComponent(
-      `🎉 파티 입장권 구매 문의\n\n` +
-      `파티: ${party.title}\n` +
-      `날짜: ${party.date} ${party.time || ''}\n` +
-      `장소: ${party.location}\n` +
-      `인원: ${ticketCount}명\n` +
-      `성별: ${gender}\n` +
-      `금액: $${totalPrice}\n\n` +
-      `입장권 구매를 진행하고 싶습니다.`
+      `Hi, I'm trying to apply for the party. Please reply\n\n` +
+      `Party: ${party.title}\n` +
+      `Host: ${party.host}\n` +
+      `Date & Time: ${party.date} ${party.time || ''}\n` +
+      `Spots left: ${availableSpots} people\n` +
+      `Number of Tickets: ${ticketCount}\n` +
+      `Tickets (${ticketCount}): $${party.price * ticketCount}\n` +
+      `Service Fee: $5\n` +
+      `Total: $${totalPrice + 5}\n\n` +
+      `Requests, Questions: `
     );
     
     // Redirect to Instagram DM

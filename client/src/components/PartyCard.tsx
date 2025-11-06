@@ -122,7 +122,7 @@ export default function PartyCard({
             <div className="text-xs text-muted-foreground">Entry Fee</div>
               <div className="text-2xl font-bold gradient-text">{priceFormatted}</div>
           </div>
-          <Link href={`/party/${id}`}>
+          <Link href={`/party/${id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <Button className="gradient-button rounded-xl px-6 h-10">
               View Details
             </Button>
