@@ -94,7 +94,7 @@ export default function PartyDetail() {
     const message = encodeURIComponent(
       `Hi, I'm trying to apply for the party. Please reply\n\n` +
       `Party: ${party.title}\n` +
-      `Host: ${party.host}\n` +
+      `Host: ${party.hostName}\n` +
       `Date & Time: ${party.date} ${party.time || ''}\n` +
       `Spots left: ${availableSpots} people\n` +
       `Number of Tickets: ${ticketCount}\n` +
