@@ -93,14 +93,9 @@ export default function PartyDetail() {
     // Create Instagram DM message with party details
     const message = encodeURIComponent(
       `Hi, I'm trying to apply for the party. Please reply\n\n` +
-      `Party: ${party.title}\n` +
+      `Party Name: ${party.title}\n` +
       `Host: ${party.hostName}\n` +
-      `Date & Time: ${party.date} ${party.time || ''}\n` +
-      `Spots left: ${availableSpots} people\n` +
-      `Number of Tickets: ${ticketCount}\n` +
-      `Tickets (${ticketCount}): $${party.price * ticketCount}\n` +
-      `Service Fee: $5\n` +
-      `Total: $${totalPrice + 5}\n\n` +
+      `Number of Tickets: ${ticketCount}\n\n` +
       `Requests, Questions: `
     );
     

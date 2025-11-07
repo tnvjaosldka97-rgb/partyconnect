@@ -58,11 +58,27 @@ export default function CreateParty() {
     const savedHostEmail = localStorage.getItem("hostEmail");
     if (savedHostEmail) {
       setHostEmail(savedHostEmail);
-      const host = getHostByEmail(savedHostEmail);
-      if (host) {
-        setIsHostVerified(true);
-        setCurrentHost(host);
-      }
+      // Auto-verify from API
+      (async () => {
+        try {
+          const response = await fetch('https://partybear.vercel.app/api/hosts');
+          const data = await response.json();
+          const hostApps = data.applications || [];
+          const matchingApp = hostApps.find(
+            (app: any) => app.email.toLowerCase() === savedHostEmail.toLowerCase() && app.status === 'approved'
+          );
+          if (matchingApp) {
+            setIsHostVerified(true);
+            setCurrentHost({
+              id: matchingApp.id,
+              name: matchingApp.name,
+              email: matchingApp.email,
+            });
+          }
+        } catch (error) {
+          console.error('Auto-verification error:', error);
+        }
+      })();
     }
   }, []);
 
@@ -71,32 +87,39 @@ export default function CreateParty() {
     toast.success("Image removed");
   };
 
-  const handleHostVerification = () => {
+  const handleHostVerification = async () => {
     if (!hostEmail.trim()) {
       toast.error("Please enter your email");
       return;
     }
 
-    console.log("[DEBUG] Verifying host:", hostEmail);
-    
-    // Debug: Check localStorage
-    const hostApps = JSON.parse(localStorage.getItem('hostApplications') || '[]');
-    console.log("[DEBUG] Total host applications:", hostApps.length);
-    console.log("[DEBUG] Host applications:", hostApps);
-    
-    const host = getHostByEmail(hostEmail);
-    console.log("[DEBUG] getHostByEmail result:", host);
-    
-    if (host) {
-      setIsHostVerified(true);
-      setCurrentHost(host);
-      toast.success("Host Verified Successfully!", {
-        description: `Welcome, ${host.name}님!`,
-      });
-    } else {
-      // More detailed error message
-      const matchingApp = hostApps.find(app => app.email.toLowerCase() === hostEmail.toLowerCase());
-      if (matchingApp) {
+    try {
+      // Fetch host applications from API
+      const response = await fetch('https://partybear.vercel.app/api/hosts');
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch host applications');
+      }
+
+      const hostApps = data.applications || [];
+      const matchingApp = hostApps.find(
+        (app: any) => app.email.toLowerCase() === hostEmail.toLowerCase()
+      );
+
+      if (matchingApp && matchingApp.status === 'approved') {
+        setIsHostVerified(true);
+        setCurrentHost({
+          id: matchingApp.id,
+          name: matchingApp.name,
+          email: matchingApp.email,
+        });
+        // Save to localStorage for convenience
+        localStorage.setItem('hostEmail', hostEmail);
+        toast.success("Host Verified Successfully!", {
+          description: `Welcome, ${matchingApp.name}!`,
+        });
+      } else if (matchingApp) {
         toast.error("Host Not Approved", {
           description: `Your application status is: ${matchingApp.status}. Please wait for admin approval.`,
         });
@@ -105,6 +128,11 @@ export default function CreateParty() {
           description: "You must apply as a host and get approved before creating parties.",
         });
       }
+    } catch (error) {
+      console.error('Host verification error:', error);
+      toast.error("Verification Failed", {
+        description: "Unable to verify host. Please try again.",
+      });
     }
   };
 
@@ -355,8 +383,8 @@ export default function CreateParty() {
       toast.dismiss("creating-party");
       
       // Show success message
-      toast.success("파티가 생성되었습니다!", {
-        description: "Instagram DM으로 승인 요청을 진행합니다.",
+      toast.success("Party Created Successfully!", {
+        description: "Please proceed with approval request via Instagram DM.",
       });
       
       // Wait a moment for user to see the success message
