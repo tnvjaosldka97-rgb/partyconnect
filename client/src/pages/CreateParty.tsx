@@ -61,7 +61,7 @@ export default function CreateParty() {
       // Auto-verify from API
       (async () => {
         try {
-          const response = await fetch('https://partybear.vercel.app/api/hosts');
+          const response = await fetch('/api/hosts');
           const data = await response.json();
           const hostApps = data.applications || [];
           const matchingApp = hostApps.find(
@@ -95,7 +95,7 @@ export default function CreateParty() {
 
     try {
       // Fetch host applications from API
-      const response = await fetch('https://partybear.vercel.app/api/hosts');
+      const response = await fetch('/api/hosts');
       const data = await response.json();
       
       if (!response.ok) {
